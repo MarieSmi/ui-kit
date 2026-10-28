@@ -10,12 +10,14 @@
 ## Подключение
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.0/components/button/button.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.1/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.1/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.1/components/button/button.css">
 ```
 
 `tokens.css` подключается первым. Текст кнопки набран шрифтом **Inter**, иконки в макете — шрифтами
-`cbuc-icons` и `cbuc-icons24`. Шрифты подключает проект; вместо глифа можно вставить `svg`.
+`cbuc-icons` и `cbuc-icons24`. Все три есть в ките и подключаются через `fonts/fonts.css`. Кнопка от него
+не зависит: если проект подключает шрифты сам, эту строку можно убрать.
 
 ## Разметка
 
@@ -23,20 +25,21 @@
 <button class="btn btn--filled btn--style-primary">Кнопка</button>
 
 <button class="btn btn--outlined btn--style-secondary btn--size-m">
-  <span class="btn__icon"><svg viewBox="0 0 16 16">…</svg></span>
+  <span class="btn__icon">&#xe9e2;</span>
   Кнопка
 </button>
 
 <button class="btn btn--ghost btn--style-danger btn--icon" aria-label="Удалить">
-  <span class="btn__icon">…</span>
+  <span class="btn__icon">&#xe9e2;</span>
 </button>
 ```
 
 Иконка может стоять до текста или после него, зазор одинаковый. Работает и на `<a>`.
 
 **Иконка.** В макете это глиф шрифта иконок: `font-family` и `font-size` у `.btn__icon` уже заданы токенами
-по размеру кнопки (16 / 24 / 32 px; для 24 px — шрифт `cbuc-icons24`), поэтому при подключённом шрифте
-достаточно самого символа: `<span class="btn__icon">&#xe9e2;</span>`. Если шрифта нет, вставьте `svg` с
+по размеру кнопки (16 / 24 / 32 px; для 24 px — шрифт `cbuc-icons24`), поэтому с `fonts/fonts.css`
+достаточно самого символа: `<span class="btn__icon">&#xe9e2;</span>`. Глиф встаёт в рамку как в макете:
+расхождение с Figma меньше 0,5 px. Если шрифта нет, вставьте `svg` с
 `viewBox` во весь размер иконки (`0 0 16 16`, `0 0 24 24`, `0 0 32 32`) — он растягивается на всю рамку
 и красится в цвет иконки. Глиф занимает рамку не целиком, поэтому svg-иконку берите из Figma вместе с
 полями, а не обрезанную по контуру.

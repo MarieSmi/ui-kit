@@ -16,13 +16,13 @@
 Файлы раздаёт jsDelivr прямо из GitHub по тегу:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.0/components/<имя>/<имя>.css">
-<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.0/components/<имя>/<имя>.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.1/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.1/components/<имя>/<имя>.css">
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.1/components/<имя>/<имя>.js"></script>
 ```
 
 - `tokens.css` подключается **первым**: компоненты берут значения из его переменных.
-- Версия в адресе (`@1.3.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
+- Версия в адресе (`@1.3.1`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
 - Во всех адресах одного прототипа должна стоять одна и та же версия.
 - В артефактах Claude адреса `cdn.jsdelivr.net/gh/` не работают: там код кита вшивается в файл.
 
@@ -32,7 +32,7 @@
 прототип подключает сам, отдельным файлом:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.1/fonts/fonts.css">
 ```
 
 | Шрифт | Файлы | Где используется |
