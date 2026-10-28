@@ -27,8 +27,6 @@
   color-scheme: light;
 }
 :root[data-ui-theme$="dark"], :root[data-ui-theme="dark-v2"], :root[data-ui-theme="dark-v3"] { color-scheme: dark; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; } }
-:root[data-theme="dark"] { color-scheme: dark; }
 
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 400 14px/1.45 var(--sans); }
@@ -47,9 +45,16 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .controls label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
 select, input[type=search] { font: 400 14px var(--sans); color: var(--fg); background: var(--surface); border: 1px solid var(--border-unaccented_border-color); border-radius: 6px; padding: 5px 8px; }
 input[type=search] { width: 220px; max-width: 100%; }
-nav.toc { display: flex; flex-wrap: wrap; gap: 4px 16px; padding-bottom: 10px; font-size: 13px; }
+/* Меню в два уровня: разделы «Компоненты» и «Переменные», под ними пункты выбранного раздела */
+nav.toc { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding-bottom: 10px; font-size: 13px; }
 nav.toc a { color: var(--muted); text-decoration: none; }
 nav.toc a:hover { color: var(--fg); }
+.toc-main { display: flex; gap: 2px; padding: 3px; margin-left: -15px; background: var(--bg); border-radius: 8px; } /* текст первой вкладки — на линии логотипа */
+.toc-main a { padding: 5px 12px; border-radius: 6px; font-weight: 500; }
+nav.toc .toc-main a.is-on { color: var(--extra-item_selected_text-color); background: var(--extra-item_selected_color); }
+.toc-sub { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.toc-sub[hidden] { display: none; }
+.toc-sub a.is-on { color: var(--fg); }
 
 main .wrap { display: grid; gap: 40px; padding-block: 28px 64px; }
 section > h2 { margin: 0 0 4px; font-size: 22px; font-weight: 600; letter-spacing: -.01em; text-wrap: balance; }
@@ -84,9 +89,9 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .shadow .n { font: 500 12px var(--mono); }
 .shadow .v { font: 400 11px var(--mono); color: var(--muted); }
 
-.comp { display: grid; gap: 14px; padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.comp { display: grid; gap: 14px; } /* без карточки: всё по одной левой линии с шапкой */
 .comp-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
-.comp-head h3 { margin: 0; font-size: 17px; font-weight: 600; }
+.comp-head h3 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -.01em; } /* заголовок раздела — выбранный компонент */
 .comp-head code { font: 400 12px var(--mono); color: var(--muted); }
 .comp p { margin: 0; max-width: 65ch; }
 .stage { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; aspect-ratio: 16 / 9; max-width: 100%; background: var(--bg); }
@@ -96,10 +101,11 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .states b { font-weight: 500; min-width: 96px; }
 .states span { color: var(--muted); }
 
-.comp-tools { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
-.comp-tools label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.comp[hidden] { display: none; }
+.comp-head .comp-tool { align-self: baseline; margin-left: auto; display: flex; align-items: baseline; gap: 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
 .btn-set { display: grid; gap: 6px; }
-.btn-set h4 { margin: 8px 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 13px; font-weight: 600; }
+#button-body { display: grid; gap: 32px; } /* отступ между видами кнопок */
+.btn-set h4 { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 13px; font-weight: 600; }
 .btn-set h4 code, .btn-set h4 span { font: 400 12px var(--mono); color: var(--muted); }
 .btn-scroll { overflow-x: auto; }
 .btn-grid { border-collapse: collapse; }
@@ -119,7 +125,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.1.0</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.1.1</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -144,21 +150,21 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     </div>
   </div>
   <nav class="toc wrap" aria-label="Разделы">
-    <a href="#components">Компоненты</a><a href="#colors">Цвета</a><a href="#sizes">Размеры</a><a href="#shadows">Тени</a>
+    <div class="toc-main">
+      <a href="#components" data-group="components">Компоненты</a><a href="#tokens" data-group="tokens">Переменные</a>
+    </div>
+    <div class="toc-sub" data-group="components"><a href="#button">Кнопка</a><a href="#demo-frame">Вспом. обл.</a></div>
+    <div class="toc-sub" data-group="tokens"><a href="#colors">Цвета</a><a href="#sizes">Размеры</a><a href="#shadows">Тени</a></div>
   </nav>
 </header>
 
 <main>
   <div class="wrap">
-    <section id="components">
-      <h2>Компоненты</h2>
-      <p class="lead">Живые примеры. Тема из переключателя применяется и к ним.</p>
+    <section id="components" data-group="components">
       <article class="comp" id="button">
-        <div class="comp-head"><h3>Кнопка</h3><code>components/button</code></div>
-        <p>Базовые кнопки со страницы «✅ Кнопки» библиотеки <a href="https://www.figma.com/design/nuC4KFMiS36uDWDUp9wKGl/?node-id=322-2761" target="_blank" rel="noopener">«⚙️ Default components»</a>: восемь видов, стили, размеры m, xl и 5xl, кнопка с текстом и кнопка-иконка. Наведение, нажатие и readOnly показаны классами <code>is-*</code>, живые кнопки реагируют и на мышь. Размер токенов меняется переключателем «Размер».</p>
-        <div class="comp-tools">
-          <label for="btn-size">inlineHeight
-            <select id="btn-size"><option value="m">m · 24</option><option value="xl" selected>xl · 32</option><option value="5xl">5xl · 48</option></select>
+        <div class="comp-head"><h3>Кнопка</h3><code>components/button</code>
+          <label class="comp-tool" for="btn-size">inlineHeight
+            <select id="btn-size"><option value="m" selected>m · 24</option><option value="xl">xl · 32</option><option value="5xl">5xl · 48</option></select>
           </label>
         </div>
         <div id="button-body"></div>
@@ -168,9 +174,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         </ul>
       </article>
       <article class="comp" id="demo-frame">
-        <div class="comp-head"><h3>Рамка демо</h3><code>components/demo-frame</code></div>
-        <p>Шапка с названием и статусом согласования, сцена 1600×900 и панель сценариев справа. Масштабируется под окно целиком. Размеры фиксированы и от «Размера» не зависят.</p>
-        <div class="stage"><iframe id="frame-demo" title="Пример рамки демо" src="../components/demo-frame/example/index.html"></iframe></div>
+        <div class="comp-head"><h3>Вспомогательная область</h3><code>components/demo-frame</code></div>
+        <div class="stage"><iframe id="frame-demo" title="Пример вспомогательной области" src="../components/demo-frame/example/index.html"></iframe></div>
         <ul class="states">
           <li><b>Сценарий</b><span>обычный, наведение, выбран, недоступен</span></li>
           <li><b>Вилка</b><span>выбран вариант — отмечен и родитель</span></li>
@@ -179,17 +184,17 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         </ul>
       </article>
     </section>
-    <section id="colors">
+    <section id="colors" data-group="tokens">
       <h2>Цвета</h2>
       <p class="lead">Из коллекции globalColor библиотеки <a href="https://www.figma.com/design/mcpY3I5yWjkPfnk1IdEiqw/" target="_blank" rel="noopener">«🌍 Global Variables»</a>. Нажмите на токен, чтобы скопировать <code>var(--…)</code>. Значение под именем — в текущей теме.</p>
       <div id="colors-body"></div>
     </section>
-    <section id="sizes">
+    <section id="sizes" data-group="tokens">
       <h2>Размеры</h2>
       <p class="lead">Из коллекции globalSize библиотеки <a href="https://www.figma.com/design/mcpY3I5yWjkPfnk1IdEiqw/" target="_blank" rel="noopener">«🌍 Global Variables»</a>. Меняются вместе с переключателем «Размер».</p>
       <div id="sizes-body"></div>
     </section>
-    <section id="shadows">
+    <section id="shadows" data-group="tokens">
       <h2>Тени</h2>
       <p class="lead">Из коллекции globalShadow библиотеки <a href="https://www.figma.com/design/mcpY3I5yWjkPfnk1IdEiqw/" target="_blank" rel="noopener">«🌍 Global Variables»</a>: размытие и цвет. Смещение в Figma токеном не задано, в превью тень без смещения.</p>
       <div id="shadows-body"></div>
@@ -359,6 +364,49 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     }).join('');
   }
 
+  // Меню: раздел «Компоненты» показывает один компонент (#button, #demo-frame), раздел «Переменные» — цвета,
+  // размеры и тени одной лентой (#colors, #sizes, #shadows). Показан только выбранный раздел.
+  var ROUTES = { components: 'components', button: 'components', 'demo-frame': 'components',
+    tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
+  var COMPS = ['button', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
+  var header = document.querySelector('header.top'), group = null, comp = 'button';
+  function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
+  function markSub(id) { nav('.toc-sub a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + id); }); }
+  function scrollToId(id) { // к началу блока, под липкой шапкой
+    var top = document.getElementById(id).getBoundingClientRect().top + window.scrollY;
+    window.scrollTo(0, Math.max(0, top - header.offsetHeight - 16));
+  }
+  function go(id, scroll) {
+    var g = ROUTES[id]; if (!g) return false;
+    group = g;
+    nav('main section[data-group]').forEach(function (s) { s.hidden = s.getAttribute('data-group') !== g; });
+    nav('.toc-sub').forEach(function (s) { s.hidden = s.getAttribute('data-group') !== g; });
+    nav('.toc-main a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('data-group') === g); });
+    document.getElementById('q').hidden = g !== 'tokens'; // поиск — только по переменным
+    if (g === 'components') {
+      if (COMPS.indexOf(id) >= 0) comp = id;
+      COMPS.forEach(function (c) { document.getElementById(c).hidden = c !== comp; });
+      markSub(comp);
+      if (scroll) scrollToId('components');
+    } else {
+      var target = TOKEN_SECTIONS.indexOf(id) >= 0 ? id : 'colors';
+      if (scroll) scrollToId(target);
+      markSub(target);
+    }
+    return true;
+  }
+  function spy() { // в «Переменных» подсвечен блок, который сейчас под шапкой
+    if (group !== 'tokens') return;
+    var line = header.offsetHeight + 40, cur = TOKEN_SECTIONS[0];
+    TOKEN_SECTIONS.forEach(function (s) { if (document.getElementById(s).getBoundingClientRect().top <= line) cur = s; });
+    markSub(cur);
+  }
+  nav('nav.toc a').forEach(function (a) { // пункт меню: перейти и прокрутить, даже если адрес не изменился
+    a.addEventListener('click', function (e) { e.preventDefault(); var id = a.getAttribute('href').slice(1); history.replaceState(null, '', '#' + id); go(id, true); });
+  });
+  window.addEventListener('hashchange', function () { go(location.hash.slice(1), true); });
+  window.addEventListener('scroll', spy, { passive: true });
+
   function refresh() {
     items.forEach(function (it) { it.v.textContent = it.pair ? val(it.pair[0]) + ' · ' + val(it.pair[1]) : val(it.n); });
     var f = document.getElementById('frame-demo');
@@ -379,21 +427,25 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     try { navigator.clipboard.writeText(text).then(function () { show('Скопировано: ' + text); }, function () { show(text); }); } catch (e) { show(text); }
   }
 
-  // Тема: выбор пользователя, иначе следуем светлой или тёмной теме окна
+  // Тема: по умолчанию светлая (Default Light), другая — только по выбору в переключателе
   var themeSel = document.getElementById('theme'), sizeSel = document.getElementById('size');
-  var chosen = null; try { chosen = localStorage.getItem('uikit-theme'); } catch (e) {}
-  function hostDark() { var t = root.getAttribute('data-theme'); if (t === 'dark') return true; if (t === 'light') return false; return window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches; }
-  function applyTheme() { var v = chosen != null ? chosen : (hostDark() ? 'default-dark' : ''); setAttr(root, 'data-ui-theme', v); themeSel.value = v; refresh(); }
-  themeSel.addEventListener('change', function () { chosen = themeSel.value; try { localStorage.setItem('uikit-theme', chosen); } catch (e) {} applyTheme(); });
+  function applyTheme() { setAttr(root, 'data-ui-theme', themeSel.value); refresh(); }
+  themeSel.value = '';
+  themeSel.addEventListener('change', applyTheme);
   sizeSel.addEventListener('change', function () { setAttr(root, 'data-ui-size', sizeSel.value); refresh(); });
-  if (window.matchMedia) { try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme); } catch (e) {} }
-  new MutationObserver(function () { if (chosen == null) applyTheme(); }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
   document.getElementById('frame-demo').addEventListener('load', refresh);
   document.getElementById('q').addEventListener('input', filter);
 
   document.getElementById('btn-size').addEventListener('change', buildButtons);
 
+  var start = location.hash.slice(1);
+  if (!go(start, false)) go('button', false);
   buildButtons(); buildColors(); buildSizes(); buildShadows();
+  if (ROUTES[start]) { // открыт по адресу раздела — прокрутить к нему, когда всё построено
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    go(start, true);
+    window.addEventListener('load', function () { go(start, true); }); // браузер мог сам прокрутить к якорю после нас
+  }
   if (!names.length) document.getElementById('colors-body').appendChild(el('p', 'empty', 'Не удалось прочитать tokens.css. Откройте каталог через локальный сервер, а не как файл.'));
   applyTheme();
 })();
