@@ -15,13 +15,13 @@
 Файлы раздаёт jsDelivr прямо из GitHub по тегу:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.1.1/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.1.1/components/<имя>/<имя>.css">
-<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.1.1/components/<имя>/<имя>.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.2.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.2.0/components/<имя>/<имя>.css">
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.2.0/components/<имя>/<имя>.js"></script>
 ```
 
 - `tokens.css` подключается **первым**: компоненты берут значения из его переменных.
-- Версия в адресе (`@1.1.1`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
+- Версия в адресе (`@1.2.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
 - Во всех адресах одного прототипа должна стоять одна и та же версия.
 - В артефактах Claude адреса `cdn.jsdelivr.net/gh/` не работают: там код кита вшивается в файл.
 
@@ -57,6 +57,7 @@ Figma: он обновит файлы в `tools/tokens/`, запустит `pyth
 |---|---|---|---|
 | Вспомогательная область: шапка, сцена, панель сценариев | [`components/demo-frame`](components/demo-frame/) | `xMQ3ZEN4AUINgwjVoxR8hS` · `18715:93398` | 1.0.0 |
 | Кнопка: 8 видов, стили, размеры m / xl / 5xl, кнопка-иконка | [`components/button`](components/button/) | `nuC4KFMiS36uDWDUp9wKGl` · `322:2761` | 1.1.0 |
+| Чекбокс: outlined / filled / ghost, resetValue, третье состояние, подпись слева | [`components/checkbox`](components/checkbox/) | `nuC4KFMiS36uDWDUp9wKGl` · `14613:12425` | 1.2.0 |
 
 Связь компонентов Figma с классами кита — в [`figma-map.json`](figma-map.json): ключи component set и
 соответствие их свойств классам. По ней инстанс из макета переводится в разметку кита.

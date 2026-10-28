@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>checkbox — пример</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../checkbox.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    table { border-collapse: collapse; }
+    th { padding: 4px 16px 4px 0; font-weight: 400; text-align: left; color: var(--text-label_text-color); white-space: nowrap; }
+    td { padding: 4px 20px 4px 0; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>captionPosition <select id="pos">
+      <option>end</option><option>start</option>
+    </select></label>
+  </div>
+  <div id="out"></div>
+
+  <script>
+    // Вид и состояния — как в component set: readOnly в макете есть только у outlined
+    const VIEWS = [
+      ['outlined', 'checkbox--outlined', true],
+      ['filled', 'checkbox--filled', false],
+      ['ghost', 'checkbox--ghost', false],
+      ['outlined + resetValue', 'checkbox--outlined checkbox--reset', false],
+    ];
+    const VALUES = [['false', ''], ['true', 'checked'], ['triState', 'tri']];
+
+    function render() {
+      const start = document.getElementById('pos').value === 'start' ? ' checkbox--caption-start' : '';
+      const cb = (cls, state, value) => `<label class="checkbox ${cls}${start}${state ? ' ' + state : ''}${value === 'tri' ? ' is-indeterminate' : ''}">` +
+        `<input class="checkbox__input" type="checkbox"${value === 'checked' ? ' checked' : ''}${value === 'tri' ? ' data-tri' : ''}>` +
+        `<span class="checkbox__box"></span><span class="checkbox__caption">Содержание</span></label>`;
+      document.getElementById('out').innerHTML = VIEWS.map(([title, cls, ro]) => {
+        const states = [['покой', ''], ['hover', 'is-hover']].concat(ro ? [['readOnly', 'is-readonly']] : []);
+        return `
+        <h2>${title}</h2>
+        <table>
+          <tr><th></th>${VALUES.map(([t]) => `<th>value ${t}</th>`).join('')}</tr>
+          ${states.map(([t, s]) => `<tr><th>${t}</th>${VALUES.map(([, v]) => `<td>${cb(cls, s, v)}</td>`).join('')}</tr>`).join('')}
+        </table>`;
+      }).join('');
+      // Третье состояние ставит JS: у атрибута indeterminate нет; класс is-indeterminate — для показа без JS
+      for (const el of document.querySelectorAll('[data-tri]')) el.indeterminate = true;
+    }
+    document.getElementById('pos').onchange = render;
+    render();
+  </script>
+</body>
+</html>

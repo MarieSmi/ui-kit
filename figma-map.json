@@ -47,6 +47,34 @@
         "iconType#17890:0": { "kit": "что внутри .btn__icon: глиф из свойства icon#17887:0 инстанса icons/font (шрифт cbuc-icons) или svg" },
         "captionPosition": { "end": "сначала .btn__icon, потом текст", "start": "сначала текст, потом .btn__icon" }
       }
+    },
+    "checkbox": {
+      "kit": "components/checkbox",
+      "since": "1.2.0",
+      "figma": {
+        "fileKey": "nuC4KFMiS36uDWDUp9wKGl",
+        "file": "⚙️ Default components",
+        "node": "14613:12425"
+      },
+      "element": "<label class=\"checkbox …\"><input class=\"checkbox__input\" type=\"checkbox\"><span class=\"checkbox__box\"></span><span class=\"checkbox__caption\">…</span></label>",
+      "base": "checkbox",
+      "sets": [
+        { "name": "checkbox", "node": "14613:12425", "key": "5c48e3ddbfec968bae08869739452b581800835a" }
+      ],
+      "properties": {
+        "viewMode": { "class": "checkbox--{value}", "values": ["outlined", "filled", "ghost"] },
+        "resetValue": { "true": "checkbox--reset", "false": null, "note": "только с viewMode=outlined" },
+        "captionPosition": { "start": "checkbox--caption-start", "end": null },
+        "captionTemplate": { "text": null, "icon": "не входит в кит" },
+        "value": { "true": "атрибут checked у input", "false": null, "alt": ":checked" },
+        "triState": { "true": "is-indeterminate", "false": null, "alt": ":indeterminate (input.indeterminate = true)", "note": "в макете только при value=true" },
+        "readOnly": { "true": "is-readonly", "false": null, "alt": ":disabled", "note": "в макете только у outlined без resetValue" },
+        "_hover": { "true": "is-hover", "false": null, "alt": ":hover" }
+      },
+      "content": {
+        "caption#6921:0": { "kit": "текст в .checkbox__caption" },
+        "captionVisible#6921:7": { "true": "есть .checkbox__caption", "false": "без .checkbox__caption" }
+      }
     }
   }
 }

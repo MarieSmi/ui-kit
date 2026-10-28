@@ -1,0 +1,136 @@
+/*!
+ * checkbox — чекбокс (Figma nuC4KFMiS36uDWDUp9wKGl, component set «checkbox» 14613:12425).
+ * Свойства: viewMode → .checkbox--outlined / --filled / --ghost, resetValue → .checkbox--reset (только с outlined),
+ * captionPosition=start → .checkbox--caption-start; value → :checked, triState → :indeterminate / .is-indeterminate;
+ * _hover / readOnly → .is-hover / .is-readonly (и :hover / :disabled). captionTemplate=icon в кит не входит.
+ * Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/checkbox
+ *
+ * Устройство: квадрат .checkbox__box — фон, рамка (::before) и маркер (::after). Рамка и маркер — маски из
+ * векторов макета, цвет у них — фон слоя, поэтому они красятся токенами. Вид и значение задают переменные
+ * --cb-*-r (покой) и --cb-*-h (наведение) на .checkbox, правило наведения выбирает нужную.
+ */
+
+.checkbox {
+  /* Векторы макета в квадрате 13×13: растягиваются на размер квадрата — нет токена */
+  --cb-ring-full: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 13'%3E%3Cpath fill-rule='evenodd' d='M0 4.33333C0 1.9401 1.9401 0 4.33333 0H8.66667C11.0599 0 13 1.9401 13 4.33333V8.66667C13 11.0599 11.0599 13 8.66667 13H4.33333C1.9401 13 0 11.0599 0 8.66667V4.33333ZM1.08333 4.33333C1.08333 2.53841 2.53841 1.08333 4.33333 1.08333H8.66667C10.4616 1.08333 11.9167 2.53841 11.9167 4.33333V8.66667C11.9167 10.4616 10.4616 11.9167 8.66667 11.9167H4.33333C2.53841 11.9167 1.08333 10.4616 1.08333 8.66667V4.33333Z'/%3E%3C/svg%3E");
+  --cb-ring-gap: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 13'%3E%3Cpath fill-rule='evenodd' d='M8.66667 0.541667C8.66667 0.242515 8.42415 0 8.125 0H4.33333C1.9401 0 0 1.9401 0 4.33333V8.66667C0 11.0599 1.9401 13 4.33333 13H8.66667C11.0599 13 13 11.0599 13 8.66667V8.125C13 7.82585 12.7574 7.58333 12.4583 7.58333C12.1592 7.58333 11.9167 7.82585 11.9167 8.125V8.66667C11.9167 10.4616 10.4616 11.9167 8.66667 11.9167H4.33333C2.53841 11.9167 1.08333 10.4616 1.08333 8.66667V4.33333C1.08333 2.53841 2.53841 1.08333 4.33333 1.08333H8.125C8.42415 1.08333 8.66667 0.840818 8.66667 0.541667Z'/%3E%3C/svg%3E");
+  --cb-ring-readonly: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 13'%3E%3Crect x='1.8846' y='1.8846' width='9.2308' height='9.2308' rx='3.0769' fill='none' stroke='black' stroke-width='.7692'/%3E%3C/svg%3E");
+  --cb-mark-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 13'%3E%3Cpath d='M11.3049 1.60781C11.5494 1.30818 11.9916 1.2632 12.2918 1.50722C12.5919 1.75134 12.6369 2.19285 12.3925 2.49258L6.50718 9.70937C6.19342 10.0939 5.60804 10.1038 5.28159 9.72988L3.17276 7.31386C2.91832 7.02244 2.94836 6.57961 3.24025 6.32558C3.53214 6.07171 3.97474 6.10257 4.22913 6.39394L5.86944 8.27285L11.3049 1.60781Z'/%3E%3C/svg%3E");
+  --cb-mark-square: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 13'%3E%3Cpath d='M7.66667 3H5.33333C4.04467 3 3 4.04467 3 5.33333V7.66667C3 8.95533 4.04467 10 5.33333 10H7.66667C8.95533 10 10 8.95533 10 7.66667V5.33333C10 4.04467 8.95533 3 7.66667 3Z'/%3E%3C/svg%3E");
+  --cb-none: linear-gradient(transparent, transparent); /* пустая маска: слой не виден; mask: none показал бы слой целиком */
+
+  /* Покой и наведение: outlined без значения */
+  --cb-bg-r: var(--components-toggle-marker-box_background-color_checkbox);
+  --cb-bg-h: var(--cb-bg-r);
+  --cb-bd-r: var(--border-unaccented_border-color);
+  --cb-bd-h: var(--border-unaccented_hover_border-color);
+  --cb-ring: var(--cb-ring-full);
+  --cb-mark: var(--cb-none);
+  --cb-mk: var(--extra-marker_color);
+  --cb-mo: 1;
+  --cb-fg: var(--text-text-color);
+  --cb-bg: var(--cb-bg-r);
+  --cb-bd: var(--cb-bd-r);
+
+  position: relative; box-sizing: border-box;
+  display: inline-flex; align-items: flex-start; vertical-align: top;
+  min-height: var(--components-toggle-checkbox-height_checkbox); max-width: 100%;
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--font-font-size-font-size_m); font-weight: var(--font-font-weight-regular); line-height: normal;
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  color: var(--cb-fg);
+  cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.checkbox--caption-start { flex-direction: row-reverse; }
+
+/* Настоящий input: невидим, но остаётся в фокусе и в форме */
+.checkbox__input {
+  position: absolute; left: 0; top: 0; width: 1px; height: 1px; margin: 0; padding: 0;
+  opacity: 0; pointer-events: none;
+}
+
+/* Квадрат: в Figma — _checkbox__size, отступы слева 4 и справа 3, снизу 6 */
+.checkbox__box {
+  --cb-size: var(--components-toggle-checkbox-marker-box_size_checkbox);
+  position: relative; flex: none; align-self: flex-end;
+  width: var(--cb-size); height: var(--cb-size);
+  margin: 0 var(--components-toggle-checkbox-padding-vertical_checkbox) 6px var(--offset-offset_2xs); /* снизу 6px — нет токена */
+  border-radius: calc(var(--cb-size) / 3); /* скругление 1/3 квадрата, как в векторе макета — нет токена */
+  background: var(--cb-bg);
+}
+.checkbox__box::before, .checkbox__box::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  -webkit-mask: var(--m) center / 100% 100% no-repeat; mask: var(--m) center / 100% 100% no-repeat;
+}
+.checkbox__box::before { --m: var(--cb-ring); background: var(--cb-bd); }
+.checkbox__box::after { --m: var(--cb-mark); background: var(--cb-mk); opacity: var(--cb-mo); }
+
+.checkbox__caption {
+  min-width: 0; padding: var(--offset-offset_3xs) 0;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+
+/* Фокус: в макете нет — обводка браузера вокруг квадрата, как у обычного чекбокса */
+.checkbox__input:focus-visible + .checkbox__box { outline: auto; outline-offset: 1px; } /* 1px — нет токена */
+
+/* ---------- Вид (viewMode, resetValue) ---------- */
+.checkbox--ghost { --cb-bg-r: transparent; }
+.checkbox--reset {
+  --cb-bg-r: var(--background-contrast-pale_color);
+  --cb-bg-h: var(--background-contrast-pale_hover_color);
+  --cb-ring: var(--cb-none);
+}
+
+/* ---------- Значение: value=true ---------- */
+.checkbox:has(> .checkbox__input:checked) { --cb-ring: var(--cb-ring-gap); --cb-mark: var(--cb-mark-check); }
+.checkbox--filled:has(> .checkbox__input:checked) {
+  --cb-bg-r: var(--background-contrast-primary_color);
+  --cb-bg-h: var(--background-contrast-primary_hover_color);
+  --cb-bd-r: var(--background-contrast-primary_color);
+  --cb-bd-h: var(--background-contrast-primary_hover_color);
+  --cb-ring: var(--cb-ring-full);
+  --cb-mk: var(--background-background-color);
+}
+.checkbox--reset:has(> .checkbox__input:checked) {
+  --cb-bg-r: var(--background-same-primary_active_same_background-color);
+  --cb-bg-h: var(--background-same-primary_hover_same_background-color);
+  --cb-ring: var(--cb-none);
+}
+
+/* ---------- Третье состояние: triState=true (маркер — квадрат) ---------- */
+.checkbox:is(:has(> .checkbox__input:indeterminate), .is-indeterminate) {
+  --cb-ring: var(--cb-ring-full); --cb-mark: var(--cb-mark-square);
+  --cb-mo: .55; /* прозрачность маркера 55 % из макета — нет токена */
+}
+.checkbox--filled:is(:has(> .checkbox__input:indeterminate), .is-indeterminate) {
+  --cb-bg-r: var(--background-contrast-primary_color);
+  --cb-bg-h: var(--background-contrast-primary_hover_color);
+  --cb-bd-r: var(--background-contrast-primary_color);
+  --cb-bd-h: var(--background-contrast-primary_hover_color);
+  --cb-mk: var(--background-background-color);
+  --cb-mo: 1;
+}
+.checkbox--reset:is(:has(> .checkbox__input:indeterminate), .is-indeterminate) {
+  --cb-bg-r: var(--background-same-primary_active_same_background-color);
+  --cb-bg-h: var(--background-same-primary_hover_same_background-color);
+  --cb-ring: var(--cb-none);
+  --cb-mo: 1;
+}
+
+/* ---------- Наведение: _hover=true ---------- */
+.checkbox:is(:hover, .is-hover) { --cb-bg: var(--cb-bg-h); --cb-bd: var(--cb-bd-h); }
+
+/* ---------- readOnly=true: в макете только у outlined ---------- */
+.checkbox--outlined:not(.checkbox--reset):is(:has(> .checkbox__input:disabled), .is-readonly) {
+  --cb-bg: transparent;
+  --cb-bd: var(--border-readonly_border-color);
+  --cb-ring: var(--cb-ring-readonly);
+  --cb-fg: var(--text-readonly_text-color);
+  cursor: default;
+}
+/* Со значением в макете остаётся только маркер, а подпись — обычного цвета */
+.checkbox--outlined:not(.checkbox--reset):is(:has(> .checkbox__input:disabled), .is-readonly):is(:has(> .checkbox__input:checked), :has(> .checkbox__input:indeterminate), .is-indeterminate) {
+  --cb-ring: var(--cb-none);
+  --cb-fg: var(--text-text-color);
+}

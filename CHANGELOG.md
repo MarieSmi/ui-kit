@@ -1,5 +1,19 @@
 # Изменения
 
+## 1.2.0 — 28.10.2026
+
+- Новый компонент `components/checkbox` — чекбокс из component set `checkbox` библиотеки
+  «⚙️ Default components» (`nuC4KFMiS36uDWDUp9wKGl`, `14613:12425`). Только CSS, внутри настоящий
+  `<input type="checkbox">`. Виды `.checkbox--outlined / --filled / --ghost`, `.checkbox--reset` (resetValue,
+  только с outlined), подпись слева `.checkbox--caption-start`; значение `:checked`, третье состояние
+  `:indeterminate` и `.is-indeterminate`, наведение `:hover` и `.is-hover`, readOnly `:disabled` и `.is-readonly`
+  (только у outlined, как в макете). Вариант с иконкой вместо подписи (`captionTemplate=icon`) не входит.
+  Рамка, галочка и квадрат — векторы макета в масках, цвета — токены. Значения без токена помечены
+  `/* нет токена */`. Состояния написаны через `:has()`.
+- `figma-map.json`: запись о чекбоксе.
+- Каталог: раздел «Чекбокс» со всеми видами, значениями и состояниями и переключателем captionPosition.
+  Сборщик артефакта вшивает CSS чекбокса.
+
 ## 1.1.1 — 28.10.2026
 
 Только каталог и пример кнопки: CSS и API компонентов не менялись.
