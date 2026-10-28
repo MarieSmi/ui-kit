@@ -131,12 +131,27 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     </div>
   </div>
   <nav class="toc wrap" aria-label="Разделы">
-    <a href="#colors">Цвета</a><a href="#sizes">Размеры</a><a href="#shadows">Тени</a><a href="#components">Компоненты</a>
+    <a href="#components">Компоненты</a><a href="#colors">Цвета</a><a href="#sizes">Размеры</a><a href="#shadows">Тени</a>
   </nav>
 </header>
 
 <main>
   <div class="wrap">
+    <section id="components">
+      <h2>Компоненты</h2>
+      <p class="lead">Живые примеры. Тема из переключателя применяется и к ним.</p>
+      <article class="comp" id="demo-frame">
+        <div class="comp-head"><h3>Рамка демо</h3><code>components/demo-frame</code><a href="https://www.figma.com/design/xMQ3ZEN4AUINgwjVoxR8hS/?node-id=18715-93398" target="_blank" rel="noopener">Макет в Figma</a></div>
+        <p>Шапка с названием и статусом согласования, сцена 1600×900 и панель сценариев справа. Масштабируется под окно целиком. Размеры фиксированы и от «Размера» не зависят.</p>
+        <div class="stage"><iframe id="frame-demo" title="Пример рамки демо" src="../components/demo-frame/example/index.html"></iframe></div>
+        <ul class="states">
+          <li><b>Сценарий</b><span>обычный, наведение, выбран, недоступен</span></li>
+          <li><b>Вилка</b><span>выбран вариант — отмечен и родитель</span></li>
+          <li><b>Устройство</b><span>выбрано, доступно, недоступно</span></li>
+          <li><b>Ссылки</b><span>обычная, наведение</span></li>
+        </ul>
+      </article>
+    </section>
     <section id="colors">
       <h2>Цвета</h2>
       <p class="lead">Из коллекции globalColor библиотеки «🌍 Global Variables». Нажмите на токен, чтобы скопировать <code>var(--…)</code>. Значение под именем — в текущей теме.</p>
@@ -151,21 +166,6 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       <h2>Тени</h2>
       <p class="lead">Из коллекции globalShadow: размытие и цвет. Смещение в Figma токеном не задано, в превью тень без смещения.</p>
       <div id="shadows-body"></div>
-    </section>
-    <section id="components">
-      <h2>Компоненты</h2>
-      <p class="lead">Живые примеры. Тема из переключателя применяется и к ним.</p>
-      <article class="comp" id="demo-frame">
-        <div class="comp-head"><h3>Рамка демо</h3><code>components/demo-frame</code><a href="https://www.figma.com/design/xMQ3ZEN4AUINgwjVoxR8hS/?node-id=18715-93398" target="_blank" rel="noopener">Макет в Figma</a></div>
-        <p>Шапка с названием и статусом согласования, сцена 1600×900 и панель сценариев справа. Масштабируется под окно целиком. Размеры фиксированы и от «Размера» не зависят.</p>
-        <div class="stage"><iframe id="frame-demo" title="Пример рамки демо" src="../components/demo-frame/example/index.html" loading="lazy"></iframe></div>
-        <ul class="states">
-          <li><b>Сценарий</b><span>обычный, наведение, выбран, недоступен</span></li>
-          <li><b>Вилка</b><span>выбран вариант — отмечен и родитель</span></li>
-          <li><b>Устройство</b><span>выбрано, доступно, недоступно</span></li>
-          <li><b>Ссылки</b><span>обычная, наведение</span></li>
-        </ul>
-      </article>
     </section>
   </div>
 </main>
