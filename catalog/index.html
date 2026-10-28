@@ -127,7 +127,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.2.0</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.2.1</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -378,7 +378,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     }).join('');
   }
 
-  // Чекбокс: по виду — таблица «состояние × значение»; readOnly в макете есть только у outlined
+  // Чекбокс: по виду — таблица «значение × состояние», как у кнопки; readOnly в макете есть только у outlined
   var CB_VIEWS = [
     ['outlined', '.checkbox--outlined', 'checkbox--outlined', true],
     ['filled', '.checkbox--filled', 'checkbox--filled', false],
@@ -399,9 +399,9 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       var states = [['покой', ''], ['hover', ' is-hover']].concat(v[3] ? [['readOnly', ' is-readonly']] : []);
       return '<div class="btn-set"><h4>' + v[0] + ' <code>' + v[1] + '</code></h4>' +
         '<div class="btn-scroll"><table class="btn-grid"><tr><th></th>' +
-        CB_VALUES.map(function (c) { return '<th>' + c[0] + '</th>'; }).join('') + '</tr>' +
-        states.map(function (s) {
-          return '<tr><th>' + s[0] + '</th>' + CB_VALUES.map(function (c) { return '<td>' + cb(v[2] + s[1], c[1]) + '</td>'; }).join('') + '</tr>';
+        states.map(function (s) { return '<th>' + s[0] + '</th>'; }).join('') + '</tr>' +
+        CB_VALUES.map(function (c) {
+          return '<tr><th>' + c[0] + '</th>' + states.map(function (s) { return '<td>' + cb(v[2] + s[1], c[1]) + '</td>'; }).join('') + '</tr>';
         }).join('') + '</table></div></div>';
     }).join('');
     // у третьего состояния нет атрибута — ставим свойство input.indeterminate

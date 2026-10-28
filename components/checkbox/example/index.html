@@ -47,8 +47,8 @@
         return `
         <h2>${title}</h2>
         <table>
-          <tr><th></th>${VALUES.map(([t]) => `<th>value ${t}</th>`).join('')}</tr>
-          ${states.map(([t, s]) => `<tr><th>${t}</th>${VALUES.map(([, v]) => `<td>${cb(cls, s, v)}</td>`).join('')}</tr>`).join('')}
+          <tr><th></th>${states.map(([t]) => `<th>${t}</th>`).join('')}</tr>
+          ${VALUES.map(([t, v]) => `<tr><th>value ${t}</th>${states.map(([, s]) => `<td>${cb(cls, s, v)}</td>`).join('')}</tr>`).join('')}
         </table>`;
       }).join('');
       // Третье состояние ставит JS: у атрибута indeterminate нет; класс is-indeterminate — для показа без JS
