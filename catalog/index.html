@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ui-kit каталог</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../tokens.css" data-kit="tokens">
+<style>
+/* Каталог: шапка с переключателями темы и размера, дальше секции токенов и компонентов.
+   Цвета страницы — только токены кита, поэтому каталог перекрашивается вместе с выбранной темой. */
+:root {
+  --bg: var(--background-unaccented_background-color);
+  --surface: var(--background-background-color);
+  --fg: var(--text-text-color);
+  --muted: var(--text-label_text-color);
+  --line: var(--border-border-color);
+  --accent: var(--background-contrast-primary_color);
+  --link: var(--text-link_text-color);
+  --focus: var(--extra-focused_border-color);
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+}
+:root[data-ui-theme$="dark"], :root[data-ui-theme="dark-v2"], :root[data-ui-theme="dark-v3"] { color-scheme: dark; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; } }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 14px/1.45 var(--sans); }
+a { color: var(--link); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.top .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding-block: 12px; }
+.brand { display: flex; align-items: baseline; gap: 8px; margin-right: auto; }
+.brand h1 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
+.brand .ver { font: 500 12px var(--mono); color: var(--muted); }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.controls label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+select, input[type=search] { font: 400 14px var(--sans); color: var(--fg); background: var(--surface); border: 1px solid var(--border-unaccented_border-color); border-radius: 6px; padding: 5px 8px; }
+input[type=search] { width: 220px; max-width: 100%; }
+nav.toc { display: flex; flex-wrap: wrap; gap: 4px 16px; padding-bottom: 10px; font-size: 13px; }
+nav.toc a { color: var(--muted); text-decoration: none; }
+nav.toc a:hover { color: var(--fg); }
+
+main .wrap { display: grid; gap: 40px; padding-block: 28px 64px; }
+section > h2 { margin: 0 0 4px; font-size: 22px; font-weight: 600; letter-spacing: -.01em; text-wrap: balance; }
+section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
+.group { display: grid; gap: 10px; margin-top: 22px; }
+.group h3 { margin: 0; display: flex; align-items: baseline; gap: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+.group h3 .count { font: 400 12px var(--mono); color: var(--muted); letter-spacing: 0; }
+
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+.tok { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 6px 8px 6px 6px; text-align: left; font: inherit; color: inherit; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; cursor: copy; }
+.tok:hover { border-color: var(--border-unaccented_hover_border-color); }
+.chip { flex: none; width: 36px; height: 36px; border-radius: 6px; position: relative; overflow: hidden;
+  background-image: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%), linear-gradient(45deg, #ccc 25%, #fff 25%, #fff 75%, #ccc 75%); /* шахматка под прозрачные цвета — нет токена */
+  background-size: 10px 10px; background-position: 0 0, 5px 5px; }
+.chip::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px var(--border-unaccented_border-color); }
+.chip i { position: absolute; inset: 0; }
+.meta { min-width: 0; display: grid; gap: 1px; }
+.meta .n { font: 500 12px var(--mono); overflow-wrap: anywhere; }
+.meta .v { font: 400 11px var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+
+.rows { display: grid; gap: 4px; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) 72px minmax(0, 2fr); align-items: center; gap: 12px; padding: 6px 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; text-align: left; font: inherit; color: inherit; cursor: copy; }
+.row .n { font: 500 12px var(--mono); overflow-wrap: anywhere; }
+.row .v { font: 400 12px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+.row .viz { min-width: 0; overflow: hidden; }
+.bar { height: 8px; border-radius: 2px; background: var(--accent); max-width: 100%; }
+.radius { width: 48px; height: 32px; border: 2px solid var(--accent); border-right: 0; border-bottom: 0; }
+.sample { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.shadows { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.shadow { display: grid; gap: 8px; padding: 18px; background: var(--surface); border-radius: 8px; }
+.shadow .n { font: 500 12px var(--mono); }
+.shadow .v { font: 400 11px var(--mono); color: var(--muted); }
+
+.comp { display: grid; gap: 14px; padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.comp-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.comp-head h3 { margin: 0; font-size: 17px; font-weight: 600; }
+.comp-head code { font: 400 12px var(--mono); color: var(--muted); }
+.comp p { margin: 0; max-width: 65ch; }
+.stage { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; aspect-ratio: 16 / 9; max-width: 100%; background: var(--bg); }
+.stage iframe { display: block; width: 100%; height: 100%; border: 0; }
+.states { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 24px; margin: 0; padding: 0; list-style: none; font-size: 13px; }
+.states li { display: flex; gap: 8px; }
+.states b { font-weight: 500; min-width: 96px; }
+.states span { color: var(--muted); }
+
+.empty { color: var(--muted); font-style: italic; }
+#toast { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); padding: 8px 14px; border-radius: 6px; background: var(--extra-item_selected_color); color: var(--extra-item_selected_text-color); font: 500 13px var(--mono); }
+@media (max-width: 560px) { .row { grid-template-columns: minmax(0, 1fr) 56px; } .row .viz { grid-column: 1 / -1; } }
+@media (prefers-reduced-motion: no-preference) { .tok, .row { transition: border-color .12s; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.0.0 · не выпущен</span></div>
+    <div class="controls">
+      <label for="theme">Тема
+        <select id="theme">
+          <option value="">Default Light</option>
+          <option value="default-dark">Default Dark</option>
+          <option value="large-light">Large Light</option>
+          <option value="large-dark">Large Dark</option>
+          <option value="dark-v2">Dark v2</option>
+          <option value="dark-v3">Dark v3</option>
+          <option value="pink">Pink</option>
+          <option value="blackblue">BlackBlue</option>
+          <option value="gray">Серая</option>
+        </select>
+      </label>
+      <label for="size">Размер
+        <select id="size">
+          <option value="">default</option>
+          <option value="mobile">mobile</option>
+          <option value="large">large</option>
+          <option value="large-mobile">large mobile</option>
+        </select>
+      </label>
+      <input type="search" id="q" placeholder="Найти токен" aria-label="Найти токен">
+    </div>
+  </div>
+  <nav class="toc wrap" aria-label="Разделы">
+    <a href="#colors">Цвета</a><a href="#sizes">Размеры</a><a href="#shadows">Тени</a><a href="#components">Компоненты</a>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap">
+    <section id="colors">
+      <h2>Цвета</h2>
+      <p class="lead">Из коллекции globalColor библиотеки «🌍 Global Variables». Нажмите на токен, чтобы скопировать <code>var(--…)</code>. Значение под именем — в текущей теме.</p>
+      <div id="colors-body"></div>
+    </section>
+    <section id="sizes">
+      <h2>Размеры</h2>
+      <p class="lead">Из коллекции globalSize. Меняются вместе с переключателем «Размер».</p>
+      <div id="sizes-body"></div>
+    </section>
+    <section id="shadows">
+      <h2>Тени</h2>
+      <p class="lead">Из коллекции globalShadow: размытие и цвет. Смещение в Figma токеном не задано, в превью тень без смещения.</p>
+      <div id="shadows-body"></div>
+    </section>
+    <section id="components">
+      <h2>Компоненты</h2>
+      <p class="lead">Живые примеры. Тема из переключателя применяется и к ним.</p>
+      <article class="comp" id="demo-frame">
+        <div class="comp-head"><h3>Рамка демо</h3><code>components/demo-frame</code><a href="https://www.figma.com/design/xMQ3ZEN4AUINgwjVoxR8hS/?node-id=18715-93398" target="_blank" rel="noopener">Макет в Figma</a></div>
+        <p>Шапка с названием и статусом согласования, сцена 1600×900 и панель сценариев справа. Масштабируется под окно целиком. Размеры фиксированы и от «Размера» не зависят.</p>
+        <div class="stage"><iframe id="frame-demo" title="Пример рамки демо" src="../components/demo-frame/example/index.html" loading="lazy"></iframe></div>
+        <ul class="states">
+          <li><b>Сценарий</b><span>обычный, наведение, выбран, недоступен</span></li>
+          <li><b>Вилка</b><span>выбран вариант — отмечен и родитель</span></li>
+          <li><b>Устройство</b><span>выбрано, доступно, недоступно</span></li>
+          <li><b>Ссылки</b><span>обычная, наведение</span></li>
+        </ul>
+      </article>
+    </section>
+  </div>
+</main>
+<div id="toast" role="status" hidden></div>
+
+<script>
+(function () {
+  'use strict';
+  var root = document.documentElement;
+
+  // Имена токенов — из правила :root в tokens.css
+  function tokenNames() {
+    for (var i = 0; i < document.styleSheets.length; i++) {
+      var rules; try { rules = document.styleSheets[i].cssRules; } catch (e) { continue; }
+      for (var j = 0; j < rules.length; j++) {
+        var r = rules[j];
+        if (r.selectorText === ':root' && r.style.getPropertyValue('--text-text-color')) {
+          var out = []; for (var k = 0; k < r.style.length; k++) out.push(r.style[k]); return out;
+        }
+      }
+    }
+    return [];
+  }
+  var names = tokenNames();
+  var raw = {}; names.forEach(function (n) { raw[n] = ''; });
+  (function () {
+    for (var i = 0; i < document.styleSheets.length; i++) {
+      var rules; try { rules = document.styleSheets[i].cssRules; } catch (e) { continue; }
+      for (var j = 0; j < rules.length; j++) if (rules[j].selectorText === ':root') {
+        var st = rules[j].style; names.forEach(function (n) { var v = st.getPropertyValue(n); if (v) raw[n] = v.trim(); });
+      }
+    }
+  })();
+
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function val(n) { return getComputedStyle(root).getPropertyValue(n).trim(); }
+  // Цвет или размер — по значению в tokens.css; алиас наследует тип того, на что ссылается
+  function isColor(n, depth) { var v = raw[n] || ''; if (/^#|^color-mix/.test(v)) return true; var m = /^var\((--[\w-]+)\)$/.exec(v); return !!m && (depth || 0) < 10 && isColor(m[1], (depth || 0) + 1); }
+
+  var colorGroups = [
+    ['text', 'Текст'], ['icon', 'Иконки'], ['border', 'Обводки'], ['background-same', 'Фон · Same'],
+    ['background-contrast', 'Фон · Contrast'], ['background-opacity', 'Фон · Opacity'], ['background', 'Фон'],
+    ['extra', 'Extra'], ['components', 'Компоненты'], ['helper', 'Вспомогательные'], ['only-mobile', 'Только mobile']
+  ];
+  var sizeGroups = [
+    ['offset', 'Отступы', 'bar'], ['border-radius', 'Скругления', 'radius'], ['inline_height', 'Высота строки элемента', 'bar'],
+    ['font-font-size', 'Размер шрифта', 'font'], ['font-line-height', 'Межстрочный интервал', 'bar'], ['font-font-weight', 'Начертание', 'weight'],
+    ['font-font-family', 'Шрифт', 'family'], ['icon-icon_size', 'Размер иконки', 'bar'], ['icon-font-family', 'Шрифт иконок', 'family'],
+    ['size_image', 'Размер изображения', 'bar'], ['air', 'Air', 'bar'], ['components', 'Компоненты', 'bar']
+  ];
+
+  var all = names.map(function (n) { return { n: n, color: isColor(n) }; });
+  var shadowNames = names.filter(function (n) { return /^--(blur|color)-|shadow/.test(n) && !/^--only-mobile-shadow-color$/.test(n); });
+  var shadowSet = {}; shadowNames.forEach(function (n) { shadowSet[n] = 1; });
+
+  function groupOf(n, groups) { var s = n.slice(2); for (var i = 0; i < groups.length; i++) if (s === groups[i][0] || s.indexOf(groups[i][0] + '-') === 0) return groups[i]; return null; }
+
+  var items = [];
+  function copyable(node, n) { node.type = 'button'; node.title = 'Скопировать var(' + n + ')'; node.addEventListener('click', function () { copy('var(' + n + ')'); }); }
+
+  function buildColors() {
+    var host = document.getElementById('colors-body');
+    colorGroups.forEach(function (g) {
+      var list = all.filter(function (t) { return t.color && !shadowSet[t.n] && groupOf(t.n, colorGroups) === g; });
+      if (!list.length) return;
+      var box = el('div', 'group'); var h = el('h3', null, g[1]); h.appendChild(el('span', 'count', list.length)); box.appendChild(h);
+      var grid = el('div', 'swatches');
+      list.forEach(function (t) {
+        var b = el('button', 'tok'); copyable(b, t.n);
+        var chip = el('span', 'chip'); var fill = el('i'); fill.style.background = 'var(' + t.n + ')'; chip.appendChild(fill);
+        var m = el('span', 'meta'); m.appendChild(el('span', 'n', t.n)); var v = el('span', 'v'); m.appendChild(v);
+        b.appendChild(chip); b.appendChild(m); grid.appendChild(b);
+        items.push({ node: b, n: t.n, v: v, box: box });
+      });
+      box.appendChild(grid); host.appendChild(box);
+    });
+  }
+
+  function buildSizes() {
+    var host = document.getElementById('sizes-body');
+    sizeGroups.forEach(function (g) {
+      var list = all.filter(function (t) { return !t.color && !shadowSet[t.n] && groupOf(t.n, sizeGroups) === g; });
+      if (!list.length) return;
+      var box = el('div', 'group'); var h = el('h3', null, g[1]); h.appendChild(el('span', 'count', list.length)); box.appendChild(h);
+      var rows = el('div', 'rows');
+      list.forEach(function (t) {
+        var r = el('button', 'row'); copyable(r, t.n);
+        r.appendChild(el('span', 'n', t.n)); var v = el('span', 'v'); r.appendChild(v);
+        var viz = el('span', 'viz'), x;
+        if (g[2] === 'bar') { x = el('span', 'bar'); x.style.width = 'var(' + t.n + ')'; }
+        else if (g[2] === 'radius') { x = el('span', 'radius'); x.style.borderTopLeftRadius = 'var(' + t.n + ')'; }
+        else if (g[2] === 'font') { x = el('span', 'sample', 'Съешь же ещё этих мягких булок'); x.style.fontSize = 'var(' + t.n + ')'; }
+        else if (g[2] === 'weight') { x = el('span', 'sample', 'Съешь же ещё этих мягких булок'); x.style.fontWeight = 'var(' + t.n + ')'; }
+        else { x = el('span', 'sample', 'Аа Бб 0123'); x.style.fontFamily = 'var(' + t.n + '), var(--sans)'; }
+        viz.appendChild(x); r.appendChild(viz); rows.appendChild(r);
+        items.push({ node: r, n: t.n, v: v, box: box });
+      });
+      box.appendChild(rows); host.appendChild(box);
+    });
+  }
+
+  function buildShadows() {
+    var host = document.getElementById('shadows-body');
+    var box = el('div', 'group'); box.appendChild(el('h3', null, 'Базовые'));
+    var grid = el('div', 'shadows');
+    ['a', 'b', 'c', 'd'].forEach(function (k) {
+      var blur = '--blur-shadow-blur_' + k, color = '--color-shadow-color_' + k;
+      var c = el('div', 'shadow'); c.style.boxShadow = '0 0 var(' + blur + ') var(' + color + ')';
+      c.appendChild(el('span', 'n', 'shadow_' + k));
+      var v = el('span', 'v'); c.appendChild(v); grid.appendChild(c);
+      items.push({ node: c, n: blur + ' ' + color, v: v, box: box, pair: [blur, color] });
+    });
+    box.appendChild(grid); host.appendChild(box);
+    var rest = shadowNames.filter(function (n) { return !/^--(blur-shadow-blur_[abcd]|color-shadow-color_[abcd])$/.test(n); });
+    var box2 = el('div', 'group'); var h = el('h3', null, 'Остальные'); h.appendChild(el('span', 'count', rest.length)); box2.appendChild(h);
+    var rows = el('div', 'rows');
+    rest.forEach(function (n) {
+      var r = el('button', 'row'); copyable(r, n);
+      r.appendChild(el('span', 'n', n)); var v = el('span', 'v'); r.appendChild(v);
+      var viz = el('span', 'viz'); var isC = /color/.test(n);
+      var x = el('span', isC ? 'bar' : 'bar'); if (isC) { x.style.background = 'var(' + n + ')'; x.style.width = '100%'; x.style.height = '16px'; } else x.style.width = 'var(' + n + ')';
+      viz.appendChild(x); r.appendChild(viz); rows.appendChild(r);
+      items.push({ node: r, n: n, v: v, box: box2 });
+    });
+    box2.appendChild(rows); host.appendChild(box2);
+  }
+
+  function refresh() {
+    items.forEach(function (it) { it.v.textContent = it.pair ? val(it.pair[0]) + ' · ' + val(it.pair[1]) : val(it.n); });
+    var f = document.getElementById('frame-demo');
+    try { var d = f.contentDocument && f.contentDocument.documentElement; if (d) { setAttr(d, 'data-ui-theme', root.getAttribute('data-ui-theme')); } } catch (e) {}
+  }
+  function setAttr(node, a, v) { if (v) node.setAttribute(a, v); else node.removeAttribute(a); }
+
+  function filter() {
+    var q = document.getElementById('q').value.trim().toLowerCase();
+    var seen = new Map();
+    items.forEach(function (it) { var hit = !q || it.n.indexOf(q) >= 0; it.node.hidden = !hit; if (hit) seen.set(it.box, true); else if (!seen.has(it.box)) seen.set(it.box, false); });
+    seen.forEach(function (vis, box) { box.hidden = !vis; });
+  }
+
+  var toast = document.getElementById('toast'), tt;
+  function copy(text) {
+    function show(msg) { toast.textContent = msg; toast.hidden = false; clearTimeout(tt); tt = setTimeout(function () { toast.hidden = true; }, 1400); }
+    try { navigator.clipboard.writeText(text).then(function () { show('Скопировано: ' + text); }, function () { show(text); }); } catch (e) { show(text); }
+  }
+
+  // Тема: выбор пользователя, иначе следуем светлой или тёмной теме окна
+  var themeSel = document.getElementById('theme'), sizeSel = document.getElementById('size');
+  var chosen = null; try { chosen = localStorage.getItem('uikit-theme'); } catch (e) {}
+  function hostDark() { var t = root.getAttribute('data-theme'); if (t === 'dark') return true; if (t === 'light') return false; return window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches; }
+  function applyTheme() { var v = chosen != null ? chosen : (hostDark() ? 'default-dark' : ''); setAttr(root, 'data-ui-theme', v); themeSel.value = v; refresh(); }
+  themeSel.addEventListener('change', function () { chosen = themeSel.value; try { localStorage.setItem('uikit-theme', chosen); } catch (e) {} applyTheme(); });
+  sizeSel.addEventListener('change', function () { setAttr(root, 'data-ui-size', sizeSel.value); refresh(); });
+  if (window.matchMedia) { try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme); } catch (e) {} }
+  new MutationObserver(function () { if (chosen == null) applyTheme(); }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+  document.getElementById('frame-demo').addEventListener('load', refresh);
+  document.getElementById('q').addEventListener('input', filter);
+
+  buildColors(); buildSizes(); buildShadows();
+  if (!names.length) document.getElementById('colors-body').appendChild(el('p', 'empty', 'Не удалось прочитать tokens.css. Откройте каталог через локальный сервер, а не как файл.'));
+  applyTheme();
+})();
+</script>
+</body>
+</html>

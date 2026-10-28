@@ -47,7 +47,7 @@ order = {'globalColor': 0, 'globalSize': 1, 'globalShadow': 2}
 collections.sort(key=lambda c: order[c[0]])
 blocks = {}
 for name, modes, items in collections:
-    attr = 'data-size' if name == 'globalSize' else 'data-theme'
+    attr = 'data-ui-size' if name == 'globalSize' else 'data-ui-theme'
     for var, kind, vals in items:
         default = fmt(var, kind, vals[0])
         blocks.setdefault(':root', []).append(f'  --{slug(var)}: {default};')
@@ -64,9 +64,9 @@ HEAD = '''/*!
  * группа «Вспомогательные переменные» → «helper». Border/border-color → --border-border-color.
  *
  * Режимы ставятся атрибутами на <html>, на других элементах не работают:
- *   data-theme: default-dark, large-light, dark-v3, large-dark, pink, dark-v2, blackblue, gray
- *               (без атрибута — Default Light; управляет цветами и тенями)
- *   data-size:  mobile, large, large-mobile (без атрибута — default)
+ *   data-ui-theme: default-dark, large-light, dark-v3, large-dark, pink, dark-v2, blackblue, gray
+ *                  (без атрибута — Default Light; управляет цветами и тенями)
+ *   data-ui-size:  mobile, large, large-mobile (без атрибута — default)
  * В блоках режимов только значения, которые отличаются от режима по умолчанию.
  */
 '''

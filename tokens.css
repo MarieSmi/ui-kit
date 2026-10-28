@@ -6,9 +6,9 @@
  * группа «Вспомогательные переменные» → «helper». Border/border-color → --border-border-color.
  *
  * Режимы ставятся атрибутами на <html>, на других элементах не работают:
- *   data-theme: default-dark, large-light, dark-v3, large-dark, pink, dark-v2, blackblue, gray
- *               (без атрибута — Default Light; управляет цветами и тенями)
- *   data-size:  mobile, large, large-mobile (без атрибута — default)
+ *   data-ui-theme: default-dark, large-light, dark-v3, large-dark, pink, dark-v2, blackblue, gray
+ *                  (без атрибута — Default Light; управляет цветами и тенями)
+ *   data-ui-size:  mobile, large, large-mobile (без атрибута — default)
  * В блоках режимов только значения, которые отличаются от режима по умолчанию.
  */
 
@@ -536,7 +536,7 @@
   --components-button-shadow-blur_button: 0;
 }
 
-:root[data-theme="default-dark"] {
+:root[data-ui-theme="default-dark"] {
   --extra-marker_color: #ff7033;
   --extra-readonly_marker-color: #a75a3a;
   --text-text-color: #cccccc;
@@ -728,7 +728,7 @@
   --components-stack-box-shadow_stack_color_second: #0000000a;
 }
 
-:root[data-theme="dark-v3"] {
+:root[data-ui-theme="dark-v3"] {
   --extra-marker_color: #ff5e1b;
   --extra-readonly_marker-color: #61382d;
   --text-text-color: #d6dadb;
@@ -937,7 +937,7 @@
   --components-slidingpanel-box-shadow_slidingpanel_color: #00000099;
 }
 
-:root[data-theme="large-dark"] {
+:root[data-ui-theme="large-dark"] {
   --extra-marker_color: #ff5e1b;
   --extra-readonly_marker-color: #61382d;
   --text-text-color: #e4e4e4;
@@ -1158,7 +1158,7 @@
   --components-button-shadow-blur_button: 3px;
 }
 
-:root[data-theme="pink"] {
+:root[data-ui-theme="pink"] {
   --extra-marker_color: var(--background-contrast-primary_color);
   --extra-readonly_marker-color: #ffccd6;
   --text-primary_text-color: var(--background-contrast-primary_color);
@@ -1195,7 +1195,7 @@
   --helper-searchhints-gradint_color-searchhints_end: #e4476600;
 }
 
-:root[data-theme="dark-v2"] {
+:root[data-ui-theme="dark-v2"] {
   --extra-marker_color: #de5419;
   --extra-readonly_marker-color: #49454f;
   --text-text-color: #dedede;
@@ -1396,7 +1396,7 @@
   --components-infobox-shadow-color_infobox: #00000073;
 }
 
-:root[data-theme="gray"] {
+:root[data-ui-theme="gray"] {
   --extra-readonly_marker-color: #ffc9b3;
   --text-label_text-color: #666666;
   --text-label_hover_text-color: #333333;
@@ -1428,7 +1428,7 @@
   --only-mobile-flatindicatoractivecolor: #00000000;
 }
 
-:root[data-theme="large-light"] {
+:root[data-ui-theme="large-light"] {
   --text-hover_text-color: #556376;
   --text-unaccented_text-color: #9fa7b2;
   --text-unaccented_hover_text-color: #556376;
@@ -1529,7 +1529,7 @@
   --components-button-shadow-blur_button: 3px;
 }
 
-:root[data-theme="blackblue"] {
+:root[data-ui-theme="blackblue"] {
   --text-primary_text-color: #00282c;
   --text-primary_hover_text-color: #405e61;
   --text-label_text-color: #8094b3;
@@ -1559,7 +1559,7 @@
   --helper-searchhints-gradint_color-searchhints_end: #00282c00;
 }
 
-:root[data-size="large"] {
+:root[data-ui-size="large"] {
   --offset-offset_3xs: 4px;
   --border-radius-border-radius_3xs: 4px;
   --inline_height-inline_height_xs: 42px;
@@ -1749,7 +1749,7 @@
   --components-loader-font-size_loadingindicator: var(--font-font-size-font-size_l);
 }
 
-:root[data-size="large-mobile"] {
+:root[data-ui-size="large-mobile"] {
   --offset-offset_3xs: 3px;
   --border-radius-border-radius_3xs: 4px;
   --inline_height-inline_height_xs: 32px;
@@ -1936,7 +1936,7 @@
   --components-loader-font-size_loadingindicator: var(--font-font-size-font-size_l);
 }
 
-:root[data-size="mobile"] {
+:root[data-ui-size="mobile"] {
   --border-radius-border-radius_3xs: 8px;
   --inline_height-inline_height_xs: 40px;
   --inline_height-inline_height_s: 44px;

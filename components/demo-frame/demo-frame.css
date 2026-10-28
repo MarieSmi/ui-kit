@@ -2,7 +2,7 @@
  * demo-frame — рамка интерактивного демо (Figma xMQ3ZEN4AUINgwjVoxR8hS 18715:93398).
  * Шапку и панель расставляет и масштабирует demo-frame.js; размеры — переменные --df-* у .df (задаёт JS).
  * Цвета и тени — токены ui-kit (tokens.css подключается раньше). Размеры рамки фиксированы и не зависят
- * от data-size: рамка — обвязка демо, её геометрию считает JS.
+ * от data-ui-size: рамка — обвязка демо, её геометрию считает JS.
  * https://github.com/MarieSmi/ui-kit/tree/main/components/demo-frame
  */
 

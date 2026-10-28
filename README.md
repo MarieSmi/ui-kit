@@ -4,7 +4,9 @@
 
 - **Токены** — `tokens.css`: цвета, отступы, радиусы и типографика как CSS-переменные с именами из Figma.
 - **Компоненты** — `components/<имя>/`: у каждого свой CSS и, если нужно, JS.
-- **Каталог** — `catalog/index.html`: все компоненты во всех состояниях.
+- **Каталог** — `catalog/index.html`: все токены и компоненты с переключением темы и размера.
+  Открывается через локальный сервер (`npx serve` в корне кита). Версия для артефакта Claude, где
+  всё вшито в один файл, собирается командой `python3 tools/catalog/build-artifact.py <файл>`.
 
 Зависимостей нет, собирать ничего не нужно.
 
@@ -31,13 +33,16 @@
 `:root`, остальные режимы переключаются атрибутами на `<html>`:
 
 ```html
-<html data-theme="default-dark" data-size="large">
+<html data-ui-theme="default-dark" data-ui-size="large">
 ```
 
 | Атрибут | Значения | Без атрибута |
 |---|---|---|
-| `data-theme` — цвета и тени | `default-dark`, `large-light`, `dark-v3`, `large-dark`, `pink`, `dark-v2`, `blackblue`, `gray` | Default Light |
-| `data-size` — размеры и шрифты | `mobile`, `large`, `large-mobile` | default |
+| `data-ui-theme` — цвета и тени | `default-dark`, `large-light`, `dark-v3`, `large-dark`, `pink`, `dark-v2`, `blackblue`, `gray` | Default Light |
+| `data-ui-size` — размеры и шрифты | `mobile`, `large`, `large-mobile` | default |
+
+Префикс `ui-` в атрибутах нужен, чтобы не конфликтовать с `data-theme`, который хост артефактов Claude
+ставит на `<html>` для светлой и тёмной темы.
 
 Алиасы из Figma сохранены как ссылки: `--icon-danger_icon-color` в тёмной теме ссылается на
 `var(--text-danger_text-color)`, поэтому меняется вместе с ним.
