@@ -1,0 +1,388 @@
+/*!
+ * button — кнопка (Figma nuC4KFMiS36uDWDUp9wKGl, страница «✅ Кнопки» 322:2761, секция «Базовые»).
+ * Вид — component set: filled 17890:2772, outlined 17890:183, same_outlined 25998:11229, same 22394:7808,
+ * ghost 17890:9751, link 17890:5961, square 17890:11474, translucent 17890:4742.
+ * Свойства: buttonStyle → .btn--style-*, inlineHeight → .btn--size-*, iconButton → .btn--icon,
+ * underlineVisible → .btn--underline; hover / press / readOnly → .is-hover / .is-active / .is-readonly
+ * (и :hover / :active / :disabled). Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/button
+ *
+ * Устройство: .btn--style-* задаёт палитру стиля (--s-*), вид (.btn--filled и др.) раскладывает её по
+ * состояниям (--btn-<свойство>-r / -h / -a: покой, наведение, нажатие; -ro: readOnly), правила состояний
+ * внизу выбирают нужный набор. Нажатие без своего значения берёт значение наведения, наведение — покоя.
+ */
+
+/* ---------- Основа и размеры (по умолчанию xl) ---------- */
+.btn {
+  --btn-h: var(--inline_height-inline_height_xl);
+  --btn-px: var(--components-button-padding-horizontal_xl_button);
+  --btn-fs: var(--font-font-size-font-size_xl);
+  --btn-is: var(--icon-icon_size-icon-size_m);
+  --btn-gap: var(--offset-offset_s);
+  --btn-if: var(--icon-font-family-m_icon_font-family);
+  --btn-radius: var(--components-button-border-radius_button);
+  --btn-sh-d: 0 0 var(--blur-shadow-blur_d) var(--color-shadow-color_d); /* shadow_d; смещение 0 0 — нет токена */
+  --btn-sh-b: 0 0 var(--blur-shadow-blur_b) var(--color-shadow-color_b); /* shadow_b; смещение 0 0 — нет токена */
+
+  position: relative; isolation: isolate; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--btn-gap);
+  height: var(--btn-h); min-width: 0; margin: 0; padding: 0 var(--btn-px); border: 0;
+  border-radius: var(--btn-radius);
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--btn-fs); font-weight: var(--font-font-weight-regular); line-height: normal;
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  white-space: nowrap; text-decoration: none; cursor: pointer; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  color: var(--btn-fg);
+  text-decoration-line: var(--btn-ul);
+  background: linear-gradient(var(--btn-ov), var(--btn-ov)) var(--btn-bg);
+  box-shadow: inset 0 0 0 1px var(--btn-bd), var(--btn-sh); /* рамка внутрь, как stroke INSIDE в Figma; 1px — нет токена */
+}
+.btn--size-m {
+  --btn-h: var(--inline_height-inline_height_m);
+  --btn-px: var(--components-button-padding-horizontal_m_button);
+  --btn-fs: var(--font-font-size-font-size_m);
+  --btn-is: var(--icon-icon_size-icon-size_s);
+  --btn-gap: var(--components-button-icon-offset_button);
+  --btn-if: var(--icon-font-family-s_icon_font-family);
+}
+.btn--size-xl { /* то же, что по умолчанию: класс нужен, чтобы размер был виден в разметке */ }
+.btn--size-5xl {
+  --btn-h: var(--inline_height-inline_height_5xl);
+  --btn-px: var(--components-button-padding-horizontal_5xl_button);
+  --btn-fs: var(--font-font-size-font-size_3xl);
+  --btn-is: var(--icon-icon_size-icon-size_l);
+  --btn-gap: var(--offset-offset_m);
+  --btn-if: var(--icon-font-family-l_icon_font-family);
+}
+
+/* Кнопка-иконка: квадрат без отступов */
+.btn--icon { width: var(--btn-h); padding: 0; }
+
+/* Иконка — любой элемент .btn__icon: глиф шрифта иконок или svg */
+.btn__icon {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: var(--btn-is); height: var(--btn-is);
+  font-family: var(--btn-if); font-size: var(--btn-is); font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--btn-ic);
+}
+.btn__icon svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+
+/* Слои вида same и square: заливка (::before) и рамка (::after) со своей прозрачностью */
+.btn::before, .btn::after { content: none; position: absolute; z-index: -1; border-radius: inherit; pointer-events: none; }
+/* Focus в макете нет: остаётся обводка браузера по :focus-visible */
+
+/* ---------- Палитры стилей (buttonStyle) ---------- */
+.btn--style-primary, .btn--style-secondary, .btn--style-success,
+.btn--style-danger, .btn--style-warning, .btn--style-info {
+  --s-solid: var(--s-fill);
+}
+.btn--style-primary {
+  --s-fill: var(--background-contrast-primary_color);
+  --s-fill-h: var(--background-contrast-primary_hover_color);
+  --s-fill-a: var(--background-contrast-primary_active_color);
+  --s-border: var(--border-primary_border-color);
+  --s-border-h: var(--border-primary_hover_border-color);
+  --s-osame: var(--components-button-outlined-same-border-primary_outlined-same_border-color_button);
+  --s-tint: var(--background-primary_background-color);
+  --s-same: var(--background-same-primary_same_background-color);
+  --s-same-h: var(--background-same-primary_hover_same_background-color);
+  --s-same-a: var(--background-same-primary_active_same_background-color);
+  --s-text: var(--text-primary_text-color);
+  --s-text-h: var(--text-primary_hover_text-color);
+  --s-icon: var(--icon-primary_icon-color);
+  --s-icon-h: var(--icon-primary_hover_icon-color);
+}
+.btn--style-secondary {
+  --s-fill: var(--components-button-secondary_contrast_background-color_button);
+  --s-fill-h: var(--background-contrast-secondary_hover_color);
+  --s-fill-a: var(--background-contrast-secondary_active_color);
+  --s-solid: var(--background-contrast-secondary_color);
+  --s-border: var(--border-secondary_border-color);
+  --s-border-h: var(--border-secondary_hover_border-color);
+  --s-osame: var(--components-button-outlined-same-border-secondary_outlined-same_border-color_button);
+  --s-osame-h: var(--components-button-outlined-same-border-secondary_outlined-same_hover-border-color_button);
+  --s-tint: var(--background-secondary_background-color);
+  --s-same: var(--background-same-secondary_same_background-color);
+  --s-same-h: var(--background-same-secondary_hover_same_background-color);
+  --s-same-a: var(--background-same-secondary_active_same_background-color);
+  --s-text: var(--text-secondary_text-color);
+  --s-text-h: var(--text-secondary_hover_text-color);
+  --s-icon: var(--icon-secondary_icon-color);
+  --s-icon-h: var(--icon-secondary_hover_icon-color);
+}
+.btn--style-success {
+  --s-fill: var(--background-contrast-success_color);
+  --s-fill-h: var(--background-contrast-success_hover_color);
+  --s-fill-a: var(--background-contrast-success_active_color);
+  --s-border: var(--border-success_border-color);
+  --s-border-h: var(--border-success_hover_border-color);
+  --s-osame: var(--components-button-outlined-same-border-success_outlined-same_border-color_button);
+  --s-tint: var(--background-success_background-color);
+  --s-same: var(--background-same-success_same_background-color);
+  --s-same-h: var(--background-same-success_hover_same_background-color);
+  --s-same-a: var(--background-same-success_active_same_background-color);
+  --s-text: var(--text-success_text-color);
+  --s-text-h: var(--text-success_hover_text-color);
+  --s-icon: var(--icon-success_icon-color);
+  --s-icon-h: var(--icon-success_hover_icon-color);
+}
+.btn--style-danger {
+  --s-fill: var(--background-contrast-danger_color);
+  --s-fill-h: var(--background-contrast-danger_hover_color);
+  --s-fill-a: var(--background-contrast-danger_active_color);
+  --s-border: var(--border-danger_border-color);
+  --s-border-h: var(--border-danger_hover_border-color);
+  --s-osame: var(--components-button-outlined-same-border-danger_outlined-same_border-color_button);
+  --s-tint: var(--background-danger_background-color);
+  --s-same: var(--background-same-danger_same_background-color);
+  --s-same-h: var(--background-same-danger_hover_same_background-color);
+  --s-same-a: var(--background-same-danger_active_same_background-color);
+  --s-text: var(--text-danger_text-color);
+  --s-text-h: var(--text-danger_hover_text-color);
+  --s-icon: var(--icon-danger_icon-color);
+  --s-icon-h: var(--icon-danger_hover_icon-color);
+}
+.btn--style-warning {
+  --s-fill: var(--background-contrast-warning_color);
+  --s-fill-h: var(--background-contrast-warning_hover_color);
+  --s-fill-a: var(--background-contrast-warning_active_color);
+  --s-border: var(--border-warning_border-color);
+  --s-border-h: var(--border-warning_hover_border-color);
+  --s-osame: var(--components-button-outlined-same-border-warning_outlined-same_border-color_button);
+  --s-tint: var(--background-warning_background-color);
+  --s-same: var(--background-same-warning_same_background-color);
+  --s-same-h: var(--background-same-warning_hover_same_background-color);
+  --s-same-a: var(--background-same-warning_active_same_background-color);
+  --s-text: var(--text-warning_text-color);
+  --s-text-h: var(--text-warning_hover_text-color);
+  --s-icon: var(--icon-warning_icon-color);
+  --s-icon-h: var(--icon-warning_hover_icon-color);
+}
+.btn--style-info {
+  --s-fill: var(--background-contrast-info_color);
+  --s-fill-h: var(--background-contrast-info_hover_color);
+  --s-fill-a: var(--background-contrast-info_active_color);
+  --s-border: var(--border-info_border-color);
+  --s-border-h: var(--border-info_hover_border-color);
+  --s-osame: var(--components-button-outlined-same-border-info_outlined-same_border-color_button);
+  --s-tint: var(--background-info_background-color);
+  --s-same: var(--background-same-info_same_background-color);
+  --s-same-h: var(--background-same-info_hover_same_background-color);
+  --s-same-a: var(--background-same-info_active_same_background-color);
+  --s-text: var(--text-info_text-color);
+  --s-text-h: var(--text-info_hover_text-color);
+  --s-icon: var(--icon-info_icon-color);
+  --s-icon-h: var(--icon-info_hover_icon-color);
+}
+.btn--style-unaccented {
+  --s-text: var(--text-unaccented_text-color);
+  --s-text-h: var(--text-unaccented_hover_text-color);
+  --s-icon: var(--icon-unaccented_icon-color);
+  --s-icon-h: var(--icon-unaccented_hover_icon-color);
+  --s-solid: var(--extra-unaccented_color);
+}
+.btn--style-link {
+  --s-text: var(--text-link_text-color);
+  --s-text-h: var(--text-link_hover_text-color);
+  --s-icon: var(--icon-link_icon-color);
+  --s-icon-h: var(--icon-link_hover_icon-color);
+}
+.btn--style-label {
+  --s-text: var(--text-label_text-color);
+  --s-text-h: var(--text-label_hover_text-color);
+  --s-icon: var(--icon-label_icon-color);
+  --s-icon-h: var(--icon-label_hover_icon-color);
+}
+.btn--style-brand {
+  --s-text: var(--extra-brand_color);
+  --s-text-h: var(--extra-brand_hover_color);
+  --s-icon: var(--extra-brand_color);
+  --s-icon-h: var(--extra-brand_hover_color);
+}
+.btn--style-default {
+  --s-text: var(--text-text-color);
+  --s-text-h: var(--text-hover_text-color);
+  --s-icon: var(--icon-icon-color);
+  --s-icon-h: var(--icon-hover_icon-color);
+}
+
+/* ---------- Виды (component sets) ---------- */
+
+/* filled — заливка цветом стиля, светлый текст, тень */
+.btn--filled {
+  --btn-bg-r: var(--s-fill); --btn-bg-h: var(--s-fill-h); --btn-bg-a: var(--s-fill-a);
+  --btn-fg-r: var(--text-contrast_text-color);
+  --btn-ic-r: var(--icon-contrast_icon-color);
+  --btn-sh-r: var(--btn-sh-d); --btn-sh-a: transparent 0 0;
+  --btn-bg-ro: transparent;
+}
+.btn--filled.btn--size-5xl {
+  --btn-sh-d: 0 4px var(--blur-shadow-blur_b) var(--color-shadow-color_b); /* components/box-shadow_contrast_big_button; смещение 0 4 — нет токена */
+}
+.btn--filled.btn--style-brand {
+  --btn-bg-r: var(--extra-brand_color); --btn-bg-h: var(--extra-brand_hover_color); --btn-bg-a: var(--extra-brand_active_color);
+}
+.btn--filled.btn--style-default {
+  --btn-bg-r: var(--components-button-default_contrast_background-color_button); --btn-bg-h: var(--btn-bg-r);
+  --btn-bg-a: var(--background-active_background-color); /* Components/Button/default_active_background-color_button — в ките нет; в Figma это алиас на Background/active_background-color (в темах Large — на secondary_active_contrast_background-color, её в ките нет) */
+  --btn-fg-r: var(--text-text-color); --btn-ic-r: var(--icon-icon-color);
+  --btn-sh-h: var(--btn-sh-b); --btn-sh-a: var(--btn-sh-b);
+}
+.btn--filled.btn--style-unaccented {
+  --btn-bg-r: var(--background-contrast-unaccented_contrast_background-color);
+  --btn-bg-h: var(--background-contrast-unaccented_hover_contrast_background-color);
+  --btn-bg-a: var(--background-contrast-unaccented_active_contrast_background-color);
+  --btn-fg-r: var(--text-text-color); --btn-ic-r: var(--icon-icon-color);
+  --btn-sh-r: transparent 0 0;
+}
+.btn--filled.btn--style-pale {
+  --btn-bg-r: var(--background-contrast-pale_color); --btn-bg-h: var(--btn-bg-r); --btn-bg-a: var(--background-contrast-pale_hover_color);
+  --btn-bd-h: var(--border-hover_border-color);
+  --btn-fg-r: var(--text-text-color); --btn-ic-r: var(--icon-icon-color);
+  --btn-sh-r: transparent 0 0;
+}
+
+/* outlined — белая, рамка цветом стиля, текст и иконка обычные */
+.btn--outlined {
+  --btn-bg-r: var(--background-background-color); --btn-bg-a: var(--s-tint);
+  --btn-bd-r: var(--s-border); --btn-bd-h: var(--s-border-h);
+  --btn-bg-ro: var(--background-background-color);
+}
+.btn--outlined.btn--style-default {
+  --btn-bg-a: var(--background-background-color); --btn-ov-a: var(--helper-button-brand_background-color);
+  --btn-bd-r: var(--components-button-outlined-same-border-secondary_outlined-same_border-color_button);
+  --btn-bd-h: var(--components-button-outlined-same-border-secondary_outlined-same_hover-border-color_button);
+}
+
+/* same_outlined — как outlined, но рамка бледнее, а иконка цветом стиля */
+.btn--same-outlined {
+  --btn-bg-r: var(--background-background-color); --btn-bg-a: var(--s-tint);
+  --btn-bd-r: var(--s-osame); --btn-bd-h: var(--s-osame-h, var(--s-border-h));
+  --btn-ic-r: var(--s-icon);
+  --btn-bg-ro: var(--background-background-color);
+}
+.btn--same-outlined.btn--style-default, .btn--same-outlined.btn--style-brand {
+  --btn-bg-a: var(--background-background-color); --btn-ov-a: var(--helper-button-brand_background-color);
+  --btn-bd-r: var(--components-button-outlined-same-border-secondary_outlined-same_border-color_button);
+  --btn-bd-h: var(--components-button-outlined-same-border-secondary_outlined-same_hover-border-color_button);
+}
+
+/* same — полупрозрачная заливка цветом стиля, текст и иконка обычные */
+.btn--same::before { content: ""; inset: 0; background: var(--btn-ly); opacity: var(--btn-lyo); }
+.btn--same {
+  --btn-ly-r: var(--s-solid);
+  --btn-lyo-r: .15; --btn-lyo-h: .25; --btn-lyo-a: .35; /* прозрачность слоя background — нет токена */
+  --btn-bg-ro: var(--background-background-color);
+}
+
+/* ghost — без фона, цвет стиля; при наведении бледная подложка */
+.btn--ghost {
+  --btn-bg-h: var(--background-contrast-pale_color); --btn-bg-a: var(--background-contrast-pale_hover_color);
+  --btn-fg-r: var(--s-text);
+  --btn-ic-r: var(--s-icon); --btn-ic-h: var(--s-icon-h);
+}
+
+/* link — текст цветом стиля без отступов; при наведении темнее и с подчёркиванием */
+.btn--link {
+  --btn-px: 0; --btn-radius: 0;
+  --btn-fg-r: var(--s-text); --btn-fg-h: var(--s-text-h);
+  --btn-ic-r: var(--s-icon); --btn-ic-h: var(--s-icon-h);
+  --btn-ul-h: underline;
+}
+.btn--link.btn--underline { --btn-ul-r: underline; }
+
+/* square — прямоугольник: светлая заливка, рамка цветом стиля, цветной текст */
+.btn--square::before { content: ""; inset: 1px; background: var(--btn-ly); opacity: var(--btn-lyo); } /* заливка отступает от края на 1px — нет токена */
+.btn--square::after { content: ""; inset: 0; box-shadow: inset 0 0 0 1px var(--btn-lb); opacity: var(--btn-lbo); }
+.btn--square {
+  --btn-radius: var(--border-radius-border-radius_xs);
+  --btn-gap: var(--offset-offset_2xs);
+  --btn-ly-r: var(--s-same); --btn-ly-h: var(--s-same-h); --btn-ly-a: var(--s-same-a);
+  --btn-lyo-r: .75; /* прозрачность слоя background — нет токена */
+  --btn-lb-r: var(--s-border); --btn-lbo-r: .4; /* прозрачность слоя border — нет токена */
+  --btn-fg-r: var(--s-text); --btn-ic-r: var(--s-icon);
+}
+.btn--square.btn--size-m { --btn-radius: var(--border-radius-border-radius_2xs); --btn-gap: var(--components-button-icon-offset_button); }
+.btn--square.btn--size-5xl { --btn-gap: var(--offset-offset_m); }
+.btn--square.btn--icon { --btn-radius: var(--border-radius-border-radius_2xs); }
+.btn--square.btn--style-default {
+  --btn-ly-r: var(--components-button-default_contrast_background-color_button); --btn-ly-h: var(--btn-ly-r);
+  --btn-ly-a: var(--background-active_background-color); /* Components/Button/default_active_background-color_button — в ките нет; в Figma это алиас на Background/active_background-color (в темах Large — на secondary_active_contrast_background-color, её в ките нет) */
+  --btn-lb-r: var(--border-unaccented_border-color);
+  --btn-lyo-h: .85; --btn-lbo-r: .75; --btn-lbo-h: .85; /* прозрачность слоёв — нет токена */
+  --btn-fg-r: var(--text-text-color); --btn-ic-r: var(--icon-icon-color);
+}
+
+/* translucent — полупрозрачная кнопка поверх картинки */
+.btn--translucent.btn--style-dark {
+  --btn-bg-r: var(--components-button-translucent_background-color_button);
+  --btn-bg-h: var(--components-button-translucent_hover_background-color_button);
+  --btn-bg-a: var(--components-button-translucent_active_background-color_button);
+  --btn-fg-r: var(--text-contrast_text-color); --btn-ic-r: var(--icon-contrast_icon-color);
+}
+.btn--translucent.btn--style-light {
+  --btn-bg-r: var(--background-opacity-translucent_background-color_light);
+  --btn-bg-h: var(--background-opacity-translucent_hover_background-color_light);
+  --btn-bg-a: var(--background-opacity-translucent_active_background-color_light);
+}
+.btn--translucent { --btn-bg-ro: transparent; }
+
+/* ---------- Состояния ---------- */
+.btn {
+  --btn-bg: var(--btn-bg-r, transparent);
+  --btn-ov: var(--btn-ov-r, transparent);
+  --btn-bd: var(--btn-bd-r, transparent);
+  --btn-sh: var(--btn-sh-r, transparent 0 0);
+  --btn-fg: var(--btn-fg-r, var(--text-text-color));
+  --btn-ic: var(--btn-ic-r, var(--icon-icon-color));
+  --btn-ul: var(--btn-ul-r, none);
+  --btn-ly: var(--btn-ly-r, transparent);
+  --btn-lyo: var(--btn-lyo-r, 1);
+  --btn-lb: var(--btn-lb-r, transparent);
+  --btn-lbo: var(--btn-lbo-r, 1);
+}
+.btn.is-hover, .btn:hover {
+  --btn-bg: var(--btn-bg-h, var(--btn-bg-r, transparent));
+  --btn-ov: var(--btn-ov-h, var(--btn-ov-r, transparent));
+  --btn-bd: var(--btn-bd-h, var(--btn-bd-r, transparent));
+  --btn-sh: var(--btn-sh-h, var(--btn-sh-r, transparent 0 0));
+  --btn-fg: var(--btn-fg-h, var(--btn-fg-r, var(--text-text-color)));
+  --btn-ic: var(--btn-ic-h, var(--btn-ic-r, var(--icon-icon-color)));
+  --btn-ul: var(--btn-ul-h, var(--btn-ul-r, none));
+  --btn-ly: var(--btn-ly-h, var(--btn-ly-r, transparent));
+  --btn-lyo: var(--btn-lyo-h, var(--btn-lyo-r, 1));
+  --btn-lb: var(--btn-lb-h, var(--btn-lb-r, transparent));
+  --btn-lbo: var(--btn-lbo-h, var(--btn-lbo-r, 1));
+}
+.btn.is-active, .btn:active {
+  --btn-bg: var(--btn-bg-a, var(--btn-bg-h, var(--btn-bg-r, transparent)));
+  --btn-ov: var(--btn-ov-a, var(--btn-ov-h, var(--btn-ov-r, transparent)));
+  --btn-bd: var(--btn-bd-a, var(--btn-bd-h, var(--btn-bd-r, transparent)));
+  --btn-sh: var(--btn-sh-a, var(--btn-sh-h, var(--btn-sh-r, transparent 0 0)));
+  --btn-fg: var(--btn-fg-a, var(--btn-fg-h, var(--btn-fg-r, var(--text-text-color))));
+  --btn-ic: var(--btn-ic-a, var(--btn-ic-h, var(--btn-ic-r, var(--icon-icon-color))));
+  --btn-ul: var(--btn-ul-a, var(--btn-ul-h, var(--btn-ul-r, none)));
+  --btn-ly: var(--btn-ly-a, var(--btn-ly-h, var(--btn-ly-r, transparent)));
+  --btn-lyo: var(--btn-lyo-a, var(--btn-lyo-h, var(--btn-lyo-r, 1)));
+  --btn-lb: var(--btn-lb-a, var(--btn-lb-h, var(--btn-lb-r, transparent)));
+  --btn-lbo: var(--btn-lbo-a, var(--btn-lbo-h, var(--btn-lbo-r, 1)));
+}
+
+/* readOnly: серый текст и иконка; рамка у видов с рамкой или заливкой, у ghost и link — только цвет */
+.btn.is-readonly, .btn:disabled {
+  --btn-bg: var(--btn-bg-ro, transparent);
+  --btn-ov: transparent;
+  --btn-bd: var(--border-readonly_border-color);
+  --btn-sh: transparent 0 0;
+  --btn-fg: var(--text-readonly_text-color);
+  --btn-ic: var(--icon-readonly_icon-color);
+  --btn-ul: none;
+  --btn-ly: transparent;
+  --btn-lb: var(--border-readonly_border-color);
+  --btn-lbo: 1;
+  cursor: default;
+}
+.btn--ghost.is-readonly, .btn--ghost:disabled, .btn--link.is-readonly, .btn--link:disabled,
+.btn--square.is-readonly, .btn--square:disabled { --btn-bd: transparent; }

@@ -1,0 +1,52 @@
+{
+  "about": "Связь компонентов Figma с компонентами ui-kit. Инстанс в макете находится по ключу component set (mainComponent.parent.key) и переводится в классы по properties. Figma только читается: в библиотеке ничего не меняем.",
+  "version": 1,
+  "components": {
+    "button": {
+      "kit": "components/button",
+      "since": "1.1.0",
+      "figma": {
+        "fileKey": "nuC4KFMiS36uDWDUp9wKGl",
+        "file": "⚙️ Default components",
+        "page": "322:2761",
+        "section": "26883:16639"
+      },
+      "element": "<button class=\"btn …\"> или <a class=\"btn …\">",
+      "base": "btn",
+      "sets": [
+        { "name": "filled", "node": "17890:2772", "key": "cf2896898088c2410fb01dc94ae75992434462d5", "class": "btn--filled",
+          "buttonStyle": ["primary", "secondary", "success", "danger", "warning", "info", "default", "unaccented", "pale", "brand"] },
+        { "name": "outlined", "node": "17890:183", "key": "d534fcd4ebb391523af661810322decfeedce8da", "class": "btn--outlined",
+          "buttonStyle": ["primary", "secondary", "success", "danger", "warning", "info", "default"] },
+        { "name": "same_outlined", "node": "25998:11229", "key": "8db00f8f1e105a9fd31ad82dc352b60f137b2710", "class": "btn--same-outlined",
+          "buttonStyle": ["primary", "secondary", "success", "danger", "warning", "info", "default", "brand"] },
+        { "name": "same", "node": "22394:7808", "key": "094bb4da11166374744ea5ad98ae4191bdc27b10", "class": "btn--same",
+          "buttonStyle": ["primary", "secondary", "success", "danger", "warning", "info", "unaccented"] },
+        { "name": "ghost", "node": "17890:9751", "key": "73a2d280a7f6b7d650317d781a863011e44e140c", "class": "btn--ghost",
+          "buttonStyle": ["primary", "secondary", "success", "danger", "warning", "info", "default", "unaccented", "link", "label"] },
+        { "name": "link", "node": "17890:5961", "key": "f809c18c87e570d9b89489e831f35a9cd522b797", "class": "btn--link",
+          "buttonStyle": ["primary", "secondary", "success", "danger", "warning", "info", "default", "unaccented", "link", "label", "brand"] },
+        { "name": "square", "node": "17890:11474", "key": "517059db378bbb230d1413d7fb097f513d6bdd60", "class": "btn--square",
+          "buttonStyle": ["primary", "secondary", "success", "danger", "warning", "info", "default"] },
+        { "name": "translucent", "node": "17890:4742", "key": "6bec232605de5b1c33c7631fe75a22ed7c11c6f0", "class": "btn--translucent",
+          "buttonStyle": ["dark", "light"] }
+      ],
+      "properties": {
+        "buttonStyle": { "class": "btn--style-{value}", "skip": ["none"], "note": "none бывает только при readOnly=true: класс стиля не нужен (у square при readOnly стиль default — класс можно оставить)" },
+        "inlineHeight": { "class": "btn--size-{value}", "values": ["m", "xl", "5xl"], "default": "xl" },
+        "iconButton": { "true": "btn--icon", "false": null },
+        "underlineVisible": { "true": "btn--underline", "false": null, "sets": ["link"] },
+        "readOnly": { "true": "is-readonly", "false": null, "alt": ":disabled" },
+        "⛔ hover": { "true": "is-hover", "false": null, "alt": ":hover" },
+        "⛔ press": { "true": "is-active", "false": null, "alt": ":active" }
+      },
+      "content": {
+        "about": "Содержимое кнопки — вложенный инстанс _buttonContent (17890:19, key 3134c128d0ba6d36771d894e40cb8fd5deb28275).",
+        "caption#17890:3": { "kit": "текст внутри .btn" },
+        "iconVisible#17890:6": { "true": "есть <span class=\"btn__icon\">", "false": "без .btn__icon" },
+        "iconType#17890:0": { "kit": "что внутри .btn__icon: глиф из свойства icon#17887:0 инстанса icons/font (шрифт cbuc-icons) или svg" },
+        "captionPosition": { "end": "сначала .btn__icon, потом текст", "start": "сначала текст, потом .btn__icon" }
+      }
+    }
+  }
+}

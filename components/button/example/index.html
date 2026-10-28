@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>button — пример</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../button.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    table { border-collapse: collapse; }
+    th { padding: 4px 16px 4px 0; font-weight: 400; text-align: left; color: var(--text-label_text-color); white-space: nowrap; }
+    td { padding: 6px 20px 6px 0; }
+    td > .btn + .btn { margin-left: 12px; }
+    /* фон под translucent: в макете кнопка стоит на картинке */
+    .on-image { background: linear-gradient(135deg, #2a9fd6, #5fd3c6); } /* нет токена: демонстрационный фон */
+    .on-image th { color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>Тема <select id="theme">
+      <option value="">Default Light</option>
+      <option>default-dark</option><option>large-light</option><option>dark-v3</option><option>large-dark</option>
+      <option>pink</option><option>dark-v2</option><option>blackblue</option><option>gray</option>
+    </select></label>
+    <label>Размер токенов <select id="uisize">
+      <option value="">default</option><option>mobile</option>
+    </select></label>
+    <label>inlineHeight <select id="size">
+      <option>m</option><option selected>xl</option><option>5xl</option>
+    </select></label>
+  </div>
+  <div id="out"></div>
+
+  <script>
+    // Иконка из макета — глиф U+E9E2 шрифтов cbuc-icons (16, 32) и cbuc-icons24 (24), выгружен из Figma в SVG.
+    // В прототипе с подключённым шрифтом иконок вместо svg пишется сам глиф: <span class="btn__icon">&#xe9e2;</span>
+    const ICONS = {
+      m: '<svg viewBox="0 0 16 16"><path d="M4.78125 15.75C4.84375 15.6458 5.19792 14.9583 5.84375 13.6875C6.53125 12.3125 7.27083 10.8229 8.0625 9.21875L2.375 0.25L10.0312 5.1875C10.0521 5.14583 10.0729 5.11458 10.0938 5.09375L10.125 5.03125C10.125 4.98958 10.1354 4.95833 10.1562 4.9375L10.1875 4.875C10.1875 4.85417 10.1979 4.83333 10.2188 4.8125L10.25 4.75C10.2708 4.6875 10.3021 4.63542 10.3438 4.59375L10.375 4.5C10.375 4.47917 10.3854 4.46875 10.4062 4.46875L10.4375 4.40625C10.4583 4.34375 10.4896 4.28125 10.5312 4.21875V4.15625L10.5625 4.125V4.09375L10.5938 4.0625C10.5938 4.04167 10.6042 4.02083 10.625 4V3.96875H10.6562V3.90625L10.7188 3.84375V3.78125C10.7396 3.76042 10.7604 3.72917 10.7812 3.6875L10.8125 3.65625V3.625L10.8438 3.5625C10.8438 3.54167 10.8542 3.52083 10.875 3.5L10.9062 3.46875V3.40625C10.9271 3.40625 10.9375 3.39583 10.9375 3.375V3.34375H10.9688V3.3125L13.625 2.5L11.5312 5.3125L11.8438 6.40625L4.78125 15.75Z"/></svg>',
+      xl: '<svg viewBox="0 0 24 24"><path d="M17.2969 7.98438L17.7656 9.57812L7.21875 23.5C7.40625 23.1875 7.92188 22.2031 8.76562 20.5469C8.79688 20.4531 8.84375 20.3594 8.90625 20.2656L9 20.0781C9 20.0469 9.01562 20.0156 9.04688 19.9844L9.14062 19.75C9.14062 19.7188 9.15625 19.6875 9.1875 19.6562L9.28125 19.4688C9.625 18.8125 9.95312 18.1406 10.2656 17.4531L10.4531 17.125C10.7969 16.4375 11.1406 15.7344 11.4844 15.0156L11.625 14.8281C11.625 14.7969 11.6406 14.7656 11.6719 14.7344L11.7656 14.5C11.7969 14.4688 11.8125 14.4375 11.8125 14.4062L11.9531 14.1719C11.9844 14.0781 12.0312 13.9688 12.0938 13.8438L3.5625 0.390625L15.0469 7.79688C15.4531 6.95312 15.9219 6.01562 16.4531 4.98438L20.4375 3.76562L17.2969 7.98438ZM7.21875 23.5469C7.21875 23.5469 7.20312 23.5625 7.17188 23.5938L7.21875 23.5V23.5469Z"/></svg>',
+      '5xl': '<svg viewBox="0 0 32 32"><path d="M9.5625 31.5C9.6875 31.2917 10.3958 29.9167 11.6875 27.375C13.0625 24.625 14.5417 21.6458 16.125 18.4375L4.75 0.5L20.0625 10.375C20.1042 10.2917 20.1458 10.2292 20.1875 10.1875L20.25 10.0625C20.25 9.97917 20.2708 9.91667 20.3125 9.875L20.375 9.75C20.375 9.70833 20.3958 9.66667 20.4375 9.625L20.5 9.5C20.5417 9.375 20.6042 9.27083 20.6875 9.1875L20.75 9C20.75 8.95833 20.7708 8.9375 20.8125 8.9375L20.875 8.8125C20.9167 8.6875 20.9792 8.5625 21.0625 8.4375V8.3125L21.125 8.25V8.1875L21.1875 8.125C21.1875 8.08333 21.2083 8.04167 21.25 8V7.9375H21.3125V7.8125L21.4375 7.6875V7.5625C21.4792 7.52083 21.5208 7.45833 21.5625 7.375L21.625 7.3125V7.25L21.6875 7.125C21.6875 7.08333 21.7083 7.04167 21.75 7L21.8125 6.9375V6.8125C21.8542 6.8125 21.875 6.79167 21.875 6.75V6.6875H21.9375V6.625L27.25 5L23.0625 10.625L23.6875 12.8125L9.5625 31.5Z"/></svg>',
+    };
+    const VIEWS = [
+      ['filled', ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'default', 'unaccented', 'pale', 'brand']],
+      ['outlined', ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'default']],
+      ['same-outlined', ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'default', 'brand']],
+      ['same', ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'unaccented']],
+      ['ghost', ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'default', 'unaccented', 'link', 'label']],
+      ['link', ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'default', 'unaccented', 'link', 'label', 'brand']],
+      ['square', ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'default']],
+      ['translucent', ['dark', 'light']],
+    ];
+    const STATES = [['покой', ''], ['hover', 'is-hover'], ['press', 'is-active'], ['readOnly', 'is-readonly']];
+
+    function render() {
+      const size = document.getElementById('size').value;
+      const ICON = `<span class="btn__icon">${ICONS[size]}</span>`;
+      const btn = (view, style, state, icon) =>
+        `<button class="btn btn--${view} btn--style-${style} btn--size-${size}${icon ? ' btn--icon' : ''} ${state}">${icon ? ICON : ICON + 'Кнопка'}</button>`;
+      document.getElementById('out').innerHTML = VIEWS.map(([view, styles]) => `
+        <h2>.btn--${view}</h2>
+        <table class="${view === 'translucent' ? 'on-image' : ''}">
+          <tr><th></th>${STATES.map(([t]) => `<th>${t}</th>`).join('')}</tr>
+          ${styles.map(style => `<tr><th>${style}</th>${STATES.map(([, s]) =>
+            `<td>${btn(view, style, s, false)}${btn(view, style, s, true)}</td>`).join('')}</tr>`).join('')}
+          ${view === 'link' ? `<tr><th>underline</th>${STATES.map(([, s]) =>
+            `<td>${btn(view, 'link', s + ' btn--underline', false)}</td>`).join('')}</tr>` : ''}
+        </table>`).join('');
+    }
+    for (const id of ['theme', 'uisize']) document.getElementById(id).onchange = e => {
+      const attr = id === 'theme' ? 'data-ui-theme' : 'data-ui-size';
+      if (e.target.value) document.documentElement.setAttribute(attr, e.target.value);
+      else document.documentElement.removeAttribute(attr);
+    };
+    document.getElementById('size').onchange = render;
+    render();
+  </script>
+</body>
+</html>
