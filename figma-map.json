@@ -75,6 +75,49 @@
         "caption#6921:0": { "kit": "текст в .checkbox__caption" },
         "captionVisible#6921:7": { "true": "есть .checkbox__caption", "false": "без .checkbox__caption" }
       }
+    },
+    "toolbar": {
+      "kit": "components/toolbar",
+      "since": "1.4.0",
+      "figma": {
+        "fileKey": "rHabzni5OI5D4fxBLQdj2m",
+        "file": "⚙️Builder-components",
+        "page": "854:7085"
+      },
+      "element": "<div class=\"tb …\" role=\"toolbar\"><button class=\"tb__btn …\"><span class=\"tb__icon\">…</span></button>…</div>",
+      "base": "tb",
+      "sets": [
+        { "name": "toolbar", "node": "854:7144", "key": "936732723ec396c2b9061d86d9fd58eda8b3e9ba", "class": "tb" },
+        { "name": "Bricks/button", "node": "854:7089", "key": "d306cceed39158afd03450dba382f71c6e82009c", "class": "tb__btn",
+          "note": "в тулбаре слой называется Bricks/backButton, если это кнопка «назад» (глиф U+E9A9)" },
+        { "name": "Bricks/deleteButton", "node": "870:26168", "key": "3a409975f743aaf61e5830e523f12cf96beced89", "class": "tb__btn tb__btn--delete" },
+        { "name": "_Bricks/successButton", "node": "1600:291", "key": "efe29e81db6ebf3ee2e13372c31c4b003c707d77", "class": "tb__btn tb__btn--success" },
+        { "name": "_Bricks/toobar/separator", "node": "854:7136", "key": "8b4b0719513a87b7529582bc597989b09b821b4a", "class": "tb__sep" },
+        { "name": "_Bricks/toobar/6dots", "node": "854:7127", "key": "ebdd64fca3121adb0652b4c8bc63e40b4faf3a0e", "class": null, "note": "не входит в кит" },
+        { "name": "_Bricks/toobar/backButton", "node": "854:7139", "key": "d3ceccd47f583e3cae701eeeec4a2cccbe10ca14", "class": null, "note": "не входит в кит: в тулбаре «назад» — инстанс Bricks/button" }
+      ],
+      "properties": {
+        "toolbar.style": { "default": null, "info": "tb--style-info", "success": "tb--style-success" },
+        "toolbar.back#1560:0": { "true": "первая .tb__btn с глифом «назад» (U+E9A9)", "false": null },
+        "toolbar.delete#1863:0": { "true": "есть .tb__btn--delete", "false": null },
+        "toolbar.drag#1547:0": { "true": "не входит в кит", "false": null },
+        "button.style": { "kit": "класса у кнопки нет: цвета берутся от стиля тулбара (.tb--style-*)", "note": "в макете style кнопки совпадает со style тулбара" },
+        "button.⛔ hover": { "true": "is-hover", "false": null, "alt": ":hover" },
+        "button.select": { "true": "is-selected", "false": null, "alt": "aria-pressed=\"true\"" },
+        "button.icon#3360:30": { "true": "есть .tb__icon", "false": "без .tb__icon" },
+        "button.text#3360:20": { "true": "есть .tb__caption", "false": null },
+        "button.Name#3360:0": { "kit": "текст в .tb__caption" },
+        "button.arrow#3360:10": { "true": "есть .tb__arrow", "false": null },
+        "deleteButton.⛔ hover": { "true": "is-hover", "false": null, "alt": ":hover" },
+        "deleteButton.style": { "kit": "от стиля тулбара" },
+        "successButton.hover": { "true": "is-hover", "false": null, "alt": ":hover" },
+        "successButton.style": { "kit": "от стиля тулбара" },
+        "separator.style": { "default": null, "contrast": "tb__sep--style-contrast" }
+      },
+      "content": {
+        "about": "Иконки — глифы шрифта cbuc-icons24 (Ui базовый набор / Font) в .tb__icon: назад U+E9A9, настройки U+E75D, удалить U+EB72, ещё U+EAB4, готово U+E75E.",
+        "Bricks/button_expander": { "kit": "не входит в кит" }
+      }
     }
   }
 }

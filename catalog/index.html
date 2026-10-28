@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="../fonts/fonts.css" data-kit="fonts">
 <link rel="stylesheet" href="../components/button/button.css" data-kit="button">
 <link rel="stylesheet" href="../components/checkbox/checkbox.css" data-kit="checkbox">
+<link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">
 <style>
 /* Каталог: шапка с переключателями темы и размера, дальше секции токенов и компонентов.
    Цвета страницы — только токены кита, поэтому каталог перекрашивается вместе с выбранной темой. */
@@ -118,6 +119,10 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .btn-grid.on-image th { color: #fff; } /* нет токена: подпись на демонстрационном фоне */
 .btn-grid.on-image th, .btn-grid.on-image td:first-child { padding-left: 8px; }
 #checkbox-body { display: grid; gap: 32px; } /* отступ между видами чекбокса */
+#toolbar-body { display: grid; gap: 32px; }
+/* Кнопки тулбара без самого тулбара: .tb даёт им цвета стиля, фон и рамку тулбара прячем */
+.tb.tb-bare { background: none; box-shadow: none; overflow: visible; }
+.tb.tb-bare::after { content: none; }
 
 .empty { color: var(--muted); font-style: italic; }
 #toast { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); padding: 8px 14px; border-radius: 6px; background: var(--extra-item_selected_color); color: var(--extra-item_selected_text-color); font: 500 13px var(--mono); }
@@ -128,7 +133,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.3.1</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.4.0</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -156,7 +161,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     <div class="toc-main">
       <a href="#components" data-group="components">Компоненты</a><a href="#tokens" data-group="tokens">Переменные</a>
     </div>
-    <div class="toc-sub" data-group="components"><a href="#button">Кнопка</a><a href="#checkbox">Чекбокс</a><a href="#demo-frame">Вспом. обл.</a></div>
+    <div class="toc-sub" data-group="components"><a href="#button">Кнопка</a><a href="#checkbox">Чекбокс</a><a href="#toolbar">Тулбар</a><a href="#demo-frame">Вспом. обл.</a></div>
     <div class="toc-sub" data-group="tokens"><a href="#colors">Цвета</a><a href="#sizes">Размеры</a><a href="#shadows">Тени</a></div>
   </nav>
 </header>
@@ -186,6 +191,15 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         <ul class="states">
           <li><b>Значение</b><span>false, true (:checked), triState (:indeterminate, .is-indeterminate)</span></li>
           <li><b>Состояния</b><span>покой, hover (.is-hover), readOnly (.is-readonly, :disabled) — только у outlined</span></li>
+        </ul>
+      </article>
+      <article class="comp" id="toolbar">
+        <div class="comp-head"><h3>Тулбар</h3><code>components/toolbar</code></div>
+        <div id="toolbar-body"></div>
+        <ul class="states">
+          <li><b>Стиль</b><span>задаётся на тулбаре (.tb--style-*), кнопки берут цвета от него</span></li>
+          <li><b>Состояния</b><span>покой, hover (.is-hover), select (.is-selected, aria-pressed) — select только у Bricks/button</span></li>
+          <li><b>Иконка</b><span>глиф шрифта cbuc-icons24 или svg в .tb__icon</span></li>
         </ul>
       </article>
       <article class="comp" id="demo-frame">
@@ -404,11 +418,50 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     [].forEach.call(host.querySelectorAll('[data-tri]'), function (i) { i.indeterminate = true; });
   }
 
-  // Меню: раздел «Компоненты» показывает один компонент (#button, #checkbox, #demo-frame), раздел «Переменные» — цвета,
+  // Тулбар: тулбар целиком по стилям, дальше по кнопке (component set) — таблица «стиль × состояние».
+  // Показаны только info и success: default в каталоге не показываем
+  var TB_STYLES = [['default', ''], ['info', ' tb--style-info'], ['success', ' tb--style-success']];
+  var TB_ICON = { back: '&#xe9a9;', settings: '&#xe75d;', del: '&#xeb72;', more: '&#xeab4;', ok: '&#xe75e;', bird: '&#xe9e2;' }; // глифы из макета, cbuc-icons24
+  var TB_KINDS = [ // имя, класс, узел Figma, разметка кнопки, есть ли select
+    ['Bricks/button', '.tb__btn', '854:7089', function (s) { return tbBtn('', s, TB_ICON.bird); }, true],
+    ['с подписью и стрелкой', '.tb__caption .tb__arrow', '854:7089', function (s) { return tbBtn('', s, TB_ICON.bird, '<span class="tb__caption">Текст</span><span class="tb__arrow" aria-hidden="true"></span>'); }, true],
+    ['Bricks/deleteButton', '.tb__btn--delete', '870:26168', function (s) { return tbBtn(' tb__btn--delete', s, TB_ICON.del); }, false],
+    ['_Bricks/successButton', '.tb__btn--success', '1600:291', function (s) { return tbBtn(' tb__btn--success', s, TB_ICON.ok); }, false]
+  ];
+  var TB_STATES = [['покой', ''], ['hover', ' is-hover'], ['select', ' is-selected']];
+  function tbBtn(cls, state, glyph, extra) {
+    var sel = state.indexOf('is-selected') >= 0;
+    return '<button type="button" class="tb__btn' + cls + state + '"' + (sel ? ' aria-pressed="true"' : '') + (extra ? '' : ' aria-label="Кнопка"') + '>' +
+      '<span class="tb__icon" aria-hidden="true">' + glyph + '</span>' + (extra || '') + '</button>';
+  }
+
+  function buildToolbars() {
+    var host = document.getElementById('toolbar-body');
+    function set(title, code, node, head, rows) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code> <span>' + node + '</span></h4>' +
+        '<div class="btn-scroll"><table class="btn-grid"><tr><th></th>' + head + '</tr>' + rows + '</table></div></div>';
+    }
+    var bar = set('toolbar', '.tb', '854:7144', '<th>style</th>', TB_STYLES.slice(1).map(function (st) {
+      return '<tr><th>' + st[0] + '</th><td><div class="tb' + st[1] + '" role="toolbar" aria-label="Виджет">' +
+        tbBtn('', '', TB_ICON.back) + tbBtn('', '', TB_ICON.settings) + tbBtn(' tb__btn--delete', '', TB_ICON.del) + tbBtn('', '', TB_ICON.more) + '</div></td></tr>';
+    }).join(''));
+    var kinds = TB_KINDS.map(function (k) {
+      var states = TB_STATES.filter(function (s) { return k[4] || s[1].indexOf('is-selected') < 0; });
+      return set(k[0], k[1], k[2], states.map(function (s) { return '<th>' + s[0] + '</th>'; }).join(''), TB_STYLES.slice(1).map(function (st) {
+        return '<tr><th>' + st[0] + '</th>' + states.map(function (s) { return '<td><div class="tb tb-bare' + st[1] + '">' + k[3](s[1]) + '</div></td>'; }).join('') + '</tr>';
+      }).join(''));
+    }).join('');
+    var sep = set('separator', '.tb__sep', '854:7136', '<th>style</th>', [['default', ''], ['contrast', ' tb__sep--style-contrast']].map(function (s) {
+      return '<tr><th>' + s[0] + '</th><td><div class="tb tb-bare">' + tbBtn('', '', TB_ICON.bird) + '<span class="tb__sep' + s[1] + '" aria-hidden="true"></span>' + tbBtn('', '', TB_ICON.bird) + '</div></td></tr>';
+    }).join(''));
+    host.innerHTML = bar + kinds + sep;
+  }
+
+  // Меню: раздел «Компоненты» показывает один компонент (#button, #checkbox, #toolbar, #demo-frame), раздел «Переменные» — цвета,
   // размеры и тени одной лентой (#colors, #sizes, #shadows). Показан только выбранный раздел.
-  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', 'demo-frame': 'components',
+  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', toolbar: 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
-  var COMPS = ['button', 'checkbox', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
+  var COMPS = ['button', 'checkbox', 'toolbar', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
   var header = document.querySelector('header.top'), group = null, comp = 'button';
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
   function markSub(id) { nav('.toc-sub a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + id); }); }
@@ -481,7 +534,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
   var start = location.hash.slice(1);
   if (!go(start, false)) go('button', false);
-  buildButtons(); buildCheckboxes(); buildColors(); buildSizes(); buildShadows();
+  buildButtons(); buildCheckboxes(); buildToolbars(); buildColors(); buildSizes(); buildShadows();
   if (ROUTES[start]) { // открыт по адресу раздела — прокрутить к нему, когда всё построено
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     go(start, true);

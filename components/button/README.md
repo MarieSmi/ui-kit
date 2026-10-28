@@ -10,9 +10,9 @@
 ## Подключение
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.1/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.1/fonts/fonts.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.1/components/button/button.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.4.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.4.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.4.0/components/button/button.css">
 ```
 
 `tokens.css` подключается первым. Текст кнопки набран шрифтом **Inter**, иконки в макете — шрифтами

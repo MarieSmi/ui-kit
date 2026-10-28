@@ -25,6 +25,7 @@ icon_fonts = ''.join(
 page = page.replace('<link rel="stylesheet" href="../fonts/fonts.css" data-kit="fonts">', '<style data-kit="fonts">' + icon_fonts + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/button/button.css" data-kit="button">', '<style data-kit="button">' + read('components/button/button.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/checkbox/checkbox.css" data-kit="checkbox">', '<style data-kit="checkbox">' + read('components/checkbox/checkbox.css') + '</style>')
+page = page.replace('<link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">', '<style data-kit="toolbar">' + read('components/toolbar/toolbar.css') + '</style>')
 page = re.sub(r'src="\.\./components/demo-frame/example/index\.html"', lambda m: 'srcdoc="' + html.escape(ex, quote=True) + '"', page)
 page = re.sub(r'<!doctype html>\s*|</?html[^>]*>\s*|</?head>\s*|</?body>\s*|<meta charset="utf-8">\s*|<meta name="viewport"[^>]*>\s*', '', page, flags=re.I)
 assert 'href="../' not in page and 'src="../' not in page, 'остались локальные ссылки'

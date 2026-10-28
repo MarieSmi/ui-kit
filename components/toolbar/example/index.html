@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>toolbar — пример</title>
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../toolbar.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    .sets { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+    /* Рамка набора — как у component set в Figma */
+    .set h3 { margin: 0 0 8px; font-size: 12px; font-weight: 400; color: var(--text-info_text-color); }
+    .set h3::before { content: "\2756\00a0"; }
+    .set__body { display: grid; gap: 20px; padding: 20px; border: 1px dashed var(--border-info_border-color); border-radius: 6px; }
+    .set__body--col { justify-items: start; }
+    .set__body--grid { grid-auto-flow: column; justify-items: center; align-items: center; }
+    /* Кнопки показываются без тулбара: палитру даёт .tb, фон и рамку тулбара здесь прячем */
+    .tb.bare { background: none; box-shadow: none; overflow: visible; }
+    .tb.bare::after { content: none; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>data-ui-theme <select id="theme">
+      <option value="">default</option><option>default-dark</option><option>large-light</option><option>large-dark</option>
+      <option>dark-v2</option><option>dark-v3</option><option>pink</option><option>blackblue</option><option>gray</option>
+    </select></label>
+  </div>
+  <div class="sets" id="out"></div>
+
+  <script>
+    // Глифы из макета: cbuc-icons24 (24 px)
+    const G = { back: '', settings: '', del: '', more: '', ok: '', bird: '' };
+    const STYLES = ['', ' tb--style-info', ' tb--style-success']; // default, info, success
+
+    const icon = (g) => `<span class="tb__icon" aria-hidden="true">${g}</span>`;
+    const btn = (g, label, cls = '', state = '') =>
+      `<button type="button" class="tb__btn${cls}${state}" aria-label="${label}"${state.includes('is-selected') ? ' aria-pressed="true"' : ''}>${icon(g)}</button>`;
+    const bare = (style, html) => `<div class="tb bare${style}">${html}</div>`;
+    const set = (title, mod, rows, html) =>
+      `<section class="set"><h3>${title}</h3><div class="set__body set__body--${mod}"${rows ? ` style="grid-template-rows: repeat(${rows}, auto)"` : ''}>${html}</div></section>`;
+
+    // Тулбар как в component set: назад, настройки, удалить, ещё
+    const toolbar = (style) => `<div class="tb${style}" role="toolbar" aria-label="Виджет">` +
+      btn(G.back, 'Назад') + btn(G.settings, 'Настройки') + btn(G.del, 'Удалить', ' tb__btn--delete') + btn(G.more, 'Ещё') + `</div>`;
+
+    // Наборы как в макете: столбец — стиль, строка — состояние (покой, hover, select)
+    const grid = (make, states) => STYLES.map((s) => states.map((st) => bare(s, make(st))).join('')).join('');
+
+    document.getElementById('out').innerHTML =
+      set('toolbar', 'col', 0, STYLES.map(toolbar).join('')) +
+      set('Bricks/button', 'grid', 3, grid((st) => btn(G.bird, 'Кнопка', '', st), ['', ' is-hover', ' is-selected'])) +
+      set('Bricks/deleteButton', 'grid', 2, grid((st) => btn(G.del, 'Удалить', ' tb__btn--delete', st), ['', ' is-hover'])) +
+      set('_Bricks/successButton', 'grid', 2, grid((st) => btn(G.ok, 'Готово', ' tb__btn--success', st), ['', ' is-hover']));
+
+    document.getElementById('theme').onchange = (e) => e.target.value
+      ? document.documentElement.setAttribute('data-ui-theme', e.target.value)
+      : document.documentElement.removeAttribute('data-ui-theme');
+  </script>
+</body>
+</html>
