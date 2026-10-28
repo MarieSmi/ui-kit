@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>demo-frame — пример</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../demo-frame.css">
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; font-family: "Inter", sans-serif; }
+    /* сцена: 1600×900 в левом верхнем углу — расставляет и масштабирует demo-frame */
+    .stage { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; border-radius: 8px; background: #eef1f4;
+      display: flex; align-items: center; justify-content: center; font-size: 40px; color: #8991a9; }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage">Сценарий: <b id="current">&nbsp;demo</b></div>
+
+  <script src="../demo-frame.js"></script>
+  <script>
+    const stage = document.getElementById('stage');
+    DemoFrame.mount({
+      stage,
+      head: { title: 'Название демо', version: '1.0', href: 'https://example.com', status: 'Запущено согласование 01.10.26' },
+      devices: [
+        { id: 'laptop', icon: 'laptop', label: 'Ноутбук', disabled: true },
+        { id: 'monitor', icon: 'monitor', label: 'Монитор', size: '1600х900', name: 'монитор' },
+      ],
+      scenarios: [
+        { id: 'demo', title: 'Общее демо' },
+        { group: 'Первая группа', items: [
+          { id: 'one', title: 'Сценарий' },
+          { id: 'fork', title: 'Сценарий с вилкой', variants: [{ id: 'a', title: 'Вариант А' }, { id: 'b', title: 'Вариант Б' }] },
+          { id: 'later', title: 'Пока не сделан', disabled: true },
+        ] },
+      ],
+      bottomScenarios: [
+        { group: 'Внизу панели', items: [{ id: 'bottom', title: 'Сценарий внизу' }] },
+      ],
+      links: [{ title: 'Макет в Figma', href: 'https://www.figma.com' }],
+      team: [
+        { label: 'Design', name: 'Имя Фамилия', links: [{ title: 'Описание', href: 'https://example.com' }] },
+        { label: 'Develop' },
+      ],
+      value: { scenario: 'demo' },
+      onChange: ({ scenario, variant }) => {
+        stage.dataset.scenario = scenario;
+        document.getElementById('current').textContent = ' ' + scenario + (variant ? ' / ' + variant : '');
+      },
+    });
+  </script>
+</body>
+</html>
