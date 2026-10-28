@@ -9,8 +9,8 @@
 ## Подключение
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.2.1/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.2.1/components/checkbox/checkbox.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.0/components/checkbox/checkbox.css">
 ```
 
 `tokens.css` подключается первым. Подпись набрана шрифтом **Inter**, его подключает проект.

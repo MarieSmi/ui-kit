@@ -4,6 +4,7 @@
 
 - **Токены** — `tokens.css`: цвета, отступы, радиусы и типографика как CSS-переменные с именами из Figma.
 - **Компоненты** — `components/<имя>/`: у каждого свой CSS и, если нужно, JS.
+- **Шрифты** — `fonts/`: Inter и иконочные шрифты из макетов, подключаются через `fonts/fonts.css`.
 - **Каталог** — `catalog/index.html`: все токены и компоненты с переключением темы и размера.
   Открывается через локальный сервер (`npx serve` в корне кита). Версия для артефакта Claude, где
   всё вшито в один файл, собирается командой `python3 tools/catalog/build-artifact.py <файл>`.
@@ -15,15 +16,33 @@
 Файлы раздаёт jsDelivr прямо из GitHub по тегу:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.2.1/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.2.1/components/<имя>/<имя>.css">
-<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.2.1/components/<имя>/<имя>.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.0/components/<имя>/<имя>.css">
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.0/components/<имя>/<имя>.js"></script>
 ```
 
 - `tokens.css` подключается **первым**: компоненты берут значения из его переменных.
-- Версия в адресе (`@1.2.1`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
+- Версия в адресе (`@1.3.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
 - Во всех адресах одного прототипа должна стоять одна и та же версия.
 - В артефактах Claude адреса `cdn.jsdelivr.net/gh/` не работают: там код кита вшивается в файл.
+
+## Шрифты
+
+Компоненты шрифты не подключают: они только называют `font-family` через токены. Шрифты из кита
+прототип подключает сам, отдельным файлом:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.3.0/fonts/fonts.css">
+```
+
+| Шрифт | Файлы | Где используется |
+|---|---|---|
+| Inter 400 / 500 / 600, прямой и курсив | `fonts/Inter/`: переменные `woff2`, запасные `ttf` | текст, `--font-font-family-default` |
+| cbuc-icons | `fonts/cbuc-icons.ttf` | иконки 16 и 32 px, `--icon-font-family-*` |
+| cbuc-icons24 | `fonts/cbuc-icons24.ttf` | иконки 24 px, `--icon-font-family-m_icon_font-family` |
+| Accordion-Font | `fonts/Accordion-Font.ttf` | иконки аккордеона |
+
+Шрифтов тем Large и mobile (SF Pro, sbis-mobile-icons) в ките нет.
 
 ## Токены
 
