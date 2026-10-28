@@ -23,6 +23,29 @@
 - Во всех адресах одного прототипа должна стоять одна и та же версия.
 - В артефактах Claude адреса `cdn.jsdelivr.net/gh/` не работают: там код кита вшивается в файл.
 
+## Токены
+
+`tokens.css` собран из библиотеки Figma
+[🌍 Global Variables](https://www.figma.com/design/mcpY3I5yWjkPfnk1IdEiqw/): 521 переменная из
+коллекций globalColor (274), globalSize (225) и globalShadow (22). Значения по умолчанию лежат в
+`:root`, остальные режимы переключаются атрибутами на `<html>`:
+
+```html
+<html data-theme="default-dark" data-size="large">
+```
+
+| Атрибут | Значения | Без атрибута |
+|---|---|---|
+| `data-theme` — цвета и тени | `default-dark`, `large-light`, `dark-v3`, `large-dark`, `pink`, `dark-v2`, `blackblue`, `gray` | Default Light |
+| `data-size` — размеры и шрифты | `mobile`, `large`, `large-mobile` | default |
+
+Алиасы из Figma сохранены как ссылки: `--icon-danger_icon-color` в тёмной теме ссылается на
+`var(--text-danger_text-color)`, поэтому меняется вместе с ним.
+
+**Обновить токены.** `tokens.css` руками не правится. Попросите Claude перевыгрузить переменные из
+Figma: он обновит файлы в `tools/tokens/`, запустит `python3 tools/tokens/build.py` и покажет, что
+изменилось. Изменение имени или удаление переменной в Figma — мажорная версия кита.
+
 ## Состав
 
 | Компонент | Папка | Макет Figma | С версии |
@@ -51,7 +74,7 @@
 | Классы | короткий префикс компонента, дальше BEM | `.pin`, `.pin__dot`, `.df-head__title` |
 | Варианты | модификатор с именем свойства и значения из Figma | `.pin--type-click` |
 | Состояния | класс `is-*` по значению `State` из Figma | `.is-hover`, `.is-disabled` |
-| Токены | имя переменной из Figma, `/` заменяется на `-` | `border/unaccented_border-color` → `--border-unaccented_border-color` |
+| Токены | имя переменной из Figma в нижнем регистре, `/` и пробелы → `-` | `Border/unaccented_border-color` → `--border-unaccented_border-color` |
 | JS | один глобальный объект на компонент, PascalCase | `DemoFrame.mount({...})` |
 
 Состояния, которые браузер ставит сам (`:hover`, `:focus-visible`, `:disabled`), стилизуются и через
