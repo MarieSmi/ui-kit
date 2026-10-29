@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>widget — пример</title>
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../../toolbar/toolbar.css">
+  <link rel="stylesheet" href="../widget.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    .sets { display: flex; flex-direction: column; gap: 32px; align-items: flex-start; }
+    /* Рамка набора — как у component set в Figma */
+    .set h3 { margin: 0 0 8px; font-size: 12px; font-weight: 400; color: var(--text-info_text-color); }
+    .set h3::before { content: "\2756\00a0"; }
+    .set__body { display: flex; flex-wrap: wrap; gap: 40px; padding: 60px 20px 20px; border: 1px dashed var(--border-info_border-color); border-radius: 6px; }
+    .cell { display: grid; gap: 8px; justify-items: start; }
+    .cell > span { font-size: 12px; color: var(--text-label_text-color); }
+    .wg { width: 210px; height: 84px; }
+    .wg__content img { flex: 1 1 auto; min-height: 0; width: 100%; object-fit: cover; display: block; }
+    .wg__content--text { padding: 12px; gap: 4px; background: var(--background-unaccented_background-color); }
+    .demo .wg { width: 260px; height: 120px; }
+    .wg.plus-demo { width: 20px; height: 20px; }
+    .wg.plus-demo::after { content: none; }
+    .wg.plus-demo .wg__plus { top: 0; left: 0; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>data-ui-theme <select id="theme">
+      <option value="">default</option><option>default-dark</option><option>large-light</option><option>large-dark</option>
+      <option>dark-v2</option><option>dark-v3</option><option>pink</option><option>blackblue</option><option>gray</option>
+    </select></label>
+  </div>
+  <div class="sets" id="out"></div>
+
+  <script>
+    // Тулбар из кита, как в макете: настройки, удалить, ещё (cbuc-icons24)
+    const toolbar = `<div class="wg__toolbar"><div class="tb tb--style-info" role="toolbar" aria-label="Виджет">
+      <button type="button" class="tb__btn" aria-label="Настройки"><span class="tb__icon" aria-hidden="true">&#xe75d;</span></button>
+      <button type="button" class="tb__btn tb__btn--delete" aria-label="Удалить"><span class="tb__icon" aria-hidden="true">&#xeb72;</span></button>
+      <button type="button" class="tb__btn" aria-label="Ещё"><span class="tb__icon" aria-hidden="true">&#xeab4;</span></button>
+    </div></div>`;
+    const plus = ['up', 'down', 'left', 'right'].map((d) =>
+      `<button type="button" class="wg__plus wg__plus--${d}" aria-label="Добавить виджет"></button>`).join('');
+    const img = `<div class="wg__content"><img src="content.png" alt=""></div>`;
+    const text = `<div class="wg__content wg__content--text"><b>Заголовок</b><span>Любое содержимое</span></div>`;
+    const widget = (cls, content = img) => `<div class="wg${cls}">${content}${plus}${toolbar}</div>`;
+    const cell = (label, html) => `<div class="cell">${html}<span>${label}</span></div>`;
+    const set = (title, html, mod = '') => `<section class="set ${mod}"><h3>${title}</h3><div class="set__body">${html}</div></section>`;
+
+    document.getElementById('out').innerHTML =
+      set('Виджет', [
+        ['Hover=off, Active=off, Уровень=1 (виджет)', ''],
+        ['Hover=on, Active=off, Уровень=1 (виджет)', ' is-hover'],
+        ['Hover=off, Active=on, Уровень=1 (виджет)', ' is-active'],
+        ['Hover=on, Active=on, Уровень=1 (виджет)', ' is-hover is-active'],
+        ['Hover=off, Active=off, Уровень=2 (родитель)', ' wg--level-2'],
+      ].map(([l, c]) => cell(l, widget(c))).join('')) +
+      // Plus 399:49380: кнопка в .wg.is-active, без контента — только кружок
+      set('Plus', [
+        ['Hover=off, Active=off', ''],
+        ['Hover=off, Active=on', ' is-active'],
+        ['Hover=on, Active=on', ' is-hover'],
+      ].map(([l, c]) => cell(l, `<div class="wg is-active plus-demo"><button type="button" class="wg__plus${c}" aria-label="Добавить"></button></div>`)).join('')) +
+      set('Живой пример: наведение и клик (класс .is-active ставит прототип)',
+        widget('', img) + widget('', text) + `<div class="wg wg--level-2">${text}</div>`, 'demo');
+
+    // Логика прототипа, не компонента: клик выделяет виджет, клик мимо или Esc снимает выделение
+    const demo = document.querySelector('.demo');
+    const clear = () => demo.querySelectorAll('.wg.is-active').forEach((w) => w.classList.remove('is-active'));
+    document.addEventListener('click', (e) => {
+      const w = e.target.closest('.demo .wg:not(.wg--level-2)'); // родитель не выделяется
+      if (w && e.target.closest('.wg__toolbar, .wg__plus')) return;
+      clear(); if (w) w.classList.add('is-active');
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') clear(); });
+
+    document.getElementById('theme').onchange = (e) => e.target.value
+      ? document.documentElement.setAttribute('data-ui-theme', e.target.value)
+      : document.documentElement.removeAttribute('data-ui-theme');
+  </script>
+</body>
+</html>

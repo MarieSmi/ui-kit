@@ -1,6 +1,6 @@
 """Собирает каталог в один самодостаточный HTML для артефакта Claude.
 
-Вшивает tokens.css, иконочные шрифты, CSS компонентов и пример demo-frame (iframe → srcdoc), снимает <!doctype>/<html>/<head>/<body>:
+Вшивает tokens.css, иконочные шрифты, CSS компонентов, картинку виджета и пример demo-frame (iframe → srcdoc), снимает <!doctype>/<html>/<head>/<body>:
 их добавляет хост артефакта. Запуск из корня: python3 tools/catalog/build-artifact.py <выходной файл>
 """
 import base64, html, pathlib, re, sys
@@ -26,6 +26,8 @@ page = page.replace('<link rel="stylesheet" href="../fonts/fonts.css" data-kit="
 page = page.replace('<link rel="stylesheet" href="../components/button/button.css" data-kit="button">', '<style data-kit="button">' + read('components/button/button.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/checkbox/checkbox.css" data-kit="checkbox">', '<style data-kit="checkbox">' + read('components/checkbox/checkbox.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">', '<style data-kit="toolbar">' + read('components/toolbar/toolbar.css') + '</style>')
+page = page.replace('<link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">', '<style data-kit="widget">' + read('components/widget/widget.css') + '</style>')
+page = page.replace("'../components/widget/example/content.png'", "'data:image/png;base64," + base64.b64encode((ROOT / 'components/widget/example/content.png').read_bytes()).decode('ascii') + "'")
 page = re.sub(r'src="\.\./components/demo-frame/example/index\.html"', lambda m: 'srcdoc="' + html.escape(ex, quote=True) + '"', page)
 page = re.sub(r'<!doctype html>\s*|</?html[^>]*>\s*|</?head>\s*|</?body>\s*|<meta charset="utf-8">\s*|<meta name="viewport"[^>]*>\s*', '', page, flags=re.I)
 assert 'href="../' not in page and 'src="../' not in page, 'остались локальные ссылки'

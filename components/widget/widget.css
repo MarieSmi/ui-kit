@@ -1,0 +1,117 @@
+/*!
+ * widget — рамка виджета в конструкторе (Figma rHabzni5OI5D4fxBLQdj2m, «Виджет» 131:17349).
+ * Варианты: ⛔ Hover → .is-hover / :hover, Active → .is-active, Уровень=2 (родитель) → .wg--level-2.
+ * Содержимое — любое, в .wg__content. Тулбар — тулбар кита (.tb) в слоте .wg__toolbar: виджет его только
+ * располагает и показывает, стили .tb не трогает. Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/widget
+ *
+ * Устройство: рамка — ::after поверх содержимого, как stroke INSIDE в Figma, поэтому не сдвигает содержимое
+ * и координаты кружков и тулбара считаются от внешнего края, как в макете.
+ */
+
+/* ---------- Контейнер (Hover=off, Active=off, Уровень=1 — виджет) ---------- */
+.wg {
+  --wg-bd: transparent;
+  --wg-bd-style: solid;
+
+  position: relative; box-sizing: border-box;
+  display: flex; flex-direction: column;
+  border-radius: var(--border-radius-border-radius_3xs);
+}
+.wg::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  border: 1px var(--wg-bd-style) var(--wg-bd); /* 1px — нет токена */
+  border-radius: inherit;
+}
+
+.wg--level-2 {
+  --wg-bd: color-mix(in srgb, var(--border-info_border-color) 60%, transparent); /* 60 % — нет токена */
+  --wg-bd-style: dashed;
+}
+
+/* Hover: рамка info 60 % (у родителя — сплошная, в макете нет: допущение) */
+.wg:hover, .wg.is-hover {
+  --wg-bd: color-mix(in srgb, var(--border-info_border-color) 60%, transparent); /* 60 % — нет токена */
+  --wg-bd-style: solid;
+}
+
+/* Active: рамка info, кружки и тулбар. Hover + Active в макете выглядит как Active.
+   У родителя активного состояния нет: .is-active на .wg--level-2 ничего не меняет */
+.wg.is-active:not(.wg--level-2) {
+  --wg-bd: var(--border-info_border-color);
+  --wg-bd-style: solid;
+  z-index: 1; /* тулбар и кружки поверх соседей — в макете нет */
+}
+
+/* ---------- Содержимое ---------- */
+.wg__content {
+  flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column;
+  padding: var(--offset-none);
+  overflow: clip;
+  border-radius: inherit;
+}
+
+/* ---------- Кружки (Plus_up / Plus_down / Plus_left / Plus_right, компонент Plus 399:49380) ---------- */
+/* Кнопка 20×20 — область клика, центр на линии рамки. Видны только у активного виджета.
+   Рисуются поверх рамки (z-index выше ::after контейнера) */
+.wg__plus {
+  --wg-plus-bg: var(--background-background-color);
+  --wg-plus-bd: var(--border-info_border-color);
+
+  position: absolute; z-index: 1; box-sizing: border-box;
+  width: 20px; height: 20px; /* нет токена */
+  margin: 0; padding: 0; border: 0;
+  background: none; cursor: pointer;
+  visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Кружок: Active=false — 8px (30 % от 20px, как в макете), Active=true — 16px с плюсом */
+.wg__plus::before {
+  content: ""; position: absolute; inset: 30%; box-sizing: border-box;
+  border: 1px solid var(--wg-plus-bd); /* 1px — нет токена */
+  border-radius: var(--border-radius-border-radius_2xl);
+  background: var(--wg-plus-bg);
+}
+.wg__plus::after {
+  content: "\e95d"; /* глиф «плюс» из макета */
+  position: absolute; inset: 0;
+  display: none; align-items: center; justify-content: center;
+  font-family: var(--icon-font-family-2xs_icon_font-family); font-size: var(--icon-icon_size-icon-size_2xs);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--icon-contrast_icon-color);
+}
+.wg.is-active:not(.wg--level-2) > .wg__plus { visibility: visible; }
+
+/* Active=true: наведение и фокус с клавиатуры */
+.wg__plus.is-active, .wg__plus:focus-visible,
+.wg__plus:hover, .wg__plus.is-hover {
+  --wg-plus-bg: var(--border-info_border-color);
+}
+/* Hover=true, Active=true: нажатие (:active) — допущение, в макете не подписано */
+.wg__plus:active, .wg__plus.is-hover {
+  --wg-plus-bg: var(--border-info_hover_border-color);
+}
+.wg__plus.is-active::before, .wg__plus:focus-visible::before,
+.wg__plus:hover::before, .wg__plus.is-hover::before {
+  inset: 10%; /* 16px от 20px */
+  border-color: var(--wg-plus-bg);
+}
+.wg__plus.is-active::after, .wg__plus:focus-visible::after,
+.wg__plus:hover::after, .wg__plus.is-hover::after { display: flex; }
+.wg__plus:focus-visible { outline: none; } /* фокус показан состоянием Active */
+
+/* Центр кнопки на внешнем крае виджета: −10px — половина кнопки; нет токена */
+.wg__plus--up    { top: -10px;    left: calc(50% - 10px); }
+.wg__plus--down  { bottom: -10px; left: calc(50% - 10px); }
+.wg__plus--left  { left: -10px;   top: calc(50% - 10px); }
+.wg__plus--right { right: -10px;  top: calc(50% - 10px); }
+
+/* ---------- Тулбар ---------- */
+/* Слот над левым верхним углом: низ тулбара на offset_s выше виджета (в макете top −40px при тулбаре 32px) */
+.wg__toolbar {
+  position: absolute; left: 0; bottom: calc(100% + var(--offset-offset_s));
+  display: flex;
+  visibility: hidden;
+}
+.wg.is-active:not(.wg--level-2) > .wg__toolbar { visibility: visible; }

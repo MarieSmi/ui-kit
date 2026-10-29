@@ -118,6 +118,39 @@
         "about": "Иконки — глифы шрифта cbuc-icons24 (Ui базовый набор / Font) в .tb__icon: назад U+E9A9, настройки U+E75D, удалить U+EB72, ещё U+EAB4, готово U+E75E.",
         "Bricks/button_expander": { "kit": "не входит в кит" }
       }
+    },
+    "widget": {
+      "kit": "components/widget",
+      "since": "1.5.0",
+      "figma": {
+        "fileKey": "rHabzni5OI5D4fxBLQdj2m",
+        "file": "⚙️Builder-components",
+        "page": "0:1",
+        "section": "134:19376"
+      },
+      "element": "<div class=\"wg …\"><div class=\"wg__content\">…</div><button class=\"wg__plus wg__plus--up\">…<div class=\"wg__toolbar\"><div class=\"tb tb--style-info\">…</div></div></div>",
+      "base": "wg",
+      "sets": [
+        { "name": "Виджет", "node": "131:17349", "key": "126806a1781383476f7e652e1640ab48d89be978", "class": "wg" },
+        { "name": "Плюс", "node": "399:49380", "key": "0f6e770fffa359d0ba303856d648251e07de663d", "class": "wg__plus",
+          "note": "в виджете слои Plus_up / Plus_down / Plus_left / Plus_right → .wg__plus--up / --down / --left / --right" }
+      ],
+      "properties": {
+        "Уровень": { "1": null, "2": "wg--level-2", "note": "1 — виджет, 2 — родитель; у родителя нет активного состояния" },
+        "⛔ Hover": { "on": "is-hover", "off": null, "alt": ":hover" },
+        "Active": { "on": "is-active", "off": null, "note": "ставит прототип" },
+        "Плавающий тулбар#230:0": { "true": "есть .wg__toolbar с .tb из компонента toolbar", "false": "без .wg__toolbar" },
+        "Плюсы Вертикальные#399:0": { "true": "есть .wg__plus--up и .wg__plus--down", "false": null },
+        "Плюсы Горизонтальные#399:5": { "true": "есть .wg__plus--left и .wg__plus--right", "false": null },
+        "Команды по ховеру#3920:0": { "true": "не входит в кит", "false": null },
+        "Плюс.⛔ Active": { "on": "is-active", "off": null, "alt": ":hover, :focus-visible" },
+        "Плюс.⛔ Hover": { "on": "is-hover", "off": null, "alt": ":active", "note": "в макете только вместе с ⛔ Active=on" }
+      },
+      "content": {
+        "Содержимое#391:0": { "kit": "любая разметка в .wg__content" },
+        "Контент#4587:0": { "kit": "любая разметка в .wg__content" },
+        "toolbar": { "kit": "инстанс toolbar style=info: настройки U+E75D, удалить U+EB72, ещё U+EAB4 — разметка по записи toolbar" }
+      }
     }
   }
 }

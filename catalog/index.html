@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="../components/button/button.css" data-kit="button">
 <link rel="stylesheet" href="../components/checkbox/checkbox.css" data-kit="checkbox">
 <link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">
+<link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">
 <style>
 /* Каталог: шапка с переключателями темы и размера, дальше секции токенов и компонентов.
    Цвета страницы — только токены кита, поэтому каталог перекрашивается вместе с выбранной темой. */
@@ -123,6 +124,15 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 /* Кнопки тулбара без самого тулбара: .tb даёт им цвета стиля, фон и рамку тулбара прячем */
 .tb.tb-bare { background: none; box-shadow: none; overflow: visible; }
 .tb.tb-bare::after { content: none; }
+#widget-body { display: grid; gap: 32px; }
+/* Виджет: место сверху под тулбар (40px) и по бокам под кружки (10px), содержимое — картинка из макета (_Контент виджета) */
+.wg-grid td { padding: 52px 32px 16px 12px; }
+.wg-grid tr:first-child th + th { padding-left: 12px; } /* подпись столбца — по левому краю виджета */
+.wg-grid .wg { width: 168px; height: 72px; }
+.wg-grid .wg__content img { flex: 1 1 auto; min-height: 0; width: 100%; object-fit: cover; display: block; }
+.wg.wg-plus { width: 20px; height: 20px; }
+.wg.wg-plus::after { content: none; }
+.wg.wg-plus .wg__plus { top: 0; left: 0; }
 
 .empty { color: var(--muted); font-style: italic; }
 #toast { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); padding: 8px 14px; border-radius: 6px; background: var(--extra-item_selected_color); color: var(--extra-item_selected_text-color); font: 500 13px var(--mono); }
@@ -133,7 +143,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.4.0</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.5.0</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -161,7 +171,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     <div class="toc-main">
       <a href="#components" data-group="components">Компоненты</a><a href="#tokens" data-group="tokens">Переменные</a>
     </div>
-    <div class="toc-sub" data-group="components"><a href="#button">Кнопка</a><a href="#checkbox">Чекбокс</a><a href="#toolbar">Тулбар</a><a href="#demo-frame">Вспом. обл.</a></div>
+    <div class="toc-sub" data-group="components"><a href="#button">Кнопка</a><a href="#checkbox">Чекбокс</a><a href="#toolbar">Тулбар</a><a href="#widget">Виджет</a><a href="#demo-frame">Вспом. обл.</a></div>
     <div class="toc-sub" data-group="tokens"><a href="#colors">Цвета</a><a href="#sizes">Размеры</a><a href="#shadows">Тени</a></div>
   </nav>
 </header>
@@ -201,6 +211,10 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
           <li><b>Состояния</b><span>покой, hover (.is-hover), select (.is-selected, aria-pressed) — select только у Bricks/button</span></li>
           <li><b>Иконка</b><span>глиф шрифта cbuc-icons24 или svg в .tb__icon</span></li>
         </ul>
+      </article>
+      <article class="comp" id="widget">
+        <div class="comp-head"><h3>Виджет</h3><code>components/widget</code></div>
+        <div id="widget-body"></div>
       </article>
       <article class="comp" id="demo-frame">
         <div class="comp-head"><h3>Вспомогательная область</h3><code>components/demo-frame</code></div>
@@ -457,11 +471,39 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     host.innerHTML = bar + kinds + sep;
   }
 
-  // Меню: раздел «Компоненты» показывает один компонент (#button, #checkbox, #toolbar, #demo-frame), раздел «Переменные» — цвета,
+  // Виджет: таблица «уровень (виджет, родитель) × состояние», дальше кружок Plus по состояниям. Тулбар — .tb кита, как в макете
+  var WG_STATES = [['покой', ''], ['hover', ' is-hover'], ['active', ' is-active'], ['hover + active', ' is-hover is-active']];
+  var WG_LEVELS = [['Виджет', ''], ['Родитель', ' wg--level-2']];
+  var WG_IMG = '../components/widget/example/content.png'; // build-artifact.py вшивает картинку в data: URL
+  function buildWidgets() {
+    var host = document.getElementById('widget-body');
+    var plus = ['up', 'down', 'left', 'right'].map(function (d) {
+      return '<button type="button" class="wg__plus wg__plus--' + d + '" aria-label="Добавить виджет"></button>';
+    }).join('');
+    var bar = '<div class="wg__toolbar"><div class="tb tb--style-info" role="toolbar" aria-label="Виджет">' +
+      tbBtn('', '', TB_ICON.settings) + tbBtn(' tb__btn--delete', '', TB_ICON.del) + tbBtn('', '', TB_ICON.more) + '</div></div>';
+    function set(title, code, node, head, rows, cls) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code> <span>' + node + '</span></h4>' +
+        '<div class="btn-scroll"><table class="btn-grid' + (cls || '') + '"><tr><th></th>' + head + '</tr>' + rows + '</table></div></div>';
+    }
+    var wg = set('Виджет', '.wg', '131:17349', WG_STATES.map(function (s) { return '<th>' + s[0] + '</th>'; }).join(''), WG_LEVELS.map(function (l) {
+      return '<tr><th>' + l[0] + '</th>' + WG_STATES.map(function (s) {
+        if (l[1] && s[1].indexOf('is-active') >= 0) return '<td></td>'; // у родителя нет активного состояния
+        return '<td><div class="wg' + l[1] + s[1] + '"><div class="wg__content"><img src="' + WG_IMG + '" alt=""></div>' + plus + bar + '</div></td>';
+      }).join('') + '</tr>';
+    }).join(''), ' wg-grid');
+    var pl = set('Plus', '.wg__plus', '399:49380', '<th>покой</th><th>active</th><th>hover</th>', '<tr><th></th>' +
+      ['', ' is-active', ' is-hover'].map(function (s) {
+        return '<td><div class="wg is-active wg-plus"><button type="button" class="wg__plus' + s + '" aria-label="Добавить виджет"></button></div></td>';
+      }).join('') + '</tr>');
+    host.innerHTML = wg + pl;
+  }
+
+  // Меню: раздел «Компоненты» показывает один компонент (#button, #checkbox, #toolbar, #widget, #demo-frame), раздел «Переменные» — цвета,
   // размеры и тени одной лентой (#colors, #sizes, #shadows). Показан только выбранный раздел.
-  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', toolbar: 'components', 'demo-frame': 'components',
+  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', toolbar: 'components', widget: 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
-  var COMPS = ['button', 'checkbox', 'toolbar', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
+  var COMPS = ['button', 'checkbox', 'toolbar', 'widget', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
   var header = document.querySelector('header.top'), group = null, comp = 'button';
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
   function markSub(id) { nav('.toc-sub a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + id); }); }
@@ -534,7 +576,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
   var start = location.hash.slice(1);
   if (!go(start, false)) go('button', false);
-  buildButtons(); buildCheckboxes(); buildToolbars(); buildColors(); buildSizes(); buildShadows();
+  buildButtons(); buildCheckboxes(); buildToolbars(); buildWidgets(); buildColors(); buildSizes(); buildShadows();
   if (ROUTES[start]) { // открыт по адресу раздела — прокрутить к нему, когда всё построено
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     go(start, true);
