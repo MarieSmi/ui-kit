@@ -133,6 +133,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .wg.wg-plus { width: 20px; height: 20px; }
 .wg.wg-plus::after { content: none; }
 .wg.wg-plus .wg__plus { top: 0; left: 0; }
+.wg-empty-grid td { padding: 6px 32px 6px 0; }
+.wg-empty-grid .wg { height: 84px; } /* ширина — из размера в макете: 168 / 266 / 326 */
 
 .empty { color: var(--muted); font-style: italic; }
 #toast { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); padding: 8px 14px; border-radius: 6px; background: var(--extra-item_selected_color); color: var(--extra-item_selected_text-color); font: 500 13px var(--mono); }
@@ -143,7 +145,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.5.0</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.6.0</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -496,7 +498,18 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       ['', ' is-active', ' is-hover'].map(function (s) {
         return '<td><div class="wg is-active wg-plus"><button type="button" class="wg__plus' + s + '" aria-label="Добавить виджет"></button></div></td>';
       }).join('') + '</tr>');
-    host.innerHTML = wg + pl;
+    // Пустая ячейка 402:9447: размер команд по ширине виджета, сам (container query)
+    function empty() {
+      return '<div class="wg__content wg__empty"><div class="wg__actions">' + [['cols', 'Колонки'], ['widget', 'Виджет'], ['rows', 'Строки']].map(function (a) {
+        return '<button type="button" class="wg__action wg__action--' + a[0] + '" aria-label="' + a[1] + '">' +
+          '<span class="wg__action-caption" aria-hidden="true">' + a[1] + '</span></button>';
+      }).join('') + '</div></div>';
+    }
+    var em = set('Пустая ячейка', '.wg__empty', '402:9447', '',
+      [['Size #3 · 168', 168], ['Size #2 · 266', 266], ['Size #1 · 326', 326]].map(function (z) {
+        return '<tr><th>' + z[0] + '</th><td><div class="wg" style="width: ' + z[1] + 'px">' + empty() + '</div></td></tr>';
+      }).join(''), ' wg-empty-grid');
+    host.innerHTML = wg + em + pl;
   }
 
   // Меню: раздел «Компоненты» показывает один компонент (#button, #checkbox, #toolbar, #widget, #demo-frame), раздел «Переменные» — цвета,

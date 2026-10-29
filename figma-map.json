@@ -133,7 +133,11 @@
       "sets": [
         { "name": "Виджет", "node": "131:17349", "key": "126806a1781383476f7e652e1640ab48d89be978", "class": "wg" },
         { "name": "Плюс", "node": "399:49380", "key": "0f6e770fffa359d0ba303856d648251e07de663d", "class": "wg__plus",
-          "note": "в виджете слои Plus_up / Plus_down / Plus_left / Plus_right → .wg__plus--up / --down / --left / --right" }
+          "note": "в виджете слои Plus_up / Plus_down / Plus_left / Plus_right → .wg__plus--up / --down / --left / --right" },
+        { "name": "_Контент виджета", "node": "402:9447", "key": "bd29484e5ea4107ef50fbc98cbdd5d0ba24f3d8a", "class": "wg__content",
+          "since": "1.6.0", "note": "Пустая ячейка → .wg__content.wg__empty > .wg__actions" },
+        { "name": "Экшены пустого состояния", "node": "4587:4958", "key": "5dc031180b69470d13ed68070a1e637a9ce6191a", "class": "wg__action",
+          "since": "1.6.0", "note": "в пустой ячейке слои Колонки / Виджет / Строки → .wg__action--cols / --widget / --rows" }
       ],
       "properties": {
         "Уровень": { "1": null, "2": "wg--level-2", "note": "1 — виджет, 2 — родитель; у родителя нет активного состояния" },
@@ -144,7 +148,13 @@
         "Плюсы Горизонтальные#399:5": { "true": "есть .wg__plus--left и .wg__plus--right", "false": null },
         "Команды по ховеру#3920:0": { "true": "не входит в кит", "false": null },
         "Плюс.⛔ Active": { "on": "is-active", "off": null, "alt": ":hover, :focus-visible" },
-        "Плюс.⛔ Hover": { "on": "is-hover", "off": null, "alt": ":active", "note": "в макете только вместе с ⛔ Active=on" }
+        "Плюс.⛔ Hover": { "on": "is-hover", "off": null, "alt": ":active", "note": "в макете только вместе с ⛔ Active=on" },
+        "_Контент виджета.Контент виджета": { "С контентом": ".wg__content", "Пустая ячейка": ".wg__content.wg__empty" },
+        "_Контент виджета.Размер виджета": { "kit": "класса нет: Size #3 / #2 / #1 выбирается сам по ширине (container query, пороги 266 и 326px)" },
+        "Экшены пустого состояния.Команда": { "Типовая": "wg__action--cols или wg__action--rows", "Виджет": "wg__action--widget" },
+        "Экшены пустого состояния.Размер экшена": { "kit": "от ширины пустой ячейки, как Размер виджета" },
+        "Экшены пустого состояния.hover": { "on": "is-hover", "off": null, "alt": ":hover" },
+        "Экшены пустого состояния.Text#14621:0": { "kit": "текст в .wg__action-caption: Колонки, Строки" }
       },
       "content": {
         "Содержимое#391:0": { "kit": "любая разметка в .wg__content" },

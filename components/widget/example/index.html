@@ -26,6 +26,11 @@
     .wg.plus-demo { width: 20px; height: 20px; }
     .wg.plus-demo::after { content: none; }
     .wg.plus-demo .wg__plus { top: 0; left: 0; }
+    .wg.size-3 { width: 168px; } .wg.size-2 { width: 266px; } .wg.size-1 { width: 326px; }
+    /* Живой пример: ширину пустого виджета можно тянуть за правый нижний угол */
+    .resizer { box-sizing: border-box; width: 290px; min-width: 140px; max-width: 560px; padding: 44px 12px 12px;
+      resize: horizontal; overflow: hidden; outline: 1px dotted var(--border-border-color); }
+    .demo .resizer .wg { width: auto; }
   </style>
 </head>
 <body>
@@ -48,6 +53,12 @@
       `<button type="button" class="wg__plus wg__plus--${d}" aria-label="Добавить виджет"></button>`).join('');
     const img = `<div class="wg__content"><img src="content.png" alt=""></div>`;
     const text = `<div class="wg__content wg__content--text"><b>Заголовок</b><span>Любое содержимое</span></div>`;
+    // Пустая ячейка: три команды из макета, размер подстраивается под ширину сам
+    const action = (mod, caption, st = '') =>
+      `<button type="button" class="wg__action wg__action--${mod}${st}" aria-label="${caption}"><span class="wg__action-caption" aria-hidden="true">${caption}</span></button>`;
+    const empty = (hover = '') => `<div class="wg__content wg__empty"><div class="wg__actions">` +
+      action('cols', 'Колонки', hover === 'cols' ? ' is-hover' : '') + action('widget', 'Виджет', hover === 'widget' ? ' is-hover' : '') +
+      action('rows', 'Строки', hover === 'rows' ? ' is-hover' : '') + `</div></div>`;
     const widget = (cls, content = img) => `<div class="wg${cls}">${content}${plus}${toolbar}</div>`;
     const cell = (label, html) => `<div class="cell">${html}<span>${label}</span></div>`;
     const set = (title, html, mod = '') => `<section class="set ${mod}"><h3>${title}</h3><div class="set__body">${html}</div></section>`;
@@ -66,15 +77,23 @@
         ['Hover=off, Active=on', ' is-active'],
         ['Hover=on, Active=on', ' is-hover'],
       ].map(([l, c]) => cell(l, `<div class="wg is-active plus-demo"><button type="button" class="wg__plus${c}" aria-label="Добавить"></button></div>`)).join('')) +
-      set('Живой пример: наведение и клик (класс .is-active ставит прототип)',
-        widget('', img) + widget('', text) + `<div class="wg wg--level-2">${text}</div>`, 'demo');
+      // Пустая ячейка 402:9447: размер по ширине виджета (Size #3 168, #2 266, #1 326), hover команд
+      set('Пустая ячейка', [['Size #3', ' size-3'], ['Size #2', ' size-2'], ['Size #1', ' size-1']].map(([l, c]) =>
+        cell(l + ' · покой', widget(c, empty())) + cell(l + ' · hover «Колонки»', widget(c, empty('cols'))) +
+        cell(l + ' · hover «Виджет»', widget(c, empty('widget')))).join('')) +
+      set('Пустой виджет по состояниям (Size #2)', [
+        ['Hover=off, Active=off (виджет)', ''], ['Hover=on (виджет)', ' is-hover'], ['Active=on (виджет)', ' is-active'],
+        ['Hover=off, Active=off (родитель)', ' wg--level-2'],
+      ].map(([l, c]) => cell(l, c.includes('level') ? `<div class="wg size-2${c}">${empty()}</div>` : widget(' size-2' + c, empty()))).join('')) +
+      set('Живой пример: наведение и клик (класс .is-active ставит прототип); ширину пустого виджета можно тянуть',
+        widget('', img) + widget('', text) + `<div class="wg wg--level-2">${text}</div>` + `<div class="resizer">${widget('', empty())}</div>`, 'demo');
 
     // Логика прототипа, не компонента: клик выделяет виджет, клик мимо или Esc снимает выделение
     const demo = document.querySelector('.demo');
     const clear = () => demo.querySelectorAll('.wg.is-active').forEach((w) => w.classList.remove('is-active'));
     document.addEventListener('click', (e) => {
       const w = e.target.closest('.demo .wg:not(.wg--level-2)'); // родитель не выделяется
-      if (w && e.target.closest('.wg__toolbar, .wg__plus')) return;
+      if (w && e.target.closest('.wg__toolbar, .wg__plus, .wg__action')) return;
       clear(); if (w) w.classList.add('is-active');
     });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') clear(); });

@@ -115,3 +115,91 @@
   visibility: hidden;
 }
 .wg.is-active:not(.wg--level-2) > .wg__toolbar { visibility: visible; }
+
+/* ---------- Пустое состояние (_Контент виджета = Пустая ячейка, 402:9447) ---------- */
+/* Вместо .wg__content с содержимым: .wg__content.wg__empty с тремя командами (Экшены пустого состояния 4587:4958).
+   Размер команд выбирается сам по ширине ячейки (container query): уже 266px — Size #3 (только иконки),
+   266–325px — Size #2 (иконка и подпись), от 326px — Size #1 (крупнее). Пороги — ширины из макета;
+   container query меряет ширину без padding ячейки, поэтому в условиях ширина минус 2×offset_2xl */
+.wg__empty {
+  container: wg-empty / inline-size;
+  box-sizing: border-box;
+  padding: 0 var(--offset-offset_2xl);
+  border-radius: var(--border-radius-border-radius_m);
+  background: var(--background-opacity-translucent_background-color_light);
+}
+.wg__actions {
+  flex: 1 1 auto;
+  display: flex; align-items: center; justify-content: center;
+  gap: var(--offset-offset_m);
+}
+
+/* Команда (Size #3): иконка без подписи */
+.wg__action {
+  --wg-act-ic: var(--icon-label_icon-color);
+  --wg-act-ic-hover: var(--icon-label_hover_icon-color);
+  --wg-act-bg: none;
+  --wg-act-bg-hover: none;
+
+  box-sizing: border-box; flex: none;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--offset-offset_2xs);
+  margin: 0; padding: var(--offset-offset_2xs); border: 0;
+  overflow: clip;
+  background: var(--wg-act-bg);
+  color: var(--text-label_text-color);
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--font-font-size-font-size_s); font-weight: var(--font-font-weight-regular); line-height: normal;
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.wg__action::before {
+  display: flex; align-items: center; justify-content: center;
+  width: var(--icon-icon_size-icon-size_m); height: var(--icon-icon_size-icon-size_m);
+  font-family: var(--icon-font-family-m_icon_font-family); font-size: var(--icon-icon_size-icon-size_m);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--wg-act-ic);
+}
+.wg__action--cols::before   { content: "\eaee"; } /* глифы из макета, cbuc-icons24 */
+.wg__action--widget::before { content: "\e6d3"; }
+/* «Строки»: в макете глиф U+EAC3, но в cbuc-icons24 кита на этом месте «=», иконки строк нет —
+   рисуем глиф «Колонки», повёрнутый на 90° (допущение до обновления шрифта) */
+.wg__action--rows::before   { content: "\eaee"; transform: rotate(90deg); }
+.wg__action:hover, .wg__action.is-hover {
+  --wg-act-ic: var(--wg-act-ic-hover);
+  --wg-act-bg: var(--wg-act-bg-hover);
+}
+.wg__action:focus-visible { outline-offset: -2px; } /* focus в макете нет; 2px — нет токена */
+
+/* «Виджет» — команда primary */
+.wg__action--widget {
+  --wg-act-ic: var(--icon-primary_icon-color);
+  --wg-act-ic-hover: var(--icon-primary_hover_icon-color);
+}
+
+.wg__action-caption { display: none; text-align: center; white-space: nowrap; }
+
+/* Size #2: подпись под иконкой, ширина команды 70px */
+@container wg-empty (min-width: 218px) { /* ячейка 266px минус отступы 2×24 */
+  .wg__actions { gap: var(--offset-offset_2xs); }
+  .wg__action { width: 70px; padding: var(--offset-offset_s) var(--offset-none); } /* 70px — нет токена */
+  .wg__action-caption { display: block; }
+}
+
+/* Size #1: команда 90px со скруглением; у типовой при hover — фон, у «Виджет» — подложка-градиент */
+@container wg-empty (min-width: 278px) { /* ячейка 326px минус отступы 2×24 */
+  .wg__action {
+    --wg-act-bg-hover: var(--background-background-color);
+    width: 90px; /* нет токена */
+    gap: var(--offset-offset_xs);
+    padding: var(--offset-offset_m) var(--offset-none);
+    border-radius: var(--border-radius-border-radius_s);
+  }
+  /* Градиент из макета (#FCF0E4 / #FFE9E0 без переменных) собран из токенов primary — допущение.
+     Эллипс и центр — из gradientTransform макета; нет токена */
+  .wg__action--widget {
+    --wg-act-bg: radial-gradient(229px 150px at 24px 125px, var(--background-primary_hover_background-color), transparent) var(--background-background-color);
+    --wg-act-bg-hover: radial-gradient(229px 150px at 24px 125px, var(--background-primary_active_background-color), transparent) var(--background-background-color);
+  }
+}
