@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>chips — пример</title>
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../chips.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    table { border-collapse: collapse; }
+    th { padding: 4px 16px 4px 0; font-weight: 400; text-align: left; color: var(--text-label_text-color); white-space: nowrap; }
+    td { padding: 6px 20px 6px 0; }
+    .row { display: flex; gap: 12px; }
+    /* серый фон: белые contrast и filter на белом не видны, в макете они стоят на сером */
+    .on-gray { background: var(--background-unaccented_background-color); }
+    .on-gray th:first-child, .on-gray td:first-child { padding-left: 12px; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>Тема <select id="theme">
+      <option value="">Default Light</option>
+      <option>default-dark</option><option>large-light</option><option>dark-v3</option><option>large-dark</option>
+      <option>pink</option><option>dark-v2</option><option>blackblue</option><option>gray</option>
+    </select></label>
+    <label>inlineHeight <select id="size">
+      <option>m</option><option selected>l</option><option>xl</option><option>5xl</option>
+    </select></label>
+    <label>iconPosition <select id="pos">
+      <option>right</option><option>left</option><option>only</option>
+    </select></label>
+  </div>
+  <div id="out"></div>
+
+  <script>
+    // Глиф иконки из макета — U+E9E2 шрифта cbuc-icons
+    const ICON = '<span class="chips__icon" aria-hidden="true">&#xE9E2;</span>';
+    const CAPTION = '<span class="chips__caption">Значение</span>';
+    const COUNTER = '<span class="chips__counter">12</span>';
+
+    // Варианты — как в component set web/chips: [подпись, классы, selectedStyle, readonly есть]
+    const CONTRAST = [
+      ['default', 'chips--contrast', true],
+      ['primary', 'chips--contrast chips--style-primary', false],
+      ['secondary', 'chips--contrast chips--style-secondary', false],
+    ];
+    const PALE = [
+      ['filled · default', '', false],
+      ['ghost · default', 'chips--ghost', false],
+      ['filled · contrast', 'chips--style-contrast', false],
+    ];
+
+    function render() {
+      const size = document.getElementById('size').value;
+      const pos = document.getElementById('pos').value;
+      const content = pos === 'left' ? ICON + CAPTION + COUNTER : pos === 'only' ? ICON + COUNTER : CAPTION + ICON + COUNTER;
+      const chip = (cls, state) => `<button type="button" class="chips chips--size-${size}${cls ? ' ' + cls : ''}${state ? ' ' + state : ''}">` +
+        (cls.includes('chips--round') ? '<span class="chips__caption">1</span>' : content) + '</button>';
+      // Круглые — web/roundChips: те же варианты, readonly в макете нет
+      const round = rows => rows.map(([t, cls]) => [t, (cls + ' chips--round').trim(), false]);
+      const table = (title, rows) => {
+        const ro = rows.some(r => r[2]);
+        const heads = ['покой', 'hover', 'selected'].concat(ro ? ['readonly', 'readonly · selected'] : []);
+        return `
+        <h2>${title}</h2>
+        <table>
+          <tr><th></th>${heads.map(t => `<th>${t}</th>`).join('')}</tr>
+          ${rows.map(([t, cls, r]) => `<tr><th>${t}</th>` +
+            ['', 'is-hover', 'is-selected'].map(s => `<td>${chip(cls, s)}</td>`).join('') +
+            (r ? ['is-readonly', 'is-readonly is-selected'].map(s => `<td>${chip(cls, s)}</td>`).join('') : ro ? '<td></td><td></td>' : '') +
+            '</tr>').join('')}
+        </table>`;
+      };
+      document.getElementById('out').innerHTML =
+        table('Контрастные — contrast=true', CONTRAST) +
+        table('Неконтрастные — contrast=false', PALE) +
+        table('Круглые контрастные', round(CONTRAST)) +
+        table('Круглые неконтрастные', round(PALE)) +
+        // Добавление данных — _buttons: только M, только покой и hover; «…» — глиф U+EAB4 шрифта cbuc-icons24
+        `<h2>Добавление данных</h2>
+        <table class="on-gray">
+          <tr><th></th><th>покой</th><th>hover</th><th>покой</th><th>hover</th></tr>
+          ${['default', 'contrast', 'filter'].map(s => `<tr><th>${s}</th>` +
+            ['', 'is-hover'].map(st => `<td><button type="button" class="chips chips--add chips--add-${s}${st ? ' ' + st : ''}"><span class="chips__caption">Кнопка</span></button></td>`).join('') +
+            ['', 'is-hover'].map(st => `<td><button type="button" class="chips chips--add chips--add-${s} chips--icon${st ? ' ' + st : ''}" aria-label="Ещё"><span class="chips__icon" aria-hidden="true">&#xEAB4;</span></button></td>`).join('') +
+            '</tr>').join('')}
+        </table>` +
+        `<h2>Группа: выбор по клику (aria-pressed ставит прототип)</h2>
+        <div class="row" id="group">${[1, 2, 3].map(i => `<button type="button" class="chips chips--contrast chips--size-${size}" aria-pressed="${i === 1}">${content}</button>`).join('')}</div>`;
+      document.getElementById('group').onclick = e => {
+        const b = e.target.closest('.chips'); if (!b) return;
+        for (const c of e.currentTarget.children) c.setAttribute('aria-pressed', c === b);
+      };
+    }
+    document.getElementById('theme').onchange = e => {
+      if (e.target.value) document.documentElement.setAttribute('data-ui-theme', e.target.value);
+      else document.documentElement.removeAttribute('data-ui-theme');
+    };
+    for (const id of ['size', 'pos']) document.getElementById(id).onchange = render;
+    render();
+  </script>
+</body>
+</html>

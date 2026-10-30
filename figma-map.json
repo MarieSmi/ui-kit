@@ -161,6 +161,52 @@
         "Контент#4587:0": { "kit": "любая разметка в .wg__content" },
         "toolbar": { "kit": "инстанс toolbar style=info: настройки U+E75D, удалить U+EB72, ещё U+EAB4 — разметка по записи toolbar" }
       }
+    },
+    "chips": {
+      "kit": "components/chips",
+      "since": "1.7.0",
+      "figma": {
+        "fileKey": "nuC4KFMiS36uDWDUp9wKGl",
+        "file": "⚙️ Default components",
+        "page": "20059:3431",
+        "showcase": "1433:6269"
+      },
+      "element": "<button class=\"chips …\"><span class=\"chips__caption\">…</span><span class=\"chips__icon\">…</span><span class=\"chips__counter\">…</span></button>",
+      "base": "chips",
+      "sets": [
+        { "name": "web/chips", "node": "20059:4296", "key": "d4e42c524af37300bcb092c0339fdbbadf5583ed", "class": "chips" },
+        { "name": "web/roundChips", "node": "20059:4457", "key": "56314166c3d5125f0a1f7bae6d015e8487a045a3", "class": "chips chips--round",
+          "note": "свойства как у web/chips, без readonly; число — в .chips__caption" },
+        { "name": "_fontSizeChips", "node": "20059:4632", "key": "bc698f9c16ac354eb49c43bfcaaa3246c65637a7", "class": null,
+          "note": "вложенное содержимое чипса: в ките — дети .chips" },
+        { "name": "_counterContent", "node": "20059:4738", "key": "97b2718ecbe4f04567b7e62d901ad7c4717740a3", "class": "chips__counter" },
+        { "name": "_buttons", "node": "18813:5910", "key": "4da5413c7d1674134969ca4c35067c4018a5cdf9", "class": "chips chips--add",
+          "page": "18813:1884", "note": "страница «✅ Добавление данных», кнопки строки extendedBlockList (18813:5927); только размер M" }
+      ],
+      "properties": {
+        "inlineHeight": { "class": "chips--size-{value}", "values": ["m", "l", "xl", "5xl"], "default": "l", "note": "значения в Figma заглавные (M, L, XL, 5XL) — класс в нижнем регистре; в Figma по умолчанию M, в ките — l" },
+        "contrast": { "true": "chips--contrast", "false": null },
+        "viewMode": { "filled": null, "ghost": "chips--ghost", "note": "ghost в макете только при contrast=false" },
+        "selectedStyle": { "default": null, "primary": "chips--style-primary", "secondary": "chips--style-secondary", "contrast": "chips--style-contrast",
+          "note": "primary / secondary видны только у выбранного контрастного; contrast — только при contrast=false и выглядит как default" },
+        "selected": { "true": "is-selected", "false": null, "alt": "aria-pressed=\"true\"" },
+        "readonly": { "true": "is-readonly", "false": null, "alt": ":disabled", "note": "в макете только у contrast=true, selectedStyle=default; у roundChips нет" },
+        "⛔hover": { "true": "is-hover", "false": null, "alt": ":hover" },
+        "_fontSizeChips.iconPosition": { "right": "порядок: .chips__caption, .chips__icon, .chips__counter", "left": "порядок: .chips__icon, .chips__caption, .chips__counter", "only": "без .chips__caption" },
+        "_buttons.button": { "text": "<span class=\"chips__caption\">", "icon": "chips--icon с одной .chips__icon" },
+        "_buttons.style": { "default": "chips--add-default", "contrast": "chips--add-contrast", "filter": "chips--add-filter" },
+        "_buttons.hover": { "true": "is-hover", "false": null, "alt": ":hover" }
+      },
+      "content": {
+        "textTemplate#8930:0": { "kit": "текст в .chips__caption" },
+        "iconVisible#8930:6": { "true": "есть .chips__icon", "false": "без .chips__icon" },
+        "countetVisible#8930:17": { "true": "есть .chips__counter", "false": "без .chips__counter" },
+        "counterTemplate#8930:2": { "kit": "текст в .chips__counter" },
+        "roundTextTemplate#8930:8": { "kit": "число в .chips__caption круглого чипса" },
+        "icon": { "kit": "глиф в .chips__icon: в макете U+E9E2 (шрифт cbuc-icons, в 5XL — cbuc-icons24) или svg" },
+        "_buttons.text#29816:0": { "kit": "текст в .chips__caption" },
+        "_buttons.icon": { "kit": "глиф U+EAB4 («ещё», cbuc-icons24) в .chips__icon" }
+      }
     }
   }
 }

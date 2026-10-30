@@ -1,0 +1,183 @@
+/*!
+ * chips — чипс (Figma nuC4KFMiS36uDWDUp9wKGl, страница «✅ Чипсы» 20059:3431, component set «web/chips» 20059:4296).
+ * Круглый — component set «web/roundChips» 20059:4457 → .chips--round, свойства те же, без readonly.
+ * Добавление данных — component set «_buttons» 18813:5910: style → .chips--add-default / -contrast / -filter,
+ * button=icon → .chips--icon, hover → .is-hover (и :hover).
+ * Свойства: inlineHeight → .chips--size-m / -l / -xl / -5xl, contrast=true → .chips--contrast, viewMode=ghost →
+ * .chips--ghost, selectedStyle → .chips--style-primary / -secondary / -contrast; selected / readonly / ⛔hover →
+ * .is-selected / .is-readonly / .is-hover (и aria-pressed="true" / :disabled / :hover).
+ * Содержимое (_fontSizeChips 20059:4632) — .chips__caption, .chips__icon, .chips__counter в любом наборе:
+ * iconPosition=left / right — порядок в разметке, only — без подписи. Цвета и размеры — токены ui-kit
+ * (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/chips
+ *
+ * Устройство: вид (.chips, .chips--contrast) задаёт цвета покоя --ch-*-r и наведения --ch-*-h, выбор и readonly
+ * подменяют их целиком, правило наведения внизу выбирает нужный набор. У выбранного и readonly наведения в макете
+ * нет: их -h равны -r.
+ */
+
+/* ---------- Основа и размеры (по умолчанию l; в Figma по умолчанию M) ---------- */
+.chips {
+  --ch-h: var(--inline_height-inline_height_l);
+  --ch-px: var(--offset-offset_m);
+  --ch-gap: var(--offset-offset_2xs);
+  --ch-fs: var(--font-font-size-font-size_l);
+  --ch-is: var(--icon-icon_size-icon-size_xs);
+  --ch-if: var(--icon-font-family-xs_icon_font-family);
+  --ch-sh-d: 0 0 var(--blur-shadow-blur_d) var(--color-shadow-color_d); /* shadow_d; смещение 0 0 — нет токена */
+  --ch-sh-b: 0 0 var(--blur-shadow-blur_b) var(--color-shadow-color_b); /* shadow_b; смещение 0 0 — нет токена */
+
+  /* Неконтрастный filled: покой и наведение. Без тени — «0 0 transparent»: none в списке box-shadow ломает всё свойство */
+  --ch-bg-r: var(--background-contrast-pale_color);
+  --ch-bg-h: var(--ch-bg-r);
+  --ch-bd-r: transparent;
+  --ch-bd-h: var(--border-hover_border-color);
+  --ch-sh-r: 0 0 transparent;
+  --ch-sh-h: 0 0 transparent;
+  --ch-fg-r: var(--text-text-color);
+  --ch-fg-h: var(--ch-fg-r);
+  --ch-ic-r: var(--icon-label_icon-color);
+  --ch-ic-h: var(--ch-ic-r);
+  --ch-cn-r: var(--text-primary_text-color);
+  --ch-cn-h: var(--ch-cn-r);
+
+  box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--ch-gap);
+  height: var(--ch-h); min-width: 0; margin: 0; padding: 0 var(--ch-px); border: 0;
+  border-radius: var(--components-button-border-radius_button);
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--ch-fs); font-weight: var(--font-font-weight-regular); line-height: normal;
+  white-space: nowrap; text-decoration: none; cursor: pointer; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  color: var(--ch-fg-r);
+  background: var(--ch-bg-r);
+  box-shadow: inset 0 0 0 1px var(--ch-bd-r), var(--ch-sh-r); /* рамка внутрь, как stroke INSIDE в Figma; 1px — нет токена */
+}
+.chips--size-m {
+  --ch-h: var(--inline_height-inline_height_m);
+  --ch-fs: var(--font-font-size-font-size_m);
+}
+.chips--size-l { /* то же, что по умолчанию: класс нужен, чтобы размер был виден в разметке */ }
+.chips--size-xl {
+  --ch-h: var(--inline_height-inline_height_xl);
+  --ch-px: var(--offset-offset_l);
+  --ch-gap: var(--offset-offset_s);
+  --ch-fs: var(--font-font-size-font-size_xl);
+  --ch-is: var(--icon-icon_size-icon-size_s);
+  --ch-if: var(--icon-font-family-s_icon_font-family);
+}
+.chips--size-5xl {
+  --ch-h: var(--inline_height-inline_height_5xl);
+  --ch-px: var(--offset-offset_2xl);
+  --ch-gap: var(--offset-offset_m);
+  --ch-fs: var(--font-font-size-font-size_5xl);
+  --ch-is: var(--icon-icon_size-icon-size_m);
+  --ch-if: var(--icon-font-family-m_icon_font-family);
+  --ch-sh-d: var(--ch-sh-b); /* в макете у 5XL и в покое тень shadow_b */
+}
+
+/* Круглый (web/roundChips 20059:4457): квадрат со стороной в высоту, число — в .chips__caption (цвет подписи).
+   Ширина фиксирована, как в макете; readonly в макете нет */
+.chips--round { width: var(--ch-h); padding: 0; }
+
+/* Подпись и счётчик — текст; иконка — глиф шрифта иконок или svg */
+.chips__caption { color: inherit; }
+.chips__counter { color: var(--ch-cn-r); }
+.chips__icon {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: var(--ch-is); height: var(--ch-is);
+  font-family: var(--ch-if); font-size: var(--ch-is); font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--ch-ic-r);
+}
+.chips__icon svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+/* Focus в макете нет: остаётся обводка браузера по :focus-visible */
+
+/* ---------- Неконтрастные: ghost и выбранный ---------- */
+.chips--ghost { --ch-bg-r: transparent; --ch-bg-h: var(--background-contrast-pale_color); }
+/* selectedStyle у неконтрастных на вид не влияет: выбранный одинаков у всех стилей и у ghost */
+.chips.is-selected, .chips[aria-pressed="true"] {
+  --ch-bg-r: var(--components-button-default_contrast_background-color_button);
+  --ch-bd-r: var(--border-unaccented_hover_border-color);
+  --ch-bg-h: var(--ch-bg-r); --ch-bd-h: var(--ch-bd-r);
+}
+
+/* ---------- Контрастные (contrast=true) ---------- */
+.chips--contrast {
+  --ch-bg-r: var(--components-button-default_contrast_background-color_button);
+  --ch-bg-h: var(--ch-bg-r);
+  --ch-bd-r: transparent;
+  --ch-bd-h: transparent;
+  --ch-sh-r: var(--ch-sh-d);
+  --ch-sh-h: var(--ch-sh-b);
+}
+/* Выбранный: заливка по selectedStyle, текст, иконка и счётчик — цвета выбранного, без тени */
+.chips--contrast.is-selected, .chips--contrast[aria-pressed="true"] {
+  --ch-sel: var(--extra-item_selected_color);
+  --ch-bg-r: var(--ch-sel); --ch-bg-h: var(--ch-sel);
+  --ch-bd-r: transparent; --ch-bd-h: transparent;
+  --ch-sh-r: 0 0 transparent; --ch-sh-h: 0 0 transparent;
+  --ch-fg-r: var(--extra-item_selected_text-color); --ch-fg-h: var(--ch-fg-r);
+  --ch-ic-r: var(--extra-item_selected_icon-color); --ch-ic-h: var(--ch-ic-r);
+  --ch-cn-r: var(--extra-item_selected_text-color); --ch-cn-h: var(--ch-cn-r);
+}
+.chips--contrast.chips--style-primary { --ch-sel: var(--background-contrast-primary_color); }
+.chips--contrast.chips--style-secondary { --ch-sel: var(--background-contrast-secondary_color); }
+.chips--style-contrast { /* в макете только у неконтрастных и выглядит как default: класс нужен для соответствия свойству */ }
+
+/* readonly: в макете только у контрастных default */
+.chips--contrast.is-readonly, .chips--contrast:disabled {
+  --ch-bg-r: var(--background-background-color);
+  --ch-bd-r: var(--border-readonly_border-color);
+  --ch-sh-r: 0 0 transparent;
+  --ch-fg-r: var(--text-readonly_text-color);
+  --ch-ic-r: var(--icon-readonly_icon-color);
+  --ch-cn-r: var(--text-readonly_text-color);
+}
+.chips--contrast.is-readonly.is-selected, .chips--contrast.is-readonly[aria-pressed="true"],
+.chips--contrast:disabled.is-selected, .chips--contrast:disabled[aria-pressed="true"] {
+  --ch-bg-r: var(--background-readonly_background-color);
+  --ch-bd-r: transparent;
+  --ch-fg-r: var(--text-contrast_text-color);
+  --ch-ic-r: var(--icon-contrast_icon-color);
+  --ch-cn-r: var(--text-contrast_text-color);
+}
+.chips.is-readonly, .chips:disabled { cursor: default; }
+
+/* ---------- Добавление данных (_buttons 18813:5910, страница «✅ Добавление данных» 18813:1884) ----------
+   Кнопки строки extendedBlockList: .chips--add со стилем .chips--add-default (по умолчанию) / -contrast / -filter,
+   кнопка-иконка — ещё .chips--icon. В макете только размер M, без selected и readonly: размер не меняется
+   классами .chips--size-* */
+.chips--add {
+  --ch-h: var(--inline_height-inline_height_m);
+  --ch-px: var(--offset-offset_m);
+  --ch-fs: var(--font-font-size-font-size_m);
+  --ch-is: var(--icon-icon_size-icon-size_m);
+  --ch-if: var(--icon-font-family-m_icon_font-family);
+  --ch-bg-r: var(--background-contrast-pale_color);
+  --ch-bg-h: var(--background-contrast-pale_hover_color);
+  --ch-bd-r: transparent; --ch-bd-h: transparent;
+  --ch-sh-r: 0 0 transparent; --ch-sh-h: 0 0 transparent;
+  --ch-fg-r: var(--text-label_contrast_text-color); --ch-fg-h: var(--ch-fg-r);
+  --ch-ic-r: var(--icon-label_icon-color); --ch-ic-h: var(--ch-ic-r);
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+}
+.chips--add-default { /* то же, что .chips--add: класс нужен, чтобы стиль был виден в разметке */ }
+.chips--add-contrast {
+  --ch-bg-r: var(--components-button-default_contrast_background-color_button); --ch-bg-h: var(--ch-bg-r);
+  --ch-bd-h: var(--border-hover_border-color);
+}
+.chips--add-filter {
+  --ch-bg-r: transparent;
+  --ch-bg-h: var(--components-button-default_contrast_background-color_button);
+}
+.chips--icon { width: var(--ch-h); padding: 0; }
+
+/* ---------- Наведение: и по мыши, и классом для каталога; у readonly наведения нет ---------- */
+.chips:is(:hover, .is-hover):not(.is-readonly, :disabled) {
+  color: var(--ch-fg-h);
+  background: var(--ch-bg-h);
+  box-shadow: inset 0 0 0 1px var(--ch-bd-h), var(--ch-sh-h);
+}
+.chips:is(:hover, .is-hover):not(.is-readonly, :disabled) .chips__icon { color: var(--ch-ic-h); }
+.chips:is(:hover, .is-hover):not(.is-readonly, :disabled) .chips__counter { color: var(--ch-cn-h); }

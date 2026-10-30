@@ -1,5 +1,19 @@
 # Изменения
 
+## 1.7.0 — 30.10.2026
+
+- Новый компонент `components/chips` — чипс со страницы «✅ Чипсы» библиотеки «⚙️ Default components»
+  (`nuC4KFMiS36uDWDUp9wKGl`): component set `web/chips` (`20059:4296`) и `web/roundChips` (`20059:4457`).
+  Только CSS. Размеры `.chips--size-m / -l / -xl / -5xl` (по умолчанию l), контрастный `.chips--contrast`,
+  ghost `.chips--ghost`, стили выбранного `.chips--style-primary / -secondary / -contrast`. Состояния: hover
+  (`:hover`, `.is-hover`), selected (`aria-pressed="true"`, `.is-selected`, ставит прототип), readonly
+  (`:disabled`, `.is-readonly`, только у контрастных default). Содержимое — `.chips__caption`, `.chips__icon`,
+  `.chips__counter`, положение иконки задаёт порядок в разметке. Круглый — `.chips--round`.
+- Кнопки «Добавление данных» — `_buttons` (`18813:5910`) — в том же компоненте: `.chips--add` со стилями
+  `.chips--add-default / -contrast / -filter` и кнопкой-иконкой `.chips--icon`, только размер M.
+- `figma-map.json`: запись о чипсах.
+- Каталог: раздел «Чипсы» с переключателями inlineHeight и iconPosition. Сборщик артефакта вшивает CSS чипсов.
+
 ## 1.6.0 — 29.10.2026
 
 - Виджет: пустое состояние — `.wg__content.wg__empty` с командами «Колонки», «Виджет», «Строки»

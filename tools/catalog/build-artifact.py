@@ -25,6 +25,7 @@ icon_fonts = ''.join(
 page = page.replace('<link rel="stylesheet" href="../fonts/fonts.css" data-kit="fonts">', '<style data-kit="fonts">' + icon_fonts + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/button/button.css" data-kit="button">', '<style data-kit="button">' + read('components/button/button.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/checkbox/checkbox.css" data-kit="checkbox">', '<style data-kit="checkbox">' + read('components/checkbox/checkbox.css') + '</style>')
+page = page.replace('<link rel="stylesheet" href="../components/chips/chips.css" data-kit="chips">', '<style data-kit="chips">' + read('components/chips/chips.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">', '<style data-kit="toolbar">' + read('components/toolbar/toolbar.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">', '<style data-kit="widget">' + read('components/widget/widget.css') + '</style>')
 page = page.replace("'../components/widget/example/content.png'", "'data:image/png;base64," + base64.b64encode((ROOT / 'components/widget/example/content.png').read_bytes()).decode('ascii') + "'")

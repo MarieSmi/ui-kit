@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="../fonts/fonts.css" data-kit="fonts">
 <link rel="stylesheet" href="../components/button/button.css" data-kit="button">
 <link rel="stylesheet" href="../components/checkbox/checkbox.css" data-kit="checkbox">
+<link rel="stylesheet" href="../components/chips/chips.css" data-kit="chips">
 <link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">
 <link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">
 <style>
@@ -120,6 +121,10 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .btn-grid.on-image th { color: #fff; } /* нет токена: подпись на демонстрационном фоне */
 .btn-grid.on-image th, .btn-grid.on-image td:first-child { padding-left: 8px; }
 #checkbox-body { display: grid; gap: 32px; } /* отступ между видами чекбокса */
+#chips-body { display: grid; gap: 32px; }
+.comp-head .comp-tool + .comp-tool { margin-left: 16px; }
+.btn-grid.on-gray { background: var(--background-unaccented_background-color); } /* в макете contrast и filter стоят на сером: на белом их не видно */
+.btn-grid.on-gray th, .btn-grid.on-gray td:first-child { padding-left: 8px; }
 #toolbar-body { display: grid; gap: 32px; }
 /* Кнопки тулбара без самого тулбара: .tb даёт им цвета стиля, фон и рамку тулбара прячем */
 .tb.tb-bare { background: none; box-shadow: none; overflow: visible; }
@@ -145,7 +150,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.6.0</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.7.0</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -173,7 +178,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     <div class="toc-main">
       <a href="#components" data-group="components">Компоненты</a><a href="#tokens" data-group="tokens">Переменные</a>
     </div>
-    <div class="toc-sub" data-group="components"><a href="#button">Кнопка</a><a href="#checkbox">Чекбокс</a><a href="#toolbar">Тулбар</a><a href="#widget">Виджет</a><a href="#demo-frame">Вспом. обл.</a></div>
+    <div class="toc-sub" data-group="components"><a href="#button">Кнопка</a><a href="#checkbox">Чекбокс</a><a href="#chips">Чипсы</a><a href="#toolbar">Тулбар</a><a href="#widget">Виджет</a><a href="#demo-frame">Вспом. обл.</a></div>
     <div class="toc-sub" data-group="tokens"><a href="#colors">Цвета</a><a href="#sizes">Размеры</a><a href="#shadows">Тени</a></div>
   </nav>
 </header>
@@ -203,6 +208,22 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         <ul class="states">
           <li><b>Значение</b><span>false, true (:checked), triState (:indeterminate, .is-indeterminate)</span></li>
           <li><b>Состояния</b><span>покой, hover (.is-hover), readOnly (.is-readonly, :disabled) — только у outlined</span></li>
+        </ul>
+      </article>
+      <article class="comp" id="chips">
+        <div class="comp-head"><h3>Чипсы</h3><code>components/chips</code>
+          <label class="comp-tool" for="ch-size">inlineHeight
+            <select id="ch-size"><option value="m">m · 24</option><option value="l" selected>l · 28</option><option value="xl">xl · 32</option><option value="5xl">5xl · 48</option></select>
+          </label>
+          <label class="comp-tool" for="ch-pos">iconPosition
+            <select id="ch-pos"><option value="right" selected>right</option><option value="left">left</option><option value="only">only</option></select>
+          </label>
+        </div>
+        <div id="chips-body"></div>
+        <ul class="states">
+          <li><b>Состояния</b><span>покой, hover (.is-hover), selected (.is-selected, aria-pressed), readonly (.is-readonly, :disabled) — только у контрастных default</span></li>
+          <li><b>Содержимое</b><span>.chips__caption, .chips__icon, .chips__counter; iconPosition — порядок в разметке</span></li>
+          <li><b>Добавление данных</b><span>.chips--add: только m, покой и hover</span></li>
         </ul>
       </article>
       <article class="comp" id="toolbar">
@@ -434,6 +455,41 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     [].forEach.call(host.querySelectorAll('[data-tri]'), function (i) { i.indeterminate = true; });
   }
 
+  // Чипсы: по виду — таблица «стиль × состояние»; readonly в макете есть только у контрастных default.
+  // Круглые (web/roundChips) — те же виды без readonly, число в .chips__caption. Добавление данных (_buttons) — только m
+  var CH_CONTRAST = [['default', 'chips--contrast', true], ['primary', 'chips--contrast chips--style-primary', false], ['secondary', 'chips--contrast chips--style-secondary', false]];
+  var CH_PALE = [['filled · default', '', false], ['ghost · default', 'chips--ghost', false], ['filled · contrast', 'chips--style-contrast', false]];
+  var CH_STATES = [['покой', ''], ['hover', ' is-hover'], ['selected', ' is-selected']], CH_RO = [['readonly', ' is-readonly'], ['readonly · selected', ' is-readonly is-selected']];
+  function buildChips() {
+    var host = document.getElementById('chips-body'), size = document.getElementById('ch-size').value, pos = document.getElementById('ch-pos').value;
+    var icon = '<span class="chips__icon" aria-hidden="true">&#xe9e2;</span>', caption = '<span class="chips__caption">Значение</span>', counter = '<span class="chips__counter">12</span>';
+    var content = pos === 'left' ? icon + caption + counter : pos === 'only' ? icon + counter : caption + icon + counter;
+    function chip(cls, round) {
+      return '<button type="button" class="chips ' + cls + ' chips--size-' + size + (round ? ' chips--round">' + '<span class="chips__caption">1</span>' : '">' + content) + '</button>';
+    }
+    function set(title, code, node, views, round) {
+      var states = CH_STATES.concat(!round && views.some(function (v) { return v[2]; }) ? CH_RO : []);
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code> <span>' + node + '</span></h4>' +
+        '<div class="btn-scroll"><table class="btn-grid"><tr><th></th>' + states.map(function (s) { return '<th>' + s[0] + '</th>'; }).join('') + '</tr>' +
+        views.map(function (v) {
+          return '<tr><th>' + v[0] + '</th>' + states.map(function (s) {
+            return '<td>' + (s[1].indexOf('is-readonly') >= 0 && !v[2] ? '' : chip(v[1] + s[1], round)) + '</td>';
+          }).join('') + '</tr>';
+        }).join('') + '</table></div></div>';
+    }
+    var add = '<div class="btn-set"><h4>Добавление данных <code>.chips--add</code> <span>18813:5910</span></h4>' +
+      '<div class="btn-scroll"><table class="btn-grid on-gray"><tr><th></th><th>покой</th><th>hover</th><th>покой</th><th>hover</th></tr>' +
+      ['default', 'contrast', 'filter'].map(function (st) {
+        return '<tr><th>' + st + '</th>' + ['', ' is-hover'].map(function (s) {
+          return '<td><button type="button" class="chips chips--add chips--add-' + st + s + '"><span class="chips__caption">Кнопка</span></button></td>';
+        }).join('') + ['', ' is-hover'].map(function (s) {
+          return '<td><button type="button" class="chips chips--add chips--add-' + st + ' chips--icon' + s + '" aria-label="Ещё"><span class="chips__icon" aria-hidden="true">&#xeab4;</span></button></td>';
+        }).join('') + '</tr>';
+      }).join('') + '</table></div></div>';
+    host.innerHTML = set('Контрастные', '.chips--contrast', '20059:4296', CH_CONTRAST) + set('Неконтрастные', '.chips', '20059:4296', CH_PALE) +
+      set('Круглые контрастные', '.chips--round.chips--contrast', '20059:4457', CH_CONTRAST, true) + set('Круглые неконтрастные', '.chips--round', '20059:4457', CH_PALE, true) + add;
+  }
+
   // Тулбар: тулбар целиком по стилям, дальше по кнопке (component set) — таблица «стиль × состояние».
   // Показаны только info и success: default в каталоге не показываем
   var TB_STYLES = [['default', ''], ['info', ' tb--style-info'], ['success', ' tb--style-success']];
@@ -512,11 +568,11 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     host.innerHTML = wg + em + pl;
   }
 
-  // Меню: раздел «Компоненты» показывает один компонент (#button, #checkbox, #toolbar, #widget, #demo-frame), раздел «Переменные» — цвета,
+  // Меню: раздел «Компоненты» показывает один компонент (#button, #checkbox, #chips, #toolbar, #widget, #demo-frame), раздел «Переменные» — цвета,
   // размеры и тени одной лентой (#colors, #sizes, #shadows). Показан только выбранный раздел.
-  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', toolbar: 'components', widget: 'components', 'demo-frame': 'components',
+  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', chips: 'components', toolbar: 'components', widget: 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
-  var COMPS = ['button', 'checkbox', 'toolbar', 'widget', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
+  var COMPS = ['button', 'checkbox', 'chips', 'toolbar', 'widget', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
   var header = document.querySelector('header.top'), group = null, comp = 'button';
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
   function markSub(id) { nav('.toc-sub a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + id); }); }
@@ -586,10 +642,12 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
   document.getElementById('btn-size').addEventListener('change', buildButtons);
   document.getElementById('cb-pos').addEventListener('change', buildCheckboxes);
+  document.getElementById('ch-size').addEventListener('change', buildChips);
+  document.getElementById('ch-pos').addEventListener('change', buildChips);
 
   var start = location.hash.slice(1);
   if (!go(start, false)) go('button', false);
-  buildButtons(); buildCheckboxes(); buildToolbars(); buildWidgets(); buildColors(); buildSizes(); buildShadows();
+  buildButtons(); buildCheckboxes(); buildChips(); buildToolbars(); buildWidgets(); buildColors(); buildSizes(); buildShadows();
   if (ROUTES[start]) { // открыт по адресу раздела — прокрутить к нему, когда всё построено
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     go(start, true);
