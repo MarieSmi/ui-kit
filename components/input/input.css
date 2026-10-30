@@ -1,0 +1,191 @@
+/*!
+ * input — поля ввода (Figma nuC4KFMiS36uDWDUp9wKGl, страница «✅ Поля ввода» 47:449).
+ * Текстовое поле: Input/text 15786:3347 и деталь inputText 15786:2888.
+ * Свойства: labelPosition=top → .input--label-top, jumpingLabel=true → .input--jumping;
+ * inlineHeight → .input--size-m / -l / -xl; contrastBackground → .input--contrast; required → .input--required;
+ * oldRequired → .input__required в подписи; iconVisible → .input__icon; counterVisible → .input__counter;
+ * focus → :focus-within / .is-focus.
+ * Многострочное поле: Input/textArea 15769:14088 и деталь inputTextArea 15491:764 → .input--textarea с <textarea>;
+ * _hover → :hover / .is-hover, text → значение в поле (:placeholder-shown — пусто).
+ * Дата: Input/date 15769:13000 и деталь inputDate 15769:12699 → .input--date; period → второе .input__field
+ * после .input__dash, calendar → .input__icon после полей.
+ * Время: Input/time 15769:13857 и деталь inputTime 15769:13740 → .input--time.
+ * Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/input
+ *
+ * Устройство: .input__field — строка поля высотой inlineHeight, линия снизу — её border-bottom.
+ * Текст прижат к линии: под ним 2px (_text) и зазор размера --in-gap.
+ */
+
+.input {
+  --in-h: var(--inline_height-inline_height_m);
+  --in-gap: 0px;
+  --in-line: var(--border-unaccented_border-color);
+  --in-bg: transparent;
+  --in-pl: 0px;
+
+  position: relative; box-sizing: border-box;
+  display: flex; align-items: baseline; gap: var(--offset-offset_s);
+  min-width: 0;
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--font-font-size-font-size_m); font-weight: var(--font-font-weight-regular); line-height: normal;
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  color: var(--text-text-color);
+}
+
+/* ---------- Подпись ---------- */
+.input__label {
+  flex: none; display: inline-flex;
+  color: var(--text-label_text-color);
+  white-space: nowrap;
+}
+/* oldRequired: красная звёздочка после подписи, всегда размера m */
+.input__required { color: var(--text-danger_text-color); font-size: var(--font-font-size-font-size_m); }
+.input__required::before { content: "\00a0*"; }
+
+/* Поле с линией и счётчик под ним */
+.input__body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+
+.input__field {
+  position: relative; box-sizing: border-box;
+  display: flex; align-items: flex-end; gap: var(--offset-offset_2xs);
+  height: var(--in-h);
+  padding: 0 0 var(--in-gap) var(--in-pl);
+  border-bottom: 1px solid var(--in-line); /* линия 1px — нет токена */
+  background: var(--in-bg);
+}
+
+.input__control {
+  flex: 1 1 auto; min-width: 0; box-sizing: border-box;
+  margin: 0; padding: 0 0 var(--offset-offset_3xs); border: 0; border-radius: 0; outline: 0;
+  background: transparent; color: inherit; caret-color: currentColor;
+  font: inherit; letter-spacing: inherit;
+  appearance: none;
+}
+.input__control::placeholder { color: var(--components-input-placeholder-color_inputtext); opacity: 1; }
+
+/* iconVisible: иконка 16px в конце поля (глиф шрифта cbuc-icons) */
+.input__icon {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: var(--icon-icon_size-icon-size_s); height: var(--icon-icon_size-icon-size_s);
+  margin-bottom: var(--offset-offset_3xs);
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+  line-height: 1; letter-spacing: 0; color: var(--icon-unaccented_icon-color);
+}
+
+/* counterVisible: «0/100» справа под линией. Число меняет прототип */
+.input__counter {
+  align-self: flex-end;
+  font-size: var(--font-font-size-font-size_xs);
+  color: var(--text-unaccented_text-color);
+}
+
+/* ---------- labelPosition=top ---------- */
+.input--label-top { flex-direction: column; align-items: stretch; gap: 0; }
+.input--label-top .input__body { flex: none; }
+
+/* ---------- jumpingLabel=true: подпись XS над полем ----------
+ * В макете один вид: подпись XS сверху. Пока поле пустое и без фокуса, подпись лежит в поле вместо
+ * плейсхолдера (размер m) и «прыгает» вверх при фокусе или вводе — допущение, в макете этого нет.
+ * Для этого у input нужен атрибут placeholder (хотя бы " "). */
+.input--jumping { flex-direction: column; align-items: stretch; gap: 0; }
+.input--jumping .input__body { flex: none; }
+.input--jumping .input__label {
+  height: 15px; /* высота _label/XS — нет токена */
+  align-items: flex-start;
+  font-size: var(--font-font-size-font-size_xs);
+  transform-origin: 0 0;
+  transition: transform .15s, font-size .15s; /* нет токена */
+  pointer-events: none;
+}
+.input--jumping:has(.input__control:placeholder-shown):not(:focus-within, .is-focus) .input__label {
+  font-size: var(--font-font-size-font-size_m);
+  /* в поле, на место плейсхолдера: 15px подписи + высота поля − линия 1px − отступ 2px − зазор − строка */
+  transform: translate(var(--in-pl), calc(12px + var(--in-h) - var(--in-gap) - 1lh)); /* нет токена */
+}
+.input--jumping:has(.input__control:placeholder-shown):not(:focus-within, .is-focus) .input__control::placeholder {
+  color: transparent;
+}
+
+/* ---------- inlineHeight ---------- */
+.input--size-l { --in-h: var(--inline_height-inline_height_l); --in-gap: 2px; }  /* зазор в макете числом — нет токена */
+.input--size-xl { --in-h: var(--inline_height-inline_height_xl); --in-gap: 4px; } /* зазор в макете числом — нет токена */
+
+/* ---------- contrastBackground: белая плашка без линии, текст с отступом ---------- */
+.input--contrast {
+  --in-bg: var(--background-background-color);
+  --in-line: transparent;
+  --in-pl: var(--components-input-padding-horizontal_inputtext);
+}
+
+/* ---------- focus ----------
+ * Линию меняет поле в фокусе (у даты с периодом их два); .is-focus на .input показывает фокус у всех полей.
+ * У textArea фокуса в макете нет. */
+.input:not(.input--textarea).is-focus,
+.input:not(.input--textarea) .input__field:is(:focus-within, .is-focus) { --in-line: var(--border-unaccented_hover_border-color); }
+.input--contrast:not(.input--textarea).is-focus,
+.input--contrast:not(.input--textarea) .input__field:is(:focus-within, .is-focus) { --in-line: var(--border-unaccented_border-color); }
+
+/* ---------- required (новый вид): красное свечение на линии слева ----------
+ * В макете — радиальный градиент 20×3 со сдвигом −4px; цвета — оттенки border-danger, взяты через color-mix. */
+.input--required .input__field::after {
+  content: ""; position: absolute; left: var(--in-pl); bottom: -2px; /* на линии: 3px по центру 1px — нет токена */
+  width: 16px; height: 3px; /* видимая часть градиента из макета — нет токена */
+  background: radial-gradient(10px 2.17px at 6px 50%, /* размеры градиента из макета — нет токена */
+    var(--border-danger_border-color) 0%,
+    color-mix(in srgb, var(--border-danger_border-color) 75%, transparent) 20%,
+    color-mix(in srgb, var(--border-danger_border-color) 50%, transparent) 40%,
+    transparent 80%);
+  pointer-events: none;
+}
+
+/* ---------- Многострочное поле: Input/textArea ----------
+ * Растёт по тексту (field-sizing: content; там, где не поддерживается, — высота по rows).
+ * В макете обводки внутри рамки: сверху бледный разделитель, снизу линия, отступы 3px с каждой стороны
+ * отсчитаны вместе с ними — поэтому в CSS отступ на 1px меньше токена. */
+.input--textarea { align-items: flex-start; }
+.input--textarea:not(.input--label-top) .input__label { padding-top: var(--components-input-padding-vertical_inputarea); }
+.input--textarea .input__field {
+  height: auto; align-items: flex-start;
+  padding: calc(var(--components-input-padding-vertical_inputarea) - 1px) var(--in-pl); /* минус обводка 1px — нет токена */
+  border-top: 1px solid var(--extra-separator_color); /* обводка 1px — нет токена */
+}
+.input--textarea .input__control {
+  display: block; resize: none; overflow: hidden;
+  field-sizing: content; min-height: calc(1lh + var(--offset-offset_3xs));
+}
+
+/* _hover=true */
+.input--textarea:is(:hover, .is-hover) { --in-line: var(--border-unaccented_hover_border-color); }
+.input--textarea.input--contrast:is(:hover, .is-hover) { --in-line: var(--border-unaccented_border-color); }
+
+/* required у textArea, даты и времени в макете только у пустого поля */
+:is(.input--textarea, .input--date, .input--time).input--required .input__field:not(:has(.input__control:placeholder-shown))::after { content: none; }
+
+/* ---------- Дата и время: Input/date, Input/time ----------
+ * Поле фиксированной ширины с маской в плейсхолдере: «  .  .» у даты (56px), «  :» у времени (36px).
+ * У даты ещё период — второе поле через тире — и иконка календаря.
+ * Маска не вводится сама: формат ДД.ММ.ГГ и ЧЧ:ММ, проверку и календарь делает прототип. */
+.input--date { --in-w: 56px; } /* ширина поля даты в макете — нет токена */
+.input--time { --in-w: 36px; } /* ширина поля времени в макете — нет токена */
+:is(.input--date, .input--time) .input__body { flex: none; flex-direction: row; align-items: center; }
+:is(.input--date, .input--time) .input__field {
+  flex: none;
+  width: calc(var(--in-w) + 2 * var(--in-pl));
+  padding-right: var(--in-pl);
+}
+:is(.input--date, .input--time) .input__control::placeholder { color: var(--text-text-color); } /* в макете маска цвета текста */
+/* period: тире между полями */
+.input__dash {
+  flex: none; box-sizing: content-box;
+  width: var(--components-input-dash_length_daterangeinput); height: 1px; /* толщина 1px — нет токена */
+  padding: 0 var(--offset-offset_2xs);
+  background: var(--text-text-color) content-box;
+}
+/* calendar: иконка после полей */
+.input--date .input__icon {
+  margin: 0 0 0 var(--offset-offset_s);
+  color: var(--icon-label_icon-color);
+}
+/* Подпись сверху на контрастном фоне — с отступом, как текст в поле */
+.input--date.input--contrast.input--label-top .input__label { padding-left: var(--in-pl); }

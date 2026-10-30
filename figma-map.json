@@ -208,6 +208,57 @@
         "_buttons.icon": { "kit": "глиф U+EAB4 («ещё», cbuc-icons24) в .chips__icon" }
       }
     },
+    "input": {
+      "kit": "components/input",
+      "since": "1.9.0",
+      "figma": {
+        "fileKey": "nuC4KFMiS36uDWDUp9wKGl",
+        "file": "⚙️ Default components",
+        "page": "47:449",
+        "section": "15830:4402",
+        "note": "страница «✅ Поля ввода»; Input/lookup (15765:10801) и inputLookup в кит не входят"
+      },
+      "element": "<label class=\"input …\"><span class=\"input__label\">…</span><span class=\"input__body\"><span class=\"input__field\"><input class=\"input__control\"></span></span></label>",
+      "base": "input",
+      "sets": [
+        { "name": "Input/text", "node": "15786:3347", "key": null, "class": "input" },
+        { "name": "Input/textArea", "node": "15769:14088", "key": null, "class": "input input--textarea", "note": "<textarea class=\"input__control\" rows=\"1\">" },
+        { "name": "Input/date", "node": "15769:13000", "key": null, "class": "input input--date" },
+        { "name": "Input/time", "node": "15769:13857", "key": null, "class": "input input--time" },
+        { "name": "inputText", "node": "15786:2888", "key": null, "class": "input__field", "note": "деталь: строка поля с линией" },
+        { "name": "inputTextArea", "node": "15491:764", "key": null, "class": "input--textarea .input__field" },
+        { "name": "inputDate", "node": "15769:12699", "key": null, "class": "input--date .input__field" },
+        { "name": "inputTime", "node": "15769:13740", "key": null, "class": "input--time .input__field" },
+        { "name": "_label/M", "node": "15426:2613", "key": null, "class": "input__label" },
+        { "name": "_label/XS", "node": "15711:2765", "key": null, "class": "input--jumping .input__label" },
+        { "name": "_required", "node": "15713:778", "key": null, "class": null,
+          "note": "type=old — .input__required в подписи, type=new — класс .input--required" },
+        { "name": "_counter", "node": "17477:1295", "key": null, "class": "input__counter" }
+      ],
+      "keysTodo": "ключи null не прочитаны: доступ Figma MCP вернул 403 — дочитать через use_figma (mainComponent.parent.key)",
+      "properties": {
+        "labelPosition": { "left": null, "top": "input--label-top" },
+        "jumpingLabel": { "true": "input--jumping", "false": null, "sets": ["Input/text"], "note": "вместо input--label-top; у input нужен placeholder" },
+        "label / labelVisible": { "true": "есть .input__label", "false": "без .input__label" },
+        "oldRequired": { "true": "<span class=\"input__required\"> в .input__label", "false": null },
+        "required": { "true": "input--required", "false": null, "note": "у textArea, даты и времени свечение только у пустого поля" },
+        "counterVisible": { "true": "есть .input__counter, число пишет прототип", "false": null, "sets": ["Input/text", "Input/textArea"] },
+        "inlineHeight": { "class": "input--size-{value}", "values": ["m", "l", "xl"], "default": "m", "note": "у деталей inputText, inputDate, inputTime" },
+        "contrastBackground / _contrastBackground": { "true": "input--contrast", "false": null },
+        "focus": { "true": "is-focus", "false": null, "alt": ":focus-within у .input__field", "note": "у textArea фокуса нет" },
+        "_hover": { "true": "is-hover", "false": null, "alt": ":hover", "sets": ["inputTextArea"] },
+        "text": { "true": "значение в .input__control", "false": "пусто (:placeholder-shown)" },
+        "period": { "true": ".input__dash и второе .input__field", "false": "одно поле", "sets": ["Input/date"] },
+        "calendar": { "true": "есть .input__icon с глифом U+E75F", "false": null, "sets": ["Input/date"] },
+        "iconVisible": { "true": "есть .input__icon с глифом U+E66C внутри .input__field", "false": null, "sets": ["inputText"] },
+        "fill": { "kit": "в макете только false — класса нет" }
+      },
+      "content": {
+        "_label name": { "kit": "текст в .input__label" },
+        "_text": { "kit": "значение — value у .input__control; плейсхолдер — placeholder (у даты «    .    .», у времени «    :»)" },
+        "_counter": { "kit": "текст в .input__counter, например «0/100»" }
+      }
+    },
     "master-list": {
       "kit": "components/master-list",
       "since": "1.8.0",

@@ -1,5 +1,20 @@
 # Изменения
 
+## 1.9.0 — 30.10.2026
+
+- Новый компонент `components/input` — поля ввода со страницы «✅ Поля ввода» библиотеки «⚙️ Default components»
+  (`nuC4KFMiS36uDWDUp9wKGl`, `47:449`): `Input/text` (`15786:3347`), `Input/textArea` (`15769:14088`, `.input--textarea`),
+  `Input/date` (`15769:13000`, `.input--date`), `Input/time` (`15769:13857`, `.input--time`). Только CSS. Метка
+  `.input__label` слева, сверху (`.input--label-top`) или прыгающая (`.input--jumping`, только у однострочного).
+  Размеры `.input--size-m / -l / -xl`, контрастный фон `.input--contrast`, обязательность — звёздочка
+  `.input__required` и свечение `.input--required`, иконка `.input__icon`, счётчик `.input__counter`. У даты —
+  период (`.input__dash` и второе поле) и календарь. Состояния: focus (`:focus-within` у поля, `.is-focus`), у
+  многострочного — hover (`:hover`, `.is-hover`). Многострочное растёт по тексту (`field-sizing: content`).
+  `Input/lookup` не входит.
+- `figma-map.json`: запись о полях ввода. Ключи наборов не прочитаны — Figma MCP отвечал 403.
+- Каталог: раздел «Поля ввода» с переключателями поля, inlineHeight и метки. Сборщик артефакта вшивает CSS
+  полей ввода.
+
 ## 1.8.0 — 30.10.2026
 
 - Новый компонент `components/master-list` — список мастер-области двухколоночного реестра со страницы

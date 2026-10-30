@@ -16,13 +16,13 @@
 Файлы раздаёт jsDelivr прямо из GitHub по тегу:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.8.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.8.0/components/<имя>/<имя>.css">
-<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.8.0/components/<имя>/<имя>.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.9.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.9.0/components/<имя>/<имя>.css">
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.9.0/components/<имя>/<имя>.js"></script>
 ```
 
 - `tokens.css` подключается **первым**: компоненты берут значения из его переменных.
-- Версия в адресе (`@1.8.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
+- Версия в адресе (`@1.9.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
 - Во всех адресах одного прототипа должна стоять одна и та же версия.
 - В артефактах Claude адреса `cdn.jsdelivr.net/gh/` не работают: там код кита вшивается в файл.
 
@@ -32,7 +32,7 @@
 прототип подключает сам, отдельным файлом:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.8.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.9.0/fonts/fonts.css">
 ```
 
 | Шрифт | Файлы | Где используется |
@@ -78,6 +78,7 @@ Figma: он обновит файлы в `tools/tokens/`, запустит `pyth
 | Кнопка: 8 видов, стили, размеры m / xl / 5xl, кнопка-иконка | [`components/button`](components/button/) | `nuC4KFMiS36uDWDUp9wKGl` · `322:2761` | 1.1.0 |
 | Чекбокс: outlined / filled / ghost, resetValue, третье состояние, подпись слева | [`components/checkbox`](components/checkbox/) | `nuC4KFMiS36uDWDUp9wKGl` · `14613:12425` | 1.2.0 |
 | Чипсы: контрастные и неконтрастные, ghost, стили выбранного, размеры m / l / xl / 5xl, подпись, иконка и счётчик, круглые, кнопки «Добавление данных» | [`components/chips`](components/chips/) | `nuC4KFMiS36uDWDUp9wKGl` · `20059:4296`, `20059:4457`, `18813:5910` | 1.7.0 |
+| Поля ввода: однострочное, многострочное, дата (период, календарь), время; метка слева / сверху / прыгающая, размеры m / l / xl, контрастный фон, обязательность, иконка и счётчик | [`components/input`](components/input/) | `nuC4KFMiS36uDWDUp9wKGl` · `15786:3347`, `15769:14088`, `15769:13000`, `15769:13857` | 1.9.0 |
 | Тулбар: стили default / info / success, кнопки-иконки, удаление, подтверждение, подпись со стрелкой, разделитель | [`components/toolbar`](components/toolbar/) | `rHabzni5OI5D4fxBLQdj2m` · `854:7085` | 1.4.0 |
 | Виджет: рамка при наведении и выделении, кружки-плюсы на сторонах, слот для тулбара, родитель (уровень 2), пустое состояние | [`components/widget`](components/widget/) | `rHabzni5OI5D4fxBLQdj2m` · `131:17349` | 1.5.0 |
 | Мастер-список: «Список» и «Навигация», счётчики, кнопка-стрелка, переключатель, дерево до 3 уровней, заголовок группы | [`components/master-list`](components/master-list/) | `nuC4KFMiS36uDWDUp9wKGl` · `25581:1272`, `34211:1076`, `14187:114` | 1.8.0 |

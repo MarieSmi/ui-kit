@@ -26,6 +26,7 @@ page = page.replace('<link rel="stylesheet" href="../fonts/fonts.css" data-kit="
 page = page.replace('<link rel="stylesheet" href="../components/button/button.css" data-kit="button">', '<style data-kit="button">' + read('components/button/button.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/checkbox/checkbox.css" data-kit="checkbox">', '<style data-kit="checkbox">' + read('components/checkbox/checkbox.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/chips/chips.css" data-kit="chips">', '<style data-kit="chips">' + read('components/chips/chips.css') + '</style>')
+page = page.replace('<link rel="stylesheet" href="../components/input/input.css" data-kit="input">', '<style data-kit="input">' + read('components/input/input.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">', '<style data-kit="toolbar">' + read('components/toolbar/toolbar.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">', '<style data-kit="widget">' + read('components/widget/widget.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/master-list/master-list.css" data-kit="master-list">', '<style data-kit="master-list">' + read('components/master-list/master-list.css') + '</style>')

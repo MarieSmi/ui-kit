@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>input — пример</title>
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../input.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    table { border-collapse: collapse; }
+    th { padding: 4px 16px 4px 0; font-weight: 400; text-align: left; color: var(--text-label_text-color); white-space: nowrap; }
+    td { padding: 8px 24px 8px 0; vertical-align: top; }
+    td > .input:not(.input--date, .input--time) { width: 160px; } /* ширина инстансов в макете; дата и время — по содержимому */
+    /* подпись строки — на уровне строки поля */
+    tr > th:first-child { vertical-align: top; padding-top: 12px; }
+    /* серый фон: белый contrastBackground на белом не виден */
+    .on-gray { background: var(--background-unaccented_background-color); }
+    .on-gray th:first-child { padding-left: 12px; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>Тема <select id="theme">
+      <option value="">Default Light</option>
+      <option>default-dark</option><option>large-light</option><option>dark-v3</option><option>large-dark</option>
+      <option>pink</option><option>dark-v2</option><option>blackblue</option><option>gray</option>
+    </select></label>
+    <label>Поле <select id="kind">
+      <option value="text">Однострочное — Input/text</option>
+      <option value="area">Многострочное — Input/textArea</option>
+      <option value="date">Дата — Input/date</option>
+      <option value="time">Время — Input/time</option>
+    </select></label>
+    <label>inlineHeight <select id="size">
+      <option>m</option><option>l</option><option>xl</option>
+    </select></label>
+    <label>Метка <select id="label">
+      <option value="left">left</option>
+      <option value="top">top</option>
+      <option value="jumping">top · jumpingLabel</option>
+      <option value="none">без подписи</option>
+    </select></label>
+  </div>
+  <div id="out"></div>
+
+  <script>
+    // Глиф иконки из макета — U+E66C шрифта cbuc-icons
+    const ICON = '<span class="input__icon" aria-hidden="true">&#xE66C;</span>';
+    const LONG = 'Длинное значение, которое не помещается в одну строку и переносится';
+    const LABEL_CLS = { left: '', top: 'input--label-top', jumping: 'input--jumping', none: '' };
+    const $ = id => document.getElementById(id);
+
+    function render() {
+      const kind = $('kind').value, area = kind === 'area', date = kind === 'date', time = kind === 'time';
+      // inlineHeight есть у всех, кроме многострочного, jumpingLabel — только у однострочного
+      $('size').disabled = area;
+      $('label').querySelector('[value=jumping]').disabled = kind !== 'text';
+      if (kind !== 'text' && $('label').value === 'jumping') $('label').value = 'top';
+      const lab = $('label').value;
+      const base = [area ? 'input--textarea' : `input--size-${$('size').value}`, date || time ? `input--${kind}` : '', LABEL_CLS[lab]];
+
+      // Глиф календаря из макета — U+E75F шрифта cbuc-icons; маска даты — плейсхолдер
+      const dateField = value => `<span class="input__field"><input class="input__control" inputmode="numeric" maxlength="8" ` +
+        `placeholder="&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;." value="${value}"></span>`;
+      const timeField = value => `<span class="input__field"><input class="input__control" inputmode="numeric" maxlength="5" ` +
+        `placeholder="&nbsp;&nbsp;&nbsp;&nbsp;:" value="${value}"></span>`;
+      const control = (value, { icon, period = true, calendar = true }) =>
+        time ? timeField(value) : date ? dateField(value) + (period ? '<span class="input__dash"></span>' + dateField(value) : '') +
+               (calendar ? '<span class="input__icon" aria-hidden="true">&#xE75F;</span>' : '')
+        : `<span class="input__field">` + (area ? `<textarea class="input__control" rows="1" placeholder="text">${value}</textarea>`
+            : `<input class="input__control" placeholder="text" value="${value}">${icon ? ICON : ''}`) + `</span>`;
+
+      const field = (cls, value, opts = {}) =>
+        `<label class="input ${base.concat(cls).filter(Boolean).join(' ')}">` +
+          (lab !== 'none' ? `<span class="input__label">Label${opts.req ? '<span class="input__required"></span>' : ''}</span>` : '') +
+          `<span class="input__body">${control(value, opts)}` +
+          (opts.counter ? `<span class="input__counter">${value.length}/100</span>` : '') +
+        `</span></label>`;
+
+      // Столбцы — состояния из макета: у однострочного и даты focus, у многострочного _hover
+      const state = area ? ['is-hover', 'hover'] : ['is-focus', 'focus'];
+      const values = area ? [['', 'пусто'], ['Значение', 'значение'], [LONG, 'две строки']]
+        : date ? [['', 'пусто'], ['12.12.24', 'значение']] : time ? [['', 'пусто'], ['12:12', 'значение']] : [['', 'пусто'], ['Значение', 'значение']];
+      // по каждому значению — покой и состояние рядом
+      const cols = values.flatMap(([v, vt]) => [['', ''], state].map(([st, t]) => [st, v, t ? `${t} · ${vt}` : vt]));
+      const head = `<tr><th></th>${cols.map(c => `<th>${c[2]}</th>`).join('')}</tr>`;
+      const row = (title, cls, opts) => `<tr><th>${title}</th>${cols.map(([st, v]) => `<td>${field([cls, st], v, opts)}</td>`).join('')}</tr>`;
+
+      $('out').innerHTML =
+        `<h2>contrastBackground=false</h2><table>${head}` +
+          row(date ? 'period · calendar' : 'покой', '') +
+          (date ? row('без period', '', { period: false }) + row('без calendar', '', { calendar: false }) : '') +
+          (lab !== 'none' ? row('oldRequired', '', { req: true }) : '') +
+          row('required', 'input--required') +
+          (kind === 'text' ? row('iconVisible', '', { icon: true }) : '') +
+          (date || time ? '' : row('counterVisible', '', { counter: true })) +
+        '</table>' +
+        `<h2>contrastBackground=true</h2><table class="on-gray">${head}` +
+          row('покой', 'input--contrast') +
+          row('required', 'input--contrast input--required') +
+        '</table>';
+    }
+
+    // Счётчик символов обновляет прототип; здесь — для примера
+    document.addEventListener('input', e => {
+      const c = e.target.closest('.input')?.querySelector('.input__counter');
+      if (c) c.textContent = e.target.value.length + '/100';
+    });
+    $('theme').onchange = e => {
+      if (e.target.value) document.documentElement.setAttribute('data-ui-theme', e.target.value);
+      else document.documentElement.removeAttribute('data-ui-theme');
+    };
+    for (const id of ['kind', 'size', 'label']) $(id).onchange = render;
+    render();
+  </script>
+</body>
+</html>
