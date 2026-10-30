@@ -1,0 +1,263 @@
+/*!
+ * master-list — список мастер-области двухколоночного реестра (Figma nuC4KFMiS36uDWDUp9wKGl, страница
+ * «✅ Списки для двухколоночных реестров» 7571:22445): component set «Список» 25581:1272 → .ml,
+ * «Навигация» 34211:1076 → .ml--nav, брики _bricks/counter 25571:454, _bricks/iconsView 25571:694,
+ * _bricks/offsetHierarhy 34211:1289, переключатель switch 1450:6298; заголовок группы — component set «grouping»
+ * 14187:114 (страница «✅ Группировка» 14187:2) → .ml__group.
+ * Свойства: selected / ⛔ hover → .is-selected / .is-hover (и aria-current / :hover); iconPosition=left / right —
+ * порядок .ml__arrow и .ml__caption в разметке, none — без .ml__arrow. Цвета и размеры — токены ui-kit
+ * (tokens.css подключается раньше). Соответствие всех свойств — figma-map.json, запись master-list.
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/master-list
+ */
+
+/* ---------- Список и пункт ---------- */
+.ml { display: flex; flex-direction: column; gap: 0; margin: 0; padding: 0; list-style: none; }
+
+.ml__item {
+  position: relative; box-sizing: border-box;
+  display: flex; align-items: flex-start;
+  width: 100%; min-width: 0; min-height: var(--components-grid-cell_min-height_grid);
+  margin: 0; border: 0;
+  padding: var(--components-list-master-master_item_padding-top_list) var(--offset-offset_s)
+    var(--components-list-master-master_item_padding-bottom_list)
+    calc(var(--offset-offset_l) + var(--ml-level, 0) * 20px); /* уровень дерева — ниже, 20px — нет токена */
+  border-radius: var(--border-radius-border-radius_xs);
+  background: transparent;
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--font-font-size-font-size_l); font-weight: var(--font-font-weight-regular); line-height: normal;
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  color: var(--text-text-color); text-align: left; text-decoration: none;
+  cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+/* Свёрнутые ветки дерева прототип прячет атрибутом hidden: display: flex выше иначе его перебивает */
+.ml__item[hidden] { display: none; }
+.ml__item:hover, .ml__item.is-hover { background: var(--components-list-master_item_hover_background-color_list); }
+.ml__item.is-selected, .ml__item[aria-current]:not([aria-current="false"]) {
+  background: var(--components-list-master_item_selected_background-color_list);
+  font-weight: var(--font-font-weight-bold);
+}
+/* Focus в макете нет: остаётся обводка браузера по :focus-visible */
+
+/* Полоска выбора (marker/Marker 2246:6908): 3×16, по центру первой строки 24px с отступом снизу 2px */
+.ml__item.is-selected::before, .ml__item[aria-current]:not([aria-current="false"])::before {
+  content: ""; position: absolute; left: 0;
+  top: calc(var(--components-list-master-master_item_padding-top_list)
+    + (var(--icon-icon_size-icon-size_m) - var(--offset-offset_3xs) - 16px) / 2); /* высота маркера 16px — нет токена */
+  width: 3px; height: 16px; /* нет токена */
+  border-radius: var(--border-radius-border-radius_2xs);
+  background: var(--extra-marker_color);
+}
+
+/* ---------- Подпись и стрелка ---------- */
+.ml__caption {
+  flex: 0 1 auto; min-width: 0;
+  padding: 3px 0; /* нет токена */
+  line-height: var(--font-line-height-line-height_m); /* в макете normal, у Inter это 18.4px: строка 24px, как у _bricks/textContent */
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Стрелка раздела (_bricks/iconsView 25571:694): глиф cbuc-icons 16px в строке высотой 24px */
+.ml__arrow {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  min-height: var(--icon-icon_size-icon-size_m);
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+  font-weight: normal; font-style: normal; line-height: 1; letter-spacing: 0;
+  color: var(--icon-label_icon-color);
+}
+.ml__arrow::before { content: "\e9c2"; padding-bottom: 1px; /* нет токена */ }
+/* Дерево: arrowState=down — узел раскрыт (.ml__arrow--down или aria-expanded="true" у пункта),
+   arrowType=fill — залитая стрелка 12px в ячейке 16px (.ml__arrow--fill). ⛔hover — наведение на саму стрелку */
+.ml__arrow--down::before, .ml__item[aria-expanded="true"] > .ml__arrow::before { content: "\e9c1"; }
+.ml__arrow--fill::before {
+  content: "\e96e"; width: var(--icon-icon_size-icon-size_s); text-align: center;
+  font-family: var(--icon-font-family-2xs_icon_font-family); font-size: var(--icon-icon_size-icon-size_2xs);
+}
+.ml__arrow--fill.ml__arrow--down::before, .ml__item[aria-expanded="true"] > .ml__arrow--fill::before { content: "\e96d"; }
+.ml__arrow:hover, .ml__arrow.is-hover { color: var(--icon-label_hover_icon-color); }
+/* Лист дерева: место под стрелку остаётся, чтобы подпись встала на свой уровень, а не под подпись родителя */
+.ml__arrow--empty { visibility: hidden; pointer-events: none; }
+
+/* Отступ иерархии (_bricks/offsetHierarhy 34211:1289): level=1 / 2 / 3 → .ml__item--level-1 / -2 / -3,
+   20px на уровень — нет токена */
+.ml__item--level-1 { --ml-level: 1; }
+.ml__item--level-2 { --ml-level: 2; }
+.ml__item--level-3 { --ml-level: 3; }
+/* iconPosition=left — стрелка перед подписью, right — после; отступы из макета разные */
+.ml__arrow:first-child { padding-right: var(--offset-offset_2xs); }
+.ml__caption + .ml__arrow { padding-left: var(--offset-offset_xs); }
+
+/* ---------- Счётчики и кнопка-стрелка (_bricks/counter 25571:454) ----------
+   Справа от подписи, в строке высотой 24px. itemType=counter → .ml__counter, counter with click →
+   .ml__counter--click, counter with two click → .ml__counter--two-click, arrow → .ml__counter--arrow.
+   Состояния брика: hoverOnItem — наведение на пункт (:hover / .is-hover у .ml__item), hoverOnCounter —
+   наведение на сам счётчик или число (:hover / .is-hover у .ml__counter или .ml__count) */
+.ml__counter {
+  flex: none; align-self: center; box-sizing: border-box;
+  display: inline-flex; align-items: center; gap: var(--offset-offset_m);
+  margin-left: auto; /* прижат вправо: между подписью и счётчиком — свободное место пункта */
+  padding: 1px var(--offset-offset_xs); /* 1px — нет токена */
+  border: 0; border-radius: 100px; /* нет токена */
+  background: transparent;
+  font-family: var(--font-font-family-default), sans-serif;
+  font-size: var(--font-font-size-font-size_m); font-weight: var(--font-font-weight-regular);
+  line-height: var(--font-line-height-line-height_m);
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  white-space: nowrap;
+}
+.ml__count { color: var(--text-primary_text-color); }
+.ml__count--secondary { color: var(--text-label_text-color); }
+
+/* С кликом: весь счётчик — одна кнопка */
+.ml__counter--click { padding-top: var(--offset-offset_3xs); padding-bottom: var(--offset-offset_3xs); cursor: pointer; }
+
+/* С двумя кликами: каждое число — своя кнопка */
+.ml__counter--two-click { gap: 0; padding: 0; }
+.ml__counter--two-click .ml__count {
+  padding: var(--offset-offset_3xs) var(--offset-offset_xs); cursor: pointer;
+}
+.ml__counter--two-click .ml__count:hover, .ml__counter--two-click .ml__count.is-hover {
+  color: var(--text-primary_hover_text-color); text-decoration: underline;
+}
+.ml__counter--two-click .ml__count--secondary:hover, .ml__counter--two-click .ml__count--secondary.is-hover {
+  color: var(--text-label_hover_text-color);
+}
+
+/* Кнопка-стрелка: круг 24px, видна только при наведении на пункт */
+.ml__counter--arrow {
+  padding: var(--offset-offset_2xs); cursor: pointer; opacity: 0;
+}
+.ml__counter--arrow::before {
+  content: "\e9d5"; display: block; width: var(--icon-icon_size-icon-size_s); height: var(--icon-icon_size-icon-size_s);
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+  font-weight: normal; font-style: normal; line-height: 1; letter-spacing: 0; text-align: center;
+  color: var(--icon-label_icon-color);
+}
+
+/* hoverOnItem: у кликабельных счётчиков и стрелки — белая плашка */
+.ml__item:hover :is(.ml__counter--click, .ml__counter--two-click, .ml__counter--arrow),
+.ml__item.is-hover :is(.ml__counter--click, .ml__counter--two-click, .ml__counter--arrow) {
+  background: var(--background-background-color); opacity: 1;
+}
+/* hoverOnCounter: рамка внутрь, как stroke INSIDE в Figma; 1px — нет токена */
+.ml__counter--click:hover, .ml__counter--click.is-hover,
+.ml__counter--arrow:hover, .ml__counter--arrow.is-hover {
+  background: var(--background-background-color); opacity: 1;
+  box-shadow: inset 0 0 0 1px var(--border-unaccented_border-color);
+}
+
+/* ---------- Заголовок группы (component set «grouping» 14187:114, страница «✅ Группировка» 14187:2) ----------
+   Линия-разделитель (_line) и заголовок (_header 14187:86): стрелка .ml__group-expander и текст .ml__group-caption.
+   headerPosition=left / right / center → без модификатора / .ml__group--header-right / --header-center;
+   lineVisible=false → .ml__group--no-line; headerVisible=false — без .ml__group-header;
+   expanderAlign=left / right — порядок стрелки и текста в разметке; style=label / black → без модификатора /
+   .ml__group--style-black; _hover → :hover / .is-hover у .ml__group-header */
+.ml__group {
+  box-sizing: border-box; display: flex; align-items: center;
+  padding: var(--offset-offset_s) 0 var(--offset-offset_2xs);
+  list-style: none;
+}
+/* Линия: 1px по центру строки высотой 20px; слева и справа от заголовка — по положению заголовка */
+.ml__group::before, .ml__group::after {
+  content: ""; flex: 1 1 0; min-width: 0; height: 1px; /* нет токена */
+  background: var(--extra-separator_color);
+}
+.ml__group::before { display: none; }
+.ml__group--header-right::before, .ml__group--header-center::before { display: block; }
+.ml__group--header-right::after { display: none; }
+.ml__group--no-line::before, .ml__group--no-line::after { display: none; }
+.ml__group--no-line.ml__group--header-right { justify-content: flex-end; }
+.ml__group--no-line.ml__group--header-center { justify-content: center; }
+
+.ml__group-header {
+  flex: none; box-sizing: border-box; display: inline-flex; align-items: center; gap: var(--offset-offset_2xs);
+  height: var(--inline_height-inline_height_s); margin: 0; padding: 0 var(--offset-offset_2xs) 0 0; border: 0;
+  background: none; cursor: pointer;
+  font-family: var(--font-font-family-default), sans-serif;
+  font-size: var(--font-font-size-font-size_m); font-weight: var(--font-font-weight-regular); line-height: normal;
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  white-space: nowrap;
+  --ml-gr-fg: var(--text-label_text-color);
+  --ml-gr-ic: var(--icon-label_icon-color);
+  color: var(--ml-gr-fg);
+}
+.ml__group--header-right .ml__group-header { padding: 0 0 0 var(--offset-offset_2xs); }
+.ml__group--header-center .ml__group-header { padding: 0 var(--offset-offset_2xs); }
+/* Текст прижат к низу строки 20px с отступом 2px, как textСontainer в макете */
+.ml__group-caption { align-self: flex-end; padding-bottom: var(--offset-offset_3xs); }
+/* Стрелка-экспандер: глиф cbuc-icons 16px */
+.ml__group-expander {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: var(--icon-icon_size-icon-size_s); height: var(--icon-icon_size-icon-size_s);
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+  font-weight: normal; font-style: normal; line-height: 1; letter-spacing: 0;
+  color: var(--ml-gr-ic);
+}
+.ml__group-expander::before { content: "\e9aa"; padding-bottom: 1px; /* нет токена */ }
+.ml__group-header:hover, .ml__group-header.is-hover {
+  --ml-gr-fg: var(--components-list-grouping_expander_hover_text-color_list);
+  --ml-gr-ic: var(--components-list-grouping_expander_hover_text-color_list);
+}
+/* style=black: тёмный текст, стрелка — цвета иконки; при наведении меняется только стрелка */
+.ml__group--style-black .ml__group-header { --ml-gr-fg: var(--text-text-color); --ml-gr-ic: var(--icon-icon-color); }
+.ml__group--style-black .ml__group-header:hover, .ml__group--style-black .ml__group-header.is-hover {
+  --ml-gr-fg: var(--text-text-color); --ml-gr-ic: var(--icon-hover_icon-color);
+}
+
+/* ---------- Навигация (component set «Навигация» 34211:1076) → .ml--nav ----------
+   Пункт с серой заливкой в покое. itemType=none / counter / switch → без счётчика / .ml__counter / .ml__switch,
+   arrowPosition=left / right — порядок .ml__arrow и .ml__caption, как у списка */
+.ml--nav .ml__item {
+  padding: var(--components-grid-item_padding-top_s_grid) var(--offset-offset_m)
+    var(--components-grid-item_padding-bottom_s_grid) calc(var(--offset-offset_l) + var(--ml-level, 0) * 20px);
+  background: var(--components-list-master_item_background-color_list);
+}
+.ml--nav .ml__item:has(> .ml__counter, > .ml__switch) { padding-right: var(--offset-offset_xs); }
+.ml--nav .ml__item:hover, .ml--nav .ml__item.is-hover {
+  background: var(--components-list-master_item_hover_background-color_list);
+}
+.ml--nav .ml__item.is-selected, .ml--nav .ml__item[aria-current]:not([aria-current="false"]) {
+  background: var(--components-list-master_item_selected_background-color_list);
+}
+/* Справа от подписи (или стрелки после неё) у счётчика и переключателя отступ 6px */
+.ml--nav :is(.ml__caption, .ml__arrow):has(+ :is(.ml__counter, .ml__switch)) { margin-right: var(--offset-offset_xs); }
+
+/* Иконка перед подписью (свойство iconVisible, в макете скрыто): глиф cbuc-icons или svg */
+.ml__icon {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  min-height: var(--icon-icon_size-icon-size_m); padding-right: var(--offset-offset_xs);
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+  font-weight: normal; font-style: normal; line-height: 1; letter-spacing: 0;
+  color: var(--icon-secondary_icon-color);
+}
+.ml__icon svg { display: block; width: var(--icon-icon_size-icon-size_s); height: var(--icon-icon_size-icon-size_s); fill: currentColor; }
+
+/* Переключатель (switch 1450:6298, size=l, стиль акцентный): по умолчанию выключен (selected=false),
+   включён — aria-checked="true" или .is-selected; переключает прототип. В «Навигации» стоит включённый */
+.ml__switch {
+  --ml-sw-knob: calc((var(--components-toggle-switcher-height_horizontal_switcher) - var(--components-toggle-switcher-marker_size_switcher)) / 2);
+  flex: none; position: relative; align-self: center; box-sizing: border-box;
+  width: var(--components-toggle-switcher-width_switcher);
+  height: var(--components-toggle-switcher-height_horizontal_switcher);
+  margin: calc((var(--icon-icon_size-icon-size_m) - var(--components-toggle-switcher-height_horizontal_switcher)) / 2) 0;
+  margin-left: auto; padding: 0; border: 0;
+  border-radius: var(--components-toggle-switcher-border-radius_switcher);
+  background: var(--background-contrast-unaccented_contrast_background-color);
+  cursor: pointer;
+}
+.ml__switch:hover, .ml__switch.is-hover { background: var(--background-contrast-unaccented_hover_contrast_background-color); }
+.ml__switch.is-selected, .ml__switch[aria-checked="true"] { background: var(--background-contrast-primary_color); }
+.ml__switch.is-selected:hover, .ml__switch.is-selected.is-hover,
+.ml__switch[aria-checked="true"]:hover, .ml__switch[aria-checked="true"].is-hover {
+  background: var(--background-contrast-primary_hover_color);
+}
+/* Кружок: у выключенного слева, у включённого справа */
+.ml__switch::after {
+  content: ""; position: absolute; top: var(--ml-sw-knob); left: var(--ml-sw-knob);
+  width: var(--components-toggle-switcher-marker_size_switcher);
+  height: var(--components-toggle-switcher-marker_size_switcher);
+  border-radius: 50%;
+  background: var(--components-toggle-marker_contrast-color_switcher);
+}
+.ml__switch.is-selected::after, .ml__switch[aria-checked="true"]::after {
+  left: calc(100% - var(--components-toggle-switcher-marker_size_switcher) - var(--ml-sw-knob));
+}

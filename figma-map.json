@@ -207,6 +207,63 @@
         "_buttons.text#29816:0": { "kit": "текст в .chips__caption" },
         "_buttons.icon": { "kit": "глиф U+EAB4 («ещё», cbuc-icons24) в .chips__icon" }
       }
+    },
+    "master-list": {
+      "kit": "components/master-list",
+      "since": "1.8.0",
+      "figma": {
+        "fileKey": "nuC4KFMiS36uDWDUp9wKGl",
+        "file": "⚙️ Default components",
+        "page": "7571:22445",
+        "showcase": "7577:23798",
+        "note": "страница «✅ Списки для двухколоночных реестров»; секция «УДАЛИТЬ. НЕАКТУАЛЬНО» (34232:13566) и пример MasterDetail (7577:23863) собраны из устаревших _componentsMaster/navigation и _doubleCounter — в кит не входят"
+      },
+      "element": "<ul class=\"ml\"><li class=\"ml__item …\"><span class=\"ml__arrow\"></span><span class=\"ml__caption\">…</span><span class=\"ml__counter\">…</span></li></ul>",
+      "base": "ml",
+      "sets": [
+        { "name": "Список", "node": "25581:1272", "key": null, "class": "ml > ml__item" },
+        { "name": "Навигация", "node": "34211:1076", "key": null, "class": "ml ml--nav > ml__item" },
+        { "name": "_bricks/counter", "node": "25571:454", "key": null, "class": "ml__counter" },
+        { "name": "_bricks/iconsView", "node": "25571:694", "key": null, "class": "ml__arrow",
+          "note": "iconView=default — иконка вместо стрелки: .ml__icon" },
+        { "name": "_bricks/offsetHierarhy", "node": "34211:1289", "key": null, "class": "ml__item--level-{level}" },
+        { "name": "_bricks/textContent", "node": "25571:487", "key": null, "class": "ml__caption" },
+        { "name": "switch", "node": "1450:6298", "key": null, "class": "ml__switch", "note": "только size=l, readOnly и resetValue не перенесены" },
+        { "name": "grouping", "node": "14187:114", "key": "2d986b18308b6f2e46334f4fc67f52348128d0ef", "class": "ml__group",
+          "page": "14187:2", "note": "страница «✅ Группировка»; заголовок _header — 14187:86" }
+      ],
+      "keysTodo": "ключи null не прочитаны: доступ Figma MCP вернул 403 — дочитать через use_figma (mainComponent.parent.key)",
+      "properties": {
+        "selected": { "true": "is-selected", "false": null, "alt": "aria-current" },
+        "⛔ hover": { "true": "is-hover", "false": null, "alt": ":hover" },
+        "itemType": { "none": "без .ml__counter", "counter": "ml__counter", "counter with click": "ml__counter ml__counter--click",
+          "counter with two click": "ml__counter ml__counter--two-click", "arrow": "ml__counter ml__counter--arrow", "switch": "ml__switch (только Навигация)" },
+        "iconPosition": { "none": "без .ml__arrow", "left": "порядок: .ml__arrow, .ml__caption", "right": "порядок: .ml__caption, .ml__arrow", "sets": ["Список"] },
+        "arrowPosition": { "left": "порядок: .ml__arrow, .ml__caption", "right": "порядок: .ml__caption, .ml__arrow", "sets": ["Навигация"] },
+        "offsetHierarhyVisible + _bricks/offsetHierarhy.level": { "class": "ml__item--level-{value}", "values": ["1", "2", "3"],
+          "note": "лист внутри узла — пустая стрелка .ml__arrow--empty, чтобы подпись встала на свой уровень" },
+        "_bricks/iconsView.arrowState": { "right": null, "down": "ml__arrow--down", "alt": "aria-expanded=\"true\" у .ml__item" },
+        "_bricks/iconsView.arrowType": { "stroke": null, "fill": "ml__arrow--fill" },
+        "_bricks/iconsView.⛔hover": { "true": "is-hover на .ml__arrow", "false": null, "alt": ":hover" },
+        "_bricks/counter.state": { "default": null, "hoverOnItem": "is-hover / :hover на .ml__item",
+          "hoverOnCounter": "is-hover / :hover на .ml__counter (two click — на .ml__count)", "hoverOnCounterMain": "is-hover / :hover на .ml__count--secondary" },
+        "switch.selected": { "true": "aria-checked=\"true\" или is-selected", "false": null },
+        "switch.hover": { "true": "is-hover", "false": null, "alt": ":hover" },
+        "grouping.headerPosition": { "left": null, "right": "ml__group--header-right", "center": "ml__group--header-center" },
+        "grouping.lineVisible#114:7": { "true": null, "false": "ml__group--no-line" },
+        "grouping.headerVisible#114:3": { "true": "есть .ml__group-header", "false": "без .ml__group-header" },
+        "_header.expanderAlign": { "left": "порядок: .ml__group-expander, .ml__group-caption", "right": "порядок: .ml__group-caption, .ml__group-expander" },
+        "_header.style": { "label": null, "black": "ml__group--style-black" },
+        "_header._hover": { "true": "is-hover на .ml__group-header", "false": null, "alt": ":hover" }
+      },
+      "content": {
+        "_bricks/textContent.textTemplate": { "kit": "текст в .ml__caption" },
+        "_bricks/counter.primaryCounterValue / secondaryCounterValue": { "kit": "числа в .ml__count и .ml__count--secondary" },
+        "_bricks/counter.primaryVisible / secondaryVisible": { "kit": "лишний .ml__count не ставится" },
+        "iconVisible": { "kit": ".ml__icon перед подписью: глиф cbuc-icons или svg (в макете скрыто)" },
+        "_header.iconVisible#114:0": { "true": "есть .ml__group-expander", "false": "без .ml__group-expander" },
+        "_header text": { "kit": "текст в .ml__group-caption" }
+      }
     }
   }
 }

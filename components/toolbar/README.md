@@ -9,9 +9,9 @@
 ## Подключение
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.7.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.7.0/fonts/fonts.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.7.0/components/toolbar/toolbar.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.8.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.8.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.8.0/components/toolbar/toolbar.css">
 ```
 
 `tokens.css` подключается первым. Иконки — глифы шрифта `cbuc-icons24`, стрелка у подписи — `cbuc-icons`,

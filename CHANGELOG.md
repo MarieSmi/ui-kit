@@ -1,5 +1,22 @@
 # Изменения
 
+## 1.8.0 — 30.10.2026
+
+- Новый компонент `components/master-list` — список мастер-области двухколоночного реестра со страницы
+  «✅ Списки для двухколоночных реестров» библиотеки «⚙️ Default components» (`nuC4KFMiS36uDWDUp9wKGl`):
+  component set «Список» (`25581:1272`) и «Навигация» (`34211:1076`, `.ml--nav`). Только CSS. Пункт `.ml__item`
+  с полоской выбора: selected (`aria-current`, `.is-selected`), hover (`:hover`, `.is-hover`). Стрелка `.ml__arrow`
+  слева или справа от подписи — порядок в разметке; вид `.ml__arrow--fill`, раскрыт — `.ml__arrow--down` или
+  `aria-expanded="true"`. Счётчики `.ml__counter`: обычный, `--click`, `--two-click`, кнопка-стрелка `--arrow`.
+  Переключатель `.ml__switch` (`aria-checked`), иконка `.ml__icon`.
+- Дерево: уровни `.ml__item--level-1 / -2 / -3`, у листа внутри узла — пустая стрелка `.ml__arrow--empty`;
+  свёрнутые ветки прототип прячет атрибутом `hidden`.
+- Заголовок группы `.ml__group` из component set `grouping` (`14187:114`): положения `--header-right / -center`,
+  `--no-line`, стиль `--style-black`.
+- `figma-map.json`: запись о мастер-списке. Ключи наборов, кроме `grouping`, не прочитаны — Figma MCP отвечал 403.
+- Каталог: раздел «Мастер-список» с переключателями iconPosition, arrowType и настройками заголовка группы.
+  Сборщик артефакта вшивает CSS мастер-списка.
+
 ## 1.7.0 — 30.10.2026
 
 - Новый компонент `components/chips` — чипс со страницы «✅ Чипсы» библиотеки «⚙️ Default components»

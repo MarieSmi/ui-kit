@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>master-list — пример</title>
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../master-list.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; margin: 32px 0 8px; color: var(--text-label_text-color); }
+    .head h2 { margin: 0; color: var(--text-text-color); white-space: nowrap; }
+    .head label { white-space: nowrap; }
+    .grid { display: grid; grid-template-columns: repeat(3, 200px); gap: 40px; }
+    .grid--5 { grid-template-columns: repeat(5, 200px); }
+    .grid--nav { grid-template-columns: repeat(3, 212px); }
+    .grid--group { grid-template-columns: repeat(3, 250px); }
+    .grid--group .ml__group + h3 { margin-top: 16px; }
+    .note { margin: 0 0 12px; color: var(--text-label_text-color); }
+    .md { width: 212px; }
+    .md .ml { gap: 2px; } /* как в примере MasterDetail */
+    .grid h3 { margin: 0 0 8px; font-size: 13px; font-weight: 400; color: var(--text-label_text-color); }
+    .grid .ml { gap: 6px; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>Тема <select id="theme">
+      <option value="">Default Light</option>
+      <option>default-dark</option><option>large-light</option><option>dark-v3</option><option>large-dark</option>
+      <option>pink</option><option>dark-v2</option><option>blackblue</option><option>gray</option>
+    </select></label>
+    <label>arrowType <select id="arrow-type">
+      <option>stroke</option><option>fill</option>
+    </select></label>
+  </div>
+
+  <h2>MasterDetail: группа, навигация и дерево</h2>
+  <p class="note">Как пример 7577:23863 в макете, но на актуальных компонентах. Клик по стрелке раскрывает узел.</p>
+  <div class="md" id="tree"></div>
+
+  <div class="head"><h2>Список: itemType</h2>
+    <label>iconPosition <select id="pos">
+      <option>left</option><option>right</option><option>none</option>
+    </select></label></div>
+  <div class="grid grid--5" id="types"></div>
+
+  <div class="head"><h2>Навигация: itemType</h2>
+    <label>arrowPosition <select id="nav-pos">
+      <option>left</option><option>right</option>
+    </select></label></div>
+  <div class="grid grid--nav" id="nav"></div>
+
+  <div class="head"><h2>Заголовок группы</h2>
+    <label>layout <select id="gr-pos">
+      <option>left</option><option>right</option><option>center</option><option>no line</option>
+    </select></label>
+    <label>expanderAlign <select id="gr-align">
+      <option>left</option><option>right</option>
+    </select></label>
+    <label>style <select id="gr-style">
+      <option>label</option><option>black</option>
+    </select></label></div>
+  <div class="grid grid--group" id="group"></div>
+
+  <script>
+    const CAPTION = '<span class="ml__caption">Раздел</span>';
+    const ARROW = '<span class="ml__arrow" aria-hidden="true"></span>';
+    const POS = { none: CAPTION, left: ARROW + CAPTION, right: CAPTION + ARROW };
+    // Порядок строк — как в component set: выбран, выбран + наведение, покой, наведение
+    const STATES = ['is-selected', 'is-selected is-hover', '', 'is-hover'];
+    const list = (title, items) => `<div><h3>${title}</h3><ul class="ml">${items.join('')}</ul></div>`;
+    // arrowType — общая настройка: вид всех стрелок пунктов на странице
+    const applyArrowType = () => {
+      const fill = document.getElementById('arrow-type').value === 'fill';
+      document.querySelectorAll('.ml__arrow').forEach(a => a.classList.toggle('ml__arrow--fill', fill));
+    };
+    document.getElementById('arrow-type').onchange = applyArrowType;
+
+    // Счётчик: mod — модификатор .ml__counter--*
+    const counter = mod => mod === 'arrow'
+      ? '<span class="ml__counter ml__counter--arrow" role="button" aria-label="Открыть"></span>'
+      : `<span class="ml__counter ${mod ? 'ml__counter--' + mod : ''}">` +
+        '<span class="ml__count">12</span><span class="ml__count ml__count--secondary">34</span></span>';
+    const TYPES = { none: null, counter: '', 'counter with click': 'click', 'counter with two click': 'two-click', arrow: 'arrow' };
+    const drawTypes = () => {
+      const head = POS[document.getElementById('pos').value];
+      document.getElementById('types').innerHTML = Object.entries(TYPES).map(([t, mod]) =>
+        list(`itemType=${t}`, STATES.map(s => `<li class="ml__item ${s}">${head}${mod === null ? '' : counter(mod)}</li>`))).join('');
+      applyArrowType();
+    };
+    document.getElementById('pos').onchange = drawTypes;
+    drawTypes();
+
+    // Навигация — порядок строк как в component set: покой, наведение, выбран, выбран + наведение
+    const NAV_STATES = ['', 'is-hover', 'is-selected', 'is-selected is-hover'];
+    const SWITCH = '<span class="ml__switch" role="switch" aria-checked="true" aria-label="Показывать раздел"></span>';
+    const NAV_TYPES = { none: '', counter: counter(''), switch: SWITCH };
+    const drawNav = () => {
+      const head = POS[document.getElementById('nav-pos').value];
+      document.getElementById('nav').innerHTML = Object.entries(NAV_TYPES).map(([t, tail]) =>
+        `<div><h3>itemType=${t}</h3><ul class="ml ml--nav">` +
+        NAV_STATES.map(s => `<li class="ml__item ${s}">${head}${tail}</li>`).join('') + '</ul></div>').join('');
+      applyArrowType();
+    };
+    document.getElementById('nav-pos').onchange = drawNav;
+    drawNav();
+
+    // MasterDetail: группа над навигацией с деревом. Лист внутри узла — с пустой стрелкой (.ml__arrow--empty).
+    // Клик по стрелке раскрывает узел — так это делает прототип
+    const drawTree = () => {
+      const arrow = (extra = '') => `<span class="ml__arrow ${extra}" aria-hidden="true"></span>`;
+      const cap = t => `<span class="ml__caption">${t}</span>`;
+      const cnt = (a, b) => `<span class="ml__counter">${a ? `<span class="ml__count">${a}</span>` : ''}` +
+        `${b ? `<span class="ml__count ml__count--secondary">${b}</span>` : ''}</span>`;
+      document.getElementById('tree').innerHTML =
+        '<div class="ml__group ml__group--header-right"><button type="button" class="ml__group-header">' +
+        '<span class="ml__group-expander" aria-hidden="true"></span><span class="ml__group-caption">Текст</span></button></div>' +
+        '<ul class="ml ml--nav">' + [
+          `<li class="ml__item is-selected">${cap('All')}${cnt(111, 111)}</li>`,
+          `<li class="ml__item" aria-expanded="false">${arrow()}${cap('На приемке')}${cnt(111, 111)}</li>`,
+          `<li class="ml__item ml__item--level-1">${arrow('ml__arrow--empty')}${cap('Новые')}${cnt(8, 70)}</li>`,
+          `<li class="ml__item ml__item--level-1">${arrow('ml__arrow--empty')}${cap('Проверено')}${cnt(0, 41)}</li>`,
+          `<li class="ml__item" aria-expanded="true">${arrow()}${cap('Задачи')}${cnt(111, 111)}</li>`,
+          `<li class="ml__item ml__item--level-1" aria-expanded="true">${arrow()}${cap('Входящие')}${cnt(12, 34)}</li>`,
+          `<li class="ml__item ml__item--level-2">${arrow('ml__arrow--empty')}${cap('Срочные')}${cnt(12)}</li>`,
+          `<li class="ml__item ml__item--level-1">${arrow('ml__arrow--empty')}${cap('Исходящие')}${cnt(0, 5)}</li>`,
+          `<li class="ml__item">${cap('Внутренние')}${cnt(0, '999+')}</li>`,
+        ].join('') + '</ul>';
+      syncTree(document.querySelector('#tree .ml'));
+      applyArrowType();
+    };
+    // Раскрыть / свернуть узел: дети — пункты ниже с уровнем глубже. При раскрытии показываем только тех,
+    // чьи предки тоже раскрыты
+    const level = li => +((li.className.match(/ml__item--level-(\d)/) || [])[1] || 0);
+    const syncTree = ul => {
+      const open = []; // open[n] — раскрыт ли ближайший предок уровня n
+      for (const li of ul.children) {
+        const n = level(li);
+        li.hidden = open.slice(0, n).some(o => o === false);
+        open.length = n;
+        open[n] = li.getAttribute('aria-expanded') !== 'false';
+      }
+    };
+    document.addEventListener('click', e => {
+      const a = e.target.closest('#tree .ml__arrow'), it = a && a.closest('.ml__item[aria-expanded]');
+      if (!it) return;
+      it.setAttribute('aria-expanded', it.getAttribute('aria-expanded') !== 'true');
+      syncTree(it.parentElement);
+    });
+    drawTree();
+
+    // Заголовок группы: default и hover
+    const drawGroup = () => {
+      // layout: headerPosition left / right / center с линией или no line (lineVisible=false)
+      const pos = { left: '', right: 'ml__group--header-right', center: 'ml__group--header-center',
+        'no line': 'ml__group--no-line' }[document.getElementById('gr-pos').value];
+      const style = document.getElementById('gr-style').value === 'black' ? 'ml__group--style-black' : '';
+      const exp = '<span class="ml__group-expander" aria-hidden="true"></span>', cap = '<span class="ml__group-caption">Текст</span>';
+      const inner = document.getElementById('gr-align').value === 'left' ? exp + cap : cap + exp;
+      const row = (title, h = '') => `<h3>${title}</h3>` +
+        `<div class="ml__group ${pos} ${style}"><button type="button" class="ml__group-header ${h}">${inner}</button></div>`;
+      document.getElementById('group').innerHTML = `<div>${row('default')}${row('hover', 'is-hover')}</div>`;
+    };
+    ['gr-pos', 'gr-style', 'gr-align'].forEach(id => document.getElementById(id).onchange = drawGroup);
+    drawGroup();
+
+    // Клик по переключателю меняет aria-checked — так это делает прототип
+    document.addEventListener('click', e => {
+      const s = e.target.closest('.ml__switch');
+      if (s) s.setAttribute('aria-checked', s.getAttribute('aria-checked') !== 'true');
+    });
+
+    document.getElementById('theme').onchange = e => {
+      if (e.target.value) document.documentElement.dataset.uiTheme = e.target.value;
+      else delete document.documentElement.dataset.uiTheme;
+    };
+  </script>
+</body>
+</html>

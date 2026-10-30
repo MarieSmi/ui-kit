@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="../components/chips/chips.css" data-kit="chips">
 <link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">
 <link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">
+<link rel="stylesheet" href="../components/master-list/master-list.css" data-kit="master-list">
 <style>
 /* Каталог: шапка с переключателями темы и размера, дальше секции токенов и компонентов.
    Цвета страницы — только токены кита, поэтому каталог перекрашивается вместе с выбранной темой. */
@@ -140,6 +141,16 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .wg.wg-plus .wg__plus { top: 0; left: 0; }
 .wg-empty-grid td { padding: 6px 32px 6px 0; }
 .wg-empty-grid .wg { height: 84px; } /* ширина — из размера в макете: 168 / 266 / 326 */
+#master-list-body { display: grid; gap: 32px; }
+/* Ширина пунктов — как у вариантов в макете: Список 200, Навигация 212, grouping 250 */
+.ml-grid td { padding-right: 16px; }
+.ml-grid .ml { width: 200px; }
+.ml-grid .ml--nav { width: 212px; }
+.ml-grid .ml__group { width: 250px; }
+.ml-tree .ml { width: 250px; gap: 2px; }
+.btn-set h4 .ml-tool { display: flex; align-items: center; gap: 6px; margin-left: 10px; font: 400 12px var(--sans); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+#ml-group { display: grid; grid-template-columns: max-content 250px; align-items: center; gap: 6px 16px; }
+#ml-group > span { font: 400 12px var(--mono); color: var(--muted); }
 
 .empty { color: var(--muted); font-style: italic; }
 #toast { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); padding: 8px 14px; border-radius: 6px; background: var(--extra-item_selected_color); color: var(--extra-item_selected_text-color); font: 500 13px var(--mono); }
@@ -150,7 +161,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.7.0</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.8.0</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -178,7 +189,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     <div class="toc-main">
       <a href="#components" data-group="components">Компоненты</a><a href="#tokens" data-group="tokens">Переменные</a>
     </div>
-    <div class="toc-sub" data-group="components"><a href="#button">Кнопка</a><a href="#checkbox">Чекбокс</a><a href="#chips">Чипсы</a><a href="#toolbar">Тулбар</a><a href="#widget">Виджет</a><a href="#demo-frame">Вспом. обл.</a></div>
+    <div class="toc-sub" data-group="components"><a href="#button">Кнопка</a><a href="#checkbox">Чекбокс</a><a href="#chips">Чипсы</a><a href="#toolbar">Тулбар</a><a href="#widget">Виджет</a><a href="#master-list">Мастер-список</a><a href="#demo-frame">Вспом. обл.</a></div>
     <div class="toc-sub" data-group="tokens"><a href="#colors">Цвета</a><a href="#sizes">Размеры</a><a href="#shadows">Тени</a></div>
   </nav>
 </header>
@@ -233,6 +244,31 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       <article class="comp" id="widget">
         <div class="comp-head"><h3>Виджет</h3><code>components/widget</code></div>
         <div id="widget-body"></div>
+      </article>
+      <article class="comp" id="master-list">
+        <div class="comp-head"><h3>Мастер-список</h3><code>components/master-list</code>
+          <label class="comp-tool" for="ml-pos">iconPosition
+            <select id="ml-pos"><option value="left" selected>left</option><option value="right">right</option><option value="none">none</option></select>
+          </label>
+          <label class="comp-tool" for="ml-arrow">arrowType
+            <select id="ml-arrow"><option value="stroke" selected>stroke</option><option value="fill">fill</option></select>
+          </label>
+        </div>
+        <div id="master-list-body"></div>
+        <div class="btn-set">
+          <h4>Заголовок группы <code>.ml__group</code> <span>14187:114</span>
+            <label class="ml-tool" for="ml-layout">layout
+              <select id="ml-layout"><option value="left" selected>left</option><option value="right">right</option><option value="center">center</option><option value="no line">no line</option></select>
+            </label>
+            <label class="ml-tool" for="ml-align">expanderAlign
+              <select id="ml-align"><option value="left" selected>left</option><option value="right">right</option></select>
+            </label>
+            <label class="ml-tool" for="ml-style">style
+              <select id="ml-style"><option value="label" selected>label</option><option value="black">black</option></select>
+            </label>
+          </h4>
+          <div id="ml-group"></div>
+        </div>
       </article>
       <article class="comp" id="demo-frame">
         <div class="comp-head"><h3>Вспомогательная область</h3><code>components/demo-frame</code></div>
@@ -563,11 +599,63 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     host.innerHTML = wg + em + pl;
   }
 
+  // Мастер-список: «Список» и «Навигация» — таблица «itemType × состояние», переключатель, дерево и заголовок группы.
+  // iconPosition — порядок стрелки и подписи, arrowType — вид всех стрелок пунктов, expanderAlign — у заголовка группы
+  var ML_STATES = [['default', ''], ['hover', ' is-hover'], ['selected', ' is-selected'], ['selected · hover', ' is-selected is-hover']];
+  var ML_COUNT = '<span class="ml__count">12</span><span class="ml__count ml__count--secondary">34</span>';
+  var ML_TYPES = [['none', ''], ['counter', '<span class="ml__counter">' + ML_COUNT + '</span>'],
+    ['counter with click', '<span class="ml__counter ml__counter--click">' + ML_COUNT + '</span>'],
+    ['counter with two click', '<span class="ml__counter ml__counter--two-click">' + ML_COUNT + '</span>'],
+    ['arrow', '<span class="ml__counter ml__counter--arrow" role="button" aria-label="Открыть"></span>']];
+  function buildMasterList() {
+    var host = document.getElementById('master-list-body'), pos = document.getElementById('ml-pos').value;
+    var fill = document.getElementById('ml-arrow').value === 'fill' ? ' ml__arrow--fill' : '';
+    var arrow = function (x) { return '<span class="ml__arrow' + fill + (x || '') + '" aria-hidden="true"></span>'; };
+    var cap = function (t) { return '<span class="ml__caption">' + (t || 'Раздел') + '</span>'; };
+    var head = pos === 'none' ? cap() : pos === 'right' ? cap() + arrow() : arrow() + cap();
+    function set(title, code, node, cols, rows) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code> <span>' + node + '</span></h4>' +
+        '<div class="btn-scroll"><table class="btn-grid ml-grid"><tr><th></th>' + cols.map(function (c) { return '<th>' + c + '</th>'; }).join('') + '</tr>' +
+        rows.map(function (r) { return '<tr><th>' + r[0] + '</th>' + r[1].map(function (c) { return '<td>' + c + '</td>'; }).join('') + '</tr>'; }).join('') +
+        '</table></div></div>';
+    }
+    var cols = ML_STATES.map(function (s) { return s[0]; });
+    var list = set('Список', '.ml', '25581:1272', cols, ML_TYPES.map(function (t) {
+      return [t[0], ML_STATES.map(function (s) { return '<ul class="ml"><li class="ml__item' + s[1] + '">' + head + t[1] + '</li></ul>'; })];
+    }));
+    var navTypes = [ML_TYPES[0], ML_TYPES[1], ['switch', '<span class="ml__switch" role="switch" aria-checked="true" aria-label="Показывать"></span>']];
+    var navHead = pos === 'right' ? cap() + arrow() : arrow() + cap(); // у «Навигации» arrowPosition только left / right
+    var navSet = set('Навигация', '.ml--nav', '34211:1076', cols, navTypes.map(function (t) {
+      return [t[0], ML_STATES.map(function (s) { return '<ul class="ml ml--nav"><li class="ml__item' + s[1] + '">' + navHead + t[1] + '</li></ul>'; })];
+    }));
+    var cnt = function (a, b) { return '<span class="ml__counter">' + (a ? '<span class="ml__count">' + a + '</span>' : '') + (b ? '<span class="ml__count ml__count--secondary">' + b + '</span>' : '') + '</span>'; };
+    var tree = '<div class="btn-set ml-tree"><h4>Дерево <code>.ml__item--level-N</code> <span>34211:1289</span></h4><ul class="ml ml--nav">' + [
+      '<li class="ml__item is-selected">' + cap('All') + cnt(111, 111) + '</li>',
+      '<li class="ml__item" aria-expanded="true">' + arrow() + cap('Задачи') + cnt(111, 111) + '</li>',
+      '<li class="ml__item ml__item--level-1" aria-expanded="true">' + arrow() + cap('Входящие') + cnt(12, 34) + '</li>',
+      '<li class="ml__item ml__item--level-2" aria-expanded="true">' + arrow() + cap('Срочные') + cnt(12) + '</li>',
+      '<li class="ml__item ml__item--level-3">' + arrow(' ml__arrow--empty') + cap('Сегодня') + cnt(3) + '</li>',
+      '<li class="ml__item ml__item--level-1">' + arrow(' ml__arrow--empty') + cap('Исходящие') + cnt(0, 5) + '</li>',
+      '<li class="ml__item">' + cap('Внутренние') + cnt(0, '999+') + '</li>'].join('') + '</ul></div>';
+    host.innerHTML = list + navSet + tree;
+    buildMlGroup();
+  }
+  // Заголовок группы: layout (headerPosition и lineVisible), expanderAlign, style — селекты в строке набора; ниже default и hover
+  function buildMlGroup() {
+    var layout = { left: '', right: ' ml__group--header-right', center: ' ml__group--header-center', 'no line': ' ml__group--no-line' }[document.getElementById('ml-layout').value];
+    var style = document.getElementById('ml-style').value === 'black' ? ' ml__group--style-black' : '';
+    var exp = '<span class="ml__group-expander" aria-hidden="true"></span>', gcap = '<span class="ml__group-caption">Текст</span>';
+    var inner = document.getElementById('ml-align').value === 'right' ? gcap + exp : exp + gcap;
+    document.getElementById('ml-group').innerHTML = [['default', ''], ['hover', ' is-hover']].map(function (s) {
+      return '<span>' + s[0] + '</span><div class="ml__group' + layout + style + '"><button type="button" class="ml__group-header' + s[1] + '">' + inner + '</button></div>';
+    }).join('');
+  }
+
   // Меню: раздел «Компоненты» показывает один компонент (#button, #checkbox, #chips, #toolbar, #widget, #demo-frame), раздел «Переменные» — цвета,
   // размеры и тени одной лентой (#colors, #sizes, #shadows). Показан только выбранный раздел.
-  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', chips: 'components', toolbar: 'components', widget: 'components', 'demo-frame': 'components',
+  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', chips: 'components', toolbar: 'components', widget: 'components', 'master-list': 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
-  var COMPS = ['button', 'checkbox', 'chips', 'toolbar', 'widget', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
+  var COMPS = ['button', 'checkbox', 'chips', 'toolbar', 'widget', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
   var header = document.querySelector('header.top'), group = null, comp = 'button';
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
   function markSub(id) { nav('.toc-sub a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + id); }); }
@@ -639,10 +727,12 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   document.getElementById('cb-pos').addEventListener('change', buildCheckboxes);
   document.getElementById('ch-size').addEventListener('change', buildChips);
   document.getElementById('ch-pos').addEventListener('change', buildChips);
+  ['ml-pos', 'ml-arrow'].forEach(function (id) { document.getElementById(id).addEventListener('change', buildMasterList); });
+  ['ml-layout', 'ml-align', 'ml-style'].forEach(function (id) { document.getElementById(id).addEventListener('change', buildMlGroup); });
 
   var start = location.hash.slice(1);
   if (!go(start, false)) go('button', false);
-  buildButtons(); buildCheckboxes(); buildChips(); buildToolbars(); buildWidgets(); buildColors(); buildSizes(); buildShadows();
+  buildButtons(); buildCheckboxes(); buildChips(); buildToolbars(); buildWidgets(); buildMasterList(); buildColors(); buildSizes(); buildShadows();
   if (ROUTES[start]) { // открыт по адресу раздела — прокрутить к нему, когда всё построено
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     go(start, true);

@@ -28,6 +28,7 @@ page = page.replace('<link rel="stylesheet" href="../components/checkbox/checkbo
 page = page.replace('<link rel="stylesheet" href="../components/chips/chips.css" data-kit="chips">', '<style data-kit="chips">' + read('components/chips/chips.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">', '<style data-kit="toolbar">' + read('components/toolbar/toolbar.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">', '<style data-kit="widget">' + read('components/widget/widget.css') + '</style>')
+page = page.replace('<link rel="stylesheet" href="../components/master-list/master-list.css" data-kit="master-list">', '<style data-kit="master-list">' + read('components/master-list/master-list.css') + '</style>')
 page = page.replace("'../components/widget/example/content.png'", "'data:image/png;base64," + base64.b64encode((ROOT / 'components/widget/example/content.png').read_bytes()).decode('ascii') + "'")
 page = re.sub(r'src="\.\./components/demo-frame/example/index\.html"', lambda m: 'srcdoc="' + html.escape(ex, quote=True) + '"', page)
 page = re.sub(r'<!doctype html>\s*|</?html[^>]*>\s*|</?head>\s*|</?body>\s*|<meta charset="utf-8">\s*|<meta name="viewport"[^>]*>\s*', '', page, flags=re.I)
