@@ -152,9 +152,10 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .ml-grid .ml { width: 200px; }
 .ml-grid .ml--nav { width: 212px; }
 .ml-grid .ml__group { width: 250px; }
-.ml-tree .ml { width: 250px; gap: 2px; }
+.ml-tree .ml, .ml-tree .ml__group { width: 250px; }
+.ml-tree .ml { gap: 2px; } /* как в примере MasterDetail */
 .btn-set h4 .ml-tool { display: flex; align-items: center; gap: 6px; margin-left: 10px; font: 400 12px var(--sans); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-#ml-group { display: grid; grid-template-columns: max-content 250px; align-items: center; gap: 6px 16px; }
+#ml-group { display: grid; grid-template-columns: repeat(2, max-content 250px); align-items: center; gap: 6px 16px; } /* default и hover в одну строку */
 #ml-group > span { font: 400 12px var(--mono); color: var(--muted); }
 
 .empty { color: var(--muted); font-style: italic; }
@@ -702,17 +703,40 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       return [t[0], ML_STATES.map(function (s) { return '<ul class="ml ml--nav"><li class="ml__item' + s[1] + '">' + navHead + t[1] + '</li></ul>'; })];
     }));
     var cnt = function (a, b) { return '<span class="ml__counter">' + (a ? '<span class="ml__count">' + a + '</span>' : '') + (b ? '<span class="ml__count ml__count--secondary">' + b + '</span>' : '') + '</span>'; };
-    var tree = '<div class="btn-set ml-tree"><h4>Дерево <code>.ml__item--level-N</code> <span>34211:1289</span></h4><ul class="ml ml--nav">' + [
+    // MasterDetail (7577:23863) на актуальных компонентах: группа над навигацией с деревом; клик по стрелке раскрывает узел
+    var tree = '<div class="btn-set ml-tree"><h4>MasterDetail: группа и дерево <code>.ml__group + .ml--nav</code> <span>7577:23863</span></h4>' +
+      '<div class="ml__group ml__group--header-right"><button type="button" class="ml__group-header">' +
+      '<span class="ml__group-expander" aria-hidden="true"></span><span class="ml__group-caption">Текст</span></button></div>' +
+      '<ul class="ml ml--nav">' + [
       '<li class="ml__item is-selected">' + cap('All') + cnt(111, 111) + '</li>',
+      '<li class="ml__item" aria-expanded="false">' + arrow() + cap('На приемке') + cnt(111, 111) + '</li>',
+      '<li class="ml__item ml__item--level-1">' + arrow(' ml__arrow--empty') + cap('Новые') + cnt(8, 70) + '</li>',
+      '<li class="ml__item ml__item--level-1">' + arrow(' ml__arrow--empty') + cap('Проверено') + cnt(0, 41) + '</li>',
       '<li class="ml__item" aria-expanded="true">' + arrow() + cap('Задачи') + cnt(111, 111) + '</li>',
       '<li class="ml__item ml__item--level-1" aria-expanded="true">' + arrow() + cap('Входящие') + cnt(12, 34) + '</li>',
-      '<li class="ml__item ml__item--level-2" aria-expanded="true">' + arrow() + cap('Срочные') + cnt(12) + '</li>',
-      '<li class="ml__item ml__item--level-3">' + arrow(' ml__arrow--empty') + cap('Сегодня') + cnt(3) + '</li>',
+      '<li class="ml__item ml__item--level-2">' + arrow(' ml__arrow--empty') + cap('Срочные') + cnt(12) + '</li>',
       '<li class="ml__item ml__item--level-1">' + arrow(' ml__arrow--empty') + cap('Исходящие') + cnt(0, 5) + '</li>',
       '<li class="ml__item">' + cap('Внутренние') + cnt(0, '999+') + '</li>'].join('') + '</ul></div>';
     host.innerHTML = list + navSet + tree;
+    mlSyncTree(host.querySelector('.ml-tree .ml'));
     buildMlGroup();
   }
+  // Дерево: дети узла — пункты ниже него с уровнем глубже; свёрнутые ветки прячет hidden — так это делает прототип
+  function mlSyncTree(ul) {
+    var open = []; // open[n] — раскрыт ли ближайший предок уровня n
+    [].forEach.call(ul.children, function (li) {
+      var n = +((li.className.match(/ml__item--level-(\d)/) || [])[1] || 0);
+      li.hidden = open.slice(0, n).some(function (o) { return o === false; });
+      open.length = n;
+      open[n] = li.getAttribute('aria-expanded') !== 'false';
+    });
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('.ml-tree .ml__arrow'), it = a && a.closest('.ml__item[aria-expanded]');
+    if (!it) return;
+    it.setAttribute('aria-expanded', it.getAttribute('aria-expanded') !== 'true');
+    mlSyncTree(it.parentElement);
+  });
   // Заголовок группы: layout (headerPosition и lineVisible), expanderAlign, style — селекты в строке набора; ниже default и hover
   function buildMlGroup() {
     var layout = { left: '', right: ' ml__group--header-right', center: ' ml__group--header-center', 'no line': ' ml__group--no-line' }[document.getElementById('ml-layout').value];
