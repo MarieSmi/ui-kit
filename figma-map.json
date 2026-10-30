@@ -235,7 +235,6 @@
           "note": "type=old — .input__required в подписи, type=new — класс .input--required" },
         { "name": "_counter", "node": "17477:1295", "key": null, "class": "input__counter" }
       ],
-      "keysTodo": "ключи null не прочитаны: доступ Figma MCP вернул 403 — дочитать через use_figma (mainComponent.parent.key)",
       "properties": {
         "labelPosition": { "left": null, "top": "input--label-top" },
         "jumpingLabel": { "true": "input--jumping", "false": null, "sets": ["Input/text"], "note": "вместо input--label-top; у input нужен placeholder" },
@@ -272,14 +271,14 @@
       "element": "<ul class=\"ml\"><li class=\"ml__item …\"><span class=\"ml__arrow\"></span><span class=\"ml__caption\">…</span><span class=\"ml__counter\">…</span></li></ul>",
       "base": "ml",
       "sets": [
-        { "name": "Список", "node": "25581:1272", "key": null, "class": "ml > ml__item" },
-        { "name": "Навигация", "node": "34211:1076", "key": null, "class": "ml ml--nav > ml__item" },
-        { "name": "_bricks/counter", "node": "25571:454", "key": null, "class": "ml__counter" },
-        { "name": "_bricks/iconsView", "node": "25571:694", "key": null, "class": "ml__arrow",
+        { "name": "Список", "node": "25581:1272", "key": "8b9afed4ed24d12f3f00538ab9d14cbfd681b133", "class": "ml > ml__item" },
+        { "name": "Навигация", "node": "34211:1076", "key": "827b68b420d3b59036bd8ef6d8ecd36705772949", "class": "ml ml--nav > ml__item" },
+        { "name": "_bricks/counter", "node": "25571:454", "key": "245294548fe715ccc3b5a95c9788c687d79f3aa8", "class": "ml__counter" },
+        { "name": "_bricks/iconsView", "node": "25571:694", "key": "f1f48be77ca0687c71cde80430368c21251ad43b", "class": "ml__arrow",
           "note": "iconView=default — иконка вместо стрелки: .ml__icon" },
-        { "name": "_bricks/offsetHierarhy", "node": "34211:1289", "key": null, "class": "ml__item--level-{level}" },
-        { "name": "_bricks/textContent", "node": "25571:487", "key": null, "class": "ml__caption" },
-        { "name": "switch", "node": "1450:6298", "key": null, "class": "ml__switch", "note": "только size=l, readOnly и resetValue не перенесены" },
+        { "name": "_bricks/offsetHierarhy", "node": "34211:1289", "key": "c3b411fa13e059434720cb403bf77d0d6e041fe3", "class": "ml__item--level-{level}" },
+        { "name": "_bricks/textContent", "node": "25571:487", "key": "619393d16795ce3219fcd76047856899bc452ebe", "class": "ml__caption" },
+        { "name": "switch", "node": "1450:6298", "key": "026125b305039d03eaf847e61bfd4f9c45b56bc7", "class": "ml__switch", "note": "только size=l, readOnly и resetValue не перенесены" },
         { "name": "grouping", "node": "14187:114", "key": "2d986b18308b6f2e46334f4fc67f52348128d0ef", "class": "ml__group",
           "page": "14187:2", "note": "страница «✅ Группировка»; заголовок _header — 14187:86" }
       ],
