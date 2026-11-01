@@ -766,7 +766,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   // размеры и тени одной лентой (#colors, #sizes, #shadows). Показан только выбранный раздел.
   var ROUTES = { components: 'components', button: 'components', checkbox: 'components', chips: 'components', input: 'components', toolbar: 'components', widget: 'components', 'master-list': 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
-  var COMPS = ['button', 'checkbox', 'chips', 'input', 'toolbar', 'widget', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'], NO_SIZE = ['toolbar', 'widget'];
+  var COMPS = ['button', 'checkbox', 'chips', 'input', 'toolbar', 'widget', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
   var header = document.querySelector('header.top'), group = null, comp = 'button';
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
   function markSub(id) { nav('.toc-sub a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + id); }); }
@@ -781,11 +781,11 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     nav('.toc-sub').forEach(function (s) { s.hidden = s.getAttribute('data-group') !== g; });
     nav('.toc-main a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('data-group') === g); });
     document.getElementById('q').hidden = g !== 'tokens'; // поиск — только по переменным
-    if (g === 'components' && COMPS.indexOf(id) >= 0) comp = id;
-    // В тулбаре и виджете переключателя размера нет: показываем их в default, выбор вернётся в других разделах
-    sizeSel.parentNode.hidden = g === 'components' && NO_SIZE.indexOf(comp) >= 0;
+    // Переключатель размера — только в «Переменных»: компоненты показаны в default, выбор вернётся вместе с разделом
+    sizeSel.parentNode.hidden = g === 'components';
     applySize();
     if (g === 'components') {
+      if (COMPS.indexOf(id) >= 0) comp = id;
       COMPS.forEach(function (c) { document.getElementById(c).hidden = c !== comp; });
       document.getElementById('comp-pick').value = comp;
       if (scroll) scrollToId('components');
