@@ -2,15 +2,16 @@
 
 Компонент ui-kit: чипс — кнопка-метка с подписью, иконкой и счётчиком. Библиотека Figma «⚙️ Default components»
 (`nuC4KFMiS36uDWDUp9wKGl`), страница «✅ Чипсы» (`20059:3431`): component set `web/chips` (`20059:4296`) и
-`web/roundChips` (`20059:4457`). Сюда же входят кнопки строки «Добавление данных» — `_buttons` (`18813:5910`).
+`web/roundChips` (`20059:4457`). Сюда же входят кнопки строки «Добавление данных» — `_buttons` (`18813:5910`) и кнопка опционального свойства из
+«⚙️Builder-components» (`4608:8103`).
 Только CSS, без JS.
 
 ## Подключение
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.10.1/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.10.1/fonts/fonts.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.10.1/components/chips/chips.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.11.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.11.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.11.0/components/chips/chips.css">
 ```
 
 `tokens.css` подключается первым. `fonts.css` нужен для Inter и глифов иконок (cbuc-icons, cbuc-icons24).
@@ -75,6 +76,28 @@
 
 Строку целиком («+», кнопки, «…») собирает прототип.
 
+## Опциональные свойства
+
+Кнопка опционального свойства, библиотека «⚙️Builder-components» (`rHabzni5OI5D4fxBLQdj2m`), страница «Окно редактора
+свойств» (`4607:4970`), component set «Опциональное свойство» (`4608:8103`). Только высота L:
+
+```html
+<button type="button" class="chips chips--optional">
+  <span class="chips__icon" aria-hidden="true">&#xeac2;</span>
+  <span class="chips__caption">Ограничения</span>
+</button>
+<button type="button" class="chips chips--optional chips--icon" aria-label="Ограничения">
+  <span class="chips__icon" aria-hidden="true">&#xeac2;</span>
+</button>
+```
+
+| Figma | Класс | Что это |
+|---|---|---|
+| — | `.chips--optional` | фон `default_contrast_background`, серая подпись, иконка 24px (U+EAC2, cbuc-icons24) |
+| `ховер=true` | `.is-hover`, `:hover` | фон `background-color`, рамка `hover_border` |
+| `iconButton=true` | `.chips--icon` | квадрат 28px, только иконка |
+| `iconVisible=false` | без `.chips__icon` | только подпись |
+
 ## Допущения
 
 - Размер по умолчанию — l (в Figma по умолчанию M).
@@ -85,7 +108,7 @@
   одинаков при любом стиле и у ghost — так в макете.
 - У 5XL тень в покое — `shadow_b`, как в макете.
 - Ширина круглого чипса фиксирована: длинное число в круг не поместится.
-- У «Добавление данных» классы размера не действуют, `selected` и `readonly` нет.
+- У «Добавление данных» и опциональных свойств классы размера не действуют, `selected` и `readonly` в макете нет.
 - Фокуса в макете нет: остаётся обводка браузера по `:focus-visible`.
 
 ## Значения без токена
@@ -94,7 +117,8 @@
 
 - смещение теней 0 0;
 - толщина рамки 1px;
-- межбуквенный интервал −1,41 % у «Добавление данных».
+- межбуквенный интервал −1,41 % у «Добавление данных» и опциональных свойств;
+- подъём иконки на 2px у опциональных свойств.
 
 ## Пример
 

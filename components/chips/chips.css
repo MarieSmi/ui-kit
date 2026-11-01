@@ -3,6 +3,8 @@
  * Круглый — component set «web/roundChips» 20059:4457 → .chips--round, свойства те же, без readonly.
  * Добавление данных — component set «_buttons» 18813:5910: style → .chips--add-default / -contrast / -filter,
  * button=icon → .chips--icon, hover → .is-hover (и :hover).
+ * Опциональное свойство — 4608:8103 в файле «⚙️Builder-components» (rHabzni5OI5D4fxBLQdj2m) → .chips--optional:
+ * iconButton=true → .chips--icon, ховер → .is-hover (и :hover).
  * Свойства: inlineHeight → .chips--size-m / -l / -xl / -5xl, contrast=true → .chips--contrast, viewMode=ghost →
  * .chips--ghost, selectedStyle → .chips--style-primary / -secondary / -contrast; selected / readonly / ⛔hover →
  * .is-selected / .is-readonly / .is-hover (и aria-pressed="true" / :disabled / :hover).
@@ -172,6 +174,26 @@
   --ch-bg-h: var(--components-button-default_contrast_background-color_button);
 }
 .chips--icon { width: var(--ch-h); padding: 0; }
+
+/* ---------- Опциональное свойство (4608:8103, библиотека «⚙️Builder-components») ----------
+   Кнопка опционального свойства: .chips--optional, iconButton=true — ещё .chips--icon, iconVisible=false — без .chips__icon.
+   В макете только высота L, без selected и readonly: размер не меняется классами .chips--size-* */
+.chips--optional {
+  --ch-h: var(--inline_height-inline_height_l);
+  --ch-px: var(--components-button-padding-horizontal_m_button);
+  --ch-gap: var(--offset-offset_2xs);
+  --ch-fs: var(--font-font-size-font-size_m);
+  --ch-is: var(--icon-icon_size-icon-size_m);
+  --ch-if: var(--icon-font-family-m_icon_font-family);
+  --ch-bg-r: var(--components-button-default_contrast_background-color_button);
+  --ch-bg-h: var(--background-background-color);
+  --ch-bd-r: transparent; --ch-bd-h: var(--border-hover_border-color);
+  --ch-sh-r: 0 0 transparent; --ch-sh-h: 0 0 transparent;
+  --ch-fg-r: var(--text-label_contrast_text-color); --ch-fg-h: var(--ch-fg-r);
+  --ch-ic-r: var(--icon-secondary_icon-color); --ch-ic-h: var(--ch-ic-r);
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+}
+.chips--optional .chips__icon { box-sizing: border-box; padding-bottom: 2px; } /* подъём глифа, как iconWrap в макете — нет токена */
 
 /* ---------- Наведение: и по мыши, и классом для каталога; у readonly наведения нет ---------- */
 .chips:is(:hover, .is-hover):not(.is-readonly, :disabled) {

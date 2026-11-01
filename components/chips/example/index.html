@@ -90,6 +90,16 @@
             ['', 'is-hover'].map(st => `<td><button type="button" class="chips chips--add chips--add-${s} chips--icon${st ? ' ' + st : ''}" aria-label="Ещё"><span class="chips__icon" aria-hidden="true">&#xEAB4;</span></button></td>`).join('') +
             '</tr>').join('')}
         </table>` +
+        // Опциональное свойство — 4608:8103: только L, только покой и hover; глиф U+EAC2 шрифта cbuc-icons24
+        `<h2>Опциональные свойства</h2>
+        <table class="on-gray">
+          <tr><th></th><th>покой</th><th>hover</th></tr>
+          ${[['с иконкой', '', '<span class="chips__icon" aria-hidden="true">&#xEAC2;</span><span class="chips__caption">Ограничения</span>', ''],
+            ['без иконки', '', '<span class="chips__caption">Ограничения</span>', ''],
+            ['iconButton', ' chips--icon', '<span class="chips__icon" aria-hidden="true">&#xEAC2;</span>', ' aria-label="Ограничения"']].map(r => `<tr><th>${r[0]}</th>` +
+            ['', ' is-hover'].map(st => `<td><button type="button" class="chips chips--optional${r[1]}${st}"${r[3]}>${r[2]}</button></td>`).join('') +
+            '</tr>').join('')}
+        </table>` +
         `<h2>Группа: выбор по клику (aria-pressed ставит прототип)</h2>
         <div class="row" id="group">${[1, 2, 3].map(i => `<button type="button" class="chips chips--contrast chips--size-${size}" aria-pressed="${i === 1}">${content}</button>`).join('')}</div>`;
       document.getElementById('group').onclick = e => {

@@ -181,7 +181,17 @@
           "note": "вложенное содержимое чипса: в ките — дети .chips" },
         { "name": "_counterContent", "node": "20059:4738", "key": "97b2718ecbe4f04567b7e62d901ad7c4717740a3", "class": "chips__counter" },
         { "name": "_buttons", "node": "18813:5910", "key": "4da5413c7d1674134969ca4c35067c4018a5cdf9", "class": "chips chips--add",
-          "page": "18813:1884", "note": "страница «✅ Добавление данных», кнопки строки extendedBlockList (18813:5927); только размер M" }
+          "page": "18813:1884", "note": "страница «✅ Добавление данных», кнопки строки extendedBlockList (18813:5927); только размер M" },
+        {
+          "name": "Опциональное свойство",
+          "node": "4608:8103",
+          "key": "0661514f3820320c258e00003dda980cb2240a74",
+          "class": "chips chips--optional",
+          "fileKey": "rHabzni5OI5D4fxBLQdj2m",
+          "file": "⚙️Builder-components",
+          "page": "4607:4970",
+          "note": "другой файл, страница «Окно редактора свойств»; только высота L; iconButton=true → .chips--icon, ховер=true → .is-hover (и :hover), iconVisible=false — без .chips__icon"
+        }
       ],
       "properties": {
         "inlineHeight": { "class": "chips--size-{value}", "values": ["m", "l", "xl", "5xl"], "default": "l", "note": "значения в Figma заглавные (M, L, XL, 5XL) — класс в нижнем регистре; в Figma по умолчанию M, в ките — l" },

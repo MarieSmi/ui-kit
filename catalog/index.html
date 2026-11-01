@@ -121,6 +121,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 #button-body { display: grid; gap: 32px; } /* отступ между видами кнопок */
 .btn-set h4 { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 13px; font-weight: 600; }
 .btn-set h4 code, .btn-set h4 span { font: 400 12px var(--mono); color: var(--muted); }
+.comp .btn-note { font-size: 12px; color: var(--muted); }
 .btn-scroll { overflow-x: auto; }
 .btn-grid { border-collapse: collapse; }
 .btn-grid th { padding: 4px 16px 4px 0; font: 400 12px var(--mono); color: var(--muted); text-align: left; white-space: nowrap; }
@@ -174,7 +175,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.10.1</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.11.0</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -540,8 +541,18 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
           return '<td><button type="button" class="chips chips--add chips--add-' + st + ' chips--icon' + s + '" aria-label="Ещё"><span class="chips__icon" aria-hidden="true">&#xeab4;</span></button></td>';
         }).join('') + '</tr>';
       }).join('') + '</table></div></div>';
+    // Опциональные свойства: размер и iconPosition на них не действуют, в макете только L и иконка перед подписью
+    var optIcon = '<span class="chips__icon" aria-hidden="true">&#xeac2;</span>', optCap = '<span class="chips__caption">Ограничения</span>';
+    var opt = '<div class="btn-set"><h4>Опциональные свойства <code>.chips--optional</code> <span>4608:8103</span></h4>' +
+      '<p class="btn-note">Используется в окне редактора свойств</p>' +
+      '<div class="btn-scroll"><table class="btn-grid on-gray"><tr><th></th><th>покой</th><th>hover</th></tr>' +
+      [['с иконкой', '', optIcon + optCap, ''], ['без иконки', '', optCap, ''], ['iconButton', ' chips--icon', optIcon, ' aria-label="Ограничения"']].map(function (r) {
+        return '<tr><th>' + r[0] + '</th>' + ['', ' is-hover'].map(function (s) {
+          return '<td><button type="button" class="chips chips--optional' + r[1] + s + '"' + r[3] + '>' + r[2] + '</button></td>';
+        }).join('') + '</tr>';
+      }).join('') + '</table></div></div>';
     host.innerHTML = set('Контрастные', '.chips--contrast', '20059:4296', CH_CONTRAST) + set('Неконтрастные', '.chips', '20059:4296', CH_PALE) +
-      set('Круглые контрастные', '.chips--round.chips--contrast', '20059:4457', CH_CONTRAST, true) + set('Круглые неконтрастные', '.chips--round', '20059:4457', CH_PALE, true) + add;
+      set('Круглые контрастные', '.chips--round.chips--contrast', '20059:4457', CH_CONTRAST, true) + set('Круглые неконтрастные', '.chips--round', '20059:4457', CH_PALE, true) + add + opt;
   }
 
   // Поля ввода: вид поля, размер и подпись — переключатели; таблица «вариант × состояние» на обычном и контрастном фоне.
