@@ -10,9 +10,9 @@
 ## Подключение
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.9.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.9.0/fonts/fonts.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.9.0/components/button/button.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.10.1/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.10.1/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.10.1/components/button/button.css">
 ```
 
 `tokens.css` подключается первым. Текст кнопки набран шрифтом **Inter**, иконки в макете — шрифтами
@@ -66,6 +66,7 @@
 **Кнопка-иконка** — `iconButton=true`: `.btn--icon`, квадрат без отступов.
 
 **Подчёркивание у ссылки** — `underlineVisible=true`: `.btn--underline`, только для `.btn--link`.
+Чтобы линия шла только под текстом, оберните текст в `<span class="btn__caption">`: без обёртки она проходит и под глифом иконки. У `.btn--icon` подчёркивания нет.
 
 **Состояния** — классы и псевдоклассы, которые браузер ставит сам:
 

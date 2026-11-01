@@ -69,6 +69,11 @@
 }
 .btn__icon svg { display: block; width: 100%; height: 100%; fill: currentColor; }
 
+/* Подчёркивание только под текстом: с .btn оно переходит и на глиф иконки, отменить его внутри нельзя.
+   Поэтому подчёркивает .btn__caption, а без него текст подчёркивается по-прежнему вместе с иконкой */
+.btn--icon, .btn:has(> .btn__caption) { text-decoration-line: none; }
+.btn__caption { text-decoration-line: var(--btn-ul); }
+
 /* Слои вида same и square: заливка (::before) и рамка (::after) со своей прозрачностью */
 .btn::before, .btn::after { content: none; position: absolute; z-index: -1; border-radius: inherit; pointer-events: none; }
 /* Focus в макете нет: остаётся обводка браузера по :focus-visible */

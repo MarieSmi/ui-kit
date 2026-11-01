@@ -49,11 +49,20 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .brand h1 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
 .brand .ver { font: 500 12px var(--mono); color: var(--muted); }
 .controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.controls label[hidden] { display: none; }
 .controls label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
 select, input[type=search] { font: 400 14px var(--sans); color: var(--fg); background: var(--surface); border: 1px solid var(--border-unaccented_border-color); border-radius: 6px; padding: 5px 8px; }
 input[type=search] { width: 220px; max-width: 100%; }
+/* Своя стрелка: системная упирается в край. Это маска на подписи селекта, поэтому она чёткая и перекрашивается вместе с темой */
+select { appearance: none; padding-right: 28px; }
+select:disabled { opacity: .5; }
+label:has(> select) { position: relative; }
+label:has(> select)::after { content: ""; position: absolute; right: 9px; top: 50%; width: 10px; height: 6px; margin-top: -3px; pointer-events: none; background: var(--fg);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
+label:has(> select:disabled)::after { opacity: .5; }
 /* Меню в два уровня: разделы «Компоненты» и «Переменные», под ними пункты выбранного раздела */
-nav.toc { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding-bottom: 10px; font-size: 13px; }
+nav.toc { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 20px; padding-bottom: 10px; font-size: 13px; }
 nav.toc a { color: var(--muted); text-decoration: none; }
 nav.toc a:hover { color: var(--fg); }
 .toc-main { display: flex; gap: 2px; padding: 3px; margin-left: -15px; background: var(--bg); border-radius: 8px; } /* текст первой вкладки — на линии логотипа */
@@ -62,6 +71,8 @@ nav.toc .toc-main a.is-on { color: var(--extra-item_selected_text-color); backgr
 .toc-sub { display: flex; flex-wrap: wrap; gap: 4px 16px; }
 .toc-sub[hidden] { display: none; }
 .toc-sub a.is-on { color: var(--fg); }
+.toc-pick { align-items: baseline; gap: 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.toc-pick select { text-transform: none; letter-spacing: normal; }
 
 main .wrap { display: grid; gap: 40px; padding-block: 28px 64px; }
 section > h2 { margin: 0 0 4px; font-size: 22px; font-weight: 600; letter-spacing: -.01em; text-wrap: balance; }
@@ -103,10 +114,6 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .comp p { margin: 0; max-width: 65ch; }
 .stage { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; aspect-ratio: 16 / 9; max-width: 100%; background: var(--bg); }
 .stage iframe { display: block; width: 100%; height: 100%; border: 0; }
-.states { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 24px; margin: 0; padding: 0; list-style: none; font-size: 13px; }
-.states li { display: flex; gap: 8px; }
-.states b { font-weight: 500; min-width: 96px; }
-.states span { color: var(--muted); }
 
 .comp[hidden] { display: none; }
 .comp-head .comp-tool { align-self: baseline; margin-left: auto; display: flex; align-items: baseline; gap: 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
@@ -167,7 +174,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.9.0</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.10.1</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -195,7 +202,22 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     <div class="toc-main">
       <a href="#components" data-group="components">Компоненты</a><a href="#tokens" data-group="tokens">Переменные</a>
     </div>
-    <div class="toc-sub" data-group="components"><a href="#button">Кнопка</a><a href="#checkbox">Чекбокс</a><a href="#chips">Чипсы</a><a href="#input">Поля ввода</a><a href="#toolbar">Тулбар</a><a href="#widget">Виджет</a><a href="#master-list">Мастер-список</a><a href="#demo-frame">Вспом. обл.</a></div>
+    <label class="toc-sub toc-pick" data-group="components" for="comp-pick">Компонент
+      <select id="comp-pick">
+        <optgroup label="Конструктор">
+          <option value="widget">Виджет</option>
+          <option value="toolbar">Тулбар</option>
+          <option value="demo-frame">Вспом. обл.</option>
+        </optgroup>
+        <optgroup label="Стандартные">
+          <option value="button">Кнопка</option>
+          <option value="checkbox">Чекбокс</option>
+          <option value="chips">Чипсы</option>
+          <option value="input">Поля ввода</option>
+          <option value="master-list">Мастер-список</option>
+        </optgroup>
+      </select>
+    </label>
     <div class="toc-sub" data-group="tokens"><a href="#colors">Цвета</a><a href="#sizes">Размеры</a><a href="#shadows">Тени</a></div>
   </nav>
 </header>
@@ -210,10 +232,6 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
           </label>
         </div>
         <div id="button-body"></div>
-        <ul class="states">
-          <li><b>Состояния</b><span>покой, hover (.is-hover), press (.is-active), readOnly (.is-readonly, :disabled)</span></li>
-          <li><b>Иконка</b><span>глиф шрифта cbuc-icons или svg в .btn__icon</span></li>
-        </ul>
       </article>
       <article class="comp" id="checkbox">
         <div class="comp-head"><h3>Чекбокс</h3><code>components/checkbox</code>
@@ -222,15 +240,11 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
           </label>
         </div>
         <div id="checkbox-body"></div>
-        <ul class="states">
-          <li><b>Значение</b><span>false, true (:checked), triState (:indeterminate, .is-indeterminate)</span></li>
-          <li><b>Состояния</b><span>покой, hover (.is-hover), readOnly (.is-readonly, :disabled) — только у outlined</span></li>
-        </ul>
       </article>
       <article class="comp" id="chips">
         <div class="comp-head"><h3>Чипсы</h3><code>components/chips</code>
           <label class="comp-tool" for="ch-size">inlineHeight
-            <select id="ch-size"><option value="m">m · 24</option><option value="l" selected>l · 28</option><option value="xl">xl · 32</option><option value="5xl">5xl · 48</option></select>
+            <select id="ch-size"><option value="m" selected>m · 24</option><option value="l">l · 28</option><option value="xl">xl · 32</option><option value="5xl">5xl · 48</option></select>
           </label>
           <label class="comp-tool" for="ch-pos">iconPosition
             <select id="ch-pos"><option value="right" selected>right</option><option value="left">left</option><option value="only">only</option></select>
@@ -255,11 +269,6 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       <article class="comp" id="toolbar">
         <div class="comp-head"><h3>Тулбар</h3><code>components/toolbar</code></div>
         <div id="toolbar-body"></div>
-        <ul class="states">
-          <li><b>Стиль</b><span>задаётся на тулбаре (.tb--style-*), кнопки берут цвета от него</span></li>
-          <li><b>Состояния</b><span>покой, hover (.is-hover), select (.is-selected, aria-pressed) — select только у Bricks/button</span></li>
-          <li><b>Иконка</b><span>глиф шрифта cbuc-icons24 или svg в .tb__icon</span></li>
-        </ul>
       </article>
       <article class="comp" id="widget">
         <div class="comp-head"><h3>Виджет</h3><code>components/widget</code></div>
@@ -293,12 +302,6 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       <article class="comp" id="demo-frame">
         <div class="comp-head"><h3>Вспомогательная область</h3><code>components/demo-frame</code></div>
         <div class="stage"><iframe id="frame-demo" title="Пример вспомогательной области" src="../components/demo-frame/example/index.html"></iframe></div>
-        <ul class="states">
-          <li><b>Сценарий</b><span>обычный, наведение, выбран, недоступен</span></li>
-          <li><b>Вилка</b><span>выбран вариант — отмечен и родитель</span></li>
-          <li><b>Устройство</b><span>выбрано, доступно, недоступно</span></li>
-          <li><b>Ссылки</b><span>обычная, наведение</span></li>
-        </ul>
       </article>
     </section>
     <section id="colors" data-group="tokens">
@@ -460,7 +463,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     var host = document.getElementById('button-body'), size = document.getElementById('btn-size').value;
     var icon = '<span class="btn__icon">&#xe9e2;</span>'; // глиф иконки из макета, шрифт cbuc-icons / cbuc-icons24 из fonts/fonts.css
     function btn(cls, iconOnly) {
-      return '<button type="button" class="btn ' + cls + ' btn--size-' + size + (iconOnly ? ' btn--icon" aria-label="Кнопка">' + icon : '">' + icon + 'Кнопка') + '</button>';
+      return '<button type="button" class="btn ' + cls + ' btn--size-' + size + (iconOnly ? ' btn--icon" aria-label="Кнопка">' + icon : '">' + icon + '<span class="btn__caption">Кнопка</span>') + '</button>';
     }
     function row(label, cls, withIcon) {
       return '<tr><th>' + label + '</th>' + BTN_STATES.map(function (s) {
@@ -752,7 +755,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   // размеры и тени одной лентой (#colors, #sizes, #shadows). Показан только выбранный раздел.
   var ROUTES = { components: 'components', button: 'components', checkbox: 'components', chips: 'components', input: 'components', toolbar: 'components', widget: 'components', 'master-list': 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
-  var COMPS = ['button', 'checkbox', 'chips', 'input', 'toolbar', 'widget', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
+  var COMPS = ['button', 'checkbox', 'chips', 'input', 'toolbar', 'widget', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'], NO_SIZE = ['toolbar', 'widget'];
   var header = document.querySelector('header.top'), group = null, comp = 'button';
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
   function markSub(id) { nav('.toc-sub a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + id); }); }
@@ -767,10 +770,13 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     nav('.toc-sub').forEach(function (s) { s.hidden = s.getAttribute('data-group') !== g; });
     nav('.toc-main a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('data-group') === g); });
     document.getElementById('q').hidden = g !== 'tokens'; // поиск — только по переменным
+    if (g === 'components' && COMPS.indexOf(id) >= 0) comp = id;
+    // В тулбаре и виджете переключателя размера нет: показываем их в default, выбор вернётся в других разделах
+    sizeSel.parentNode.hidden = g === 'components' && NO_SIZE.indexOf(comp) >= 0;
+    applySize();
     if (g === 'components') {
-      if (COMPS.indexOf(id) >= 0) comp = id;
       COMPS.forEach(function (c) { document.getElementById(c).hidden = c !== comp; });
-      markSub(comp);
+      document.getElementById('comp-pick').value = comp;
       if (scroll) scrollToId('components');
     } else {
       var target = TOKEN_SECTIONS.indexOf(id) >= 0 ? id : 'colors';
@@ -788,6 +794,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   nav('nav.toc a').forEach(function (a) { // пункт меню: перейти и прокрутить, даже если адрес не изменился
     a.addEventListener('click', function (e) { e.preventDefault(); var id = a.getAttribute('href').slice(1); history.replaceState(null, '', '#' + id); go(id, true); });
   });
+  document.getElementById('comp-pick').addEventListener('change', function () { history.replaceState(null, '', '#' + this.value); go(this.value, true); });
   window.addEventListener('hashchange', function () { go(location.hash.slice(1), true); });
   window.addEventListener('scroll', spy, { passive: true });
 
@@ -816,7 +823,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   function applyTheme() { setAttr(root, 'data-ui-theme', themeSel.value); refresh(); }
   themeSel.value = '';
   themeSel.addEventListener('change', applyTheme);
-  sizeSel.addEventListener('change', function () { setAttr(root, 'data-ui-size', sizeSel.value); refresh(); });
+  function applySize() { setAttr(root, 'data-ui-size', sizeSel.parentNode.hidden ? '' : sizeSel.value); refresh(); }
+  sizeSel.addEventListener('change', applySize);
   document.getElementById('frame-demo').addEventListener('load', refresh);
   document.getElementById('q').addEventListener('input', filter);
 
