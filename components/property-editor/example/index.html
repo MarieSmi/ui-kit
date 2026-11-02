@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Окно редактора свойств</title>
+<link rel="stylesheet" href="../../../tokens.css">
+<link rel="stylesheet" href="../../../fonts/fonts.css">
+<link rel="stylesheet" href="../../chips/chips.css">
+<link rel="stylesheet" href="../property-editor.css">
+<script src="../property-editor.js"></script>
+<style>
+  body { margin: 0; padding: 32px; background: var(--background-unaccented_background-color); }
+  .stack { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px; }
+</style>
+</head>
+<body>
+<div class="stack">
+
+  <!-- Рабочее окно: чипсы и крестики убирают строки, название правится, сброс всё возвращает -->
+  <section class="pe" id="demo" aria-label="Редактор свойств">
+    <header class="pe__head">
+      <span class="pe__icon pe__icon--s" aria-hidden="true">&#xebb9;</span>
+      <label class="pe__name"><input class="pe__name-input" value="Название виджета" aria-label="Название" spellcheck="false"></label>
+      <button type="button" class="pe__mark" hidden aria-label="Вернуть имя">
+        <span class="pe__hint"><span class="pe__hint-icon" aria-hidden="true">&#xe60a;</span><span class="pe__hint-text"></span></span>
+      </button>
+      <div class="pe__cmds">
+        <button type="button" class="pe__reset" aria-label="Сбросить настройки">&#xe629;</button>
+        <button type="button" class="pe__done" aria-label="Сохранить и выйти">&#xe75e;</button>
+        <button type="button" class="pe__close" aria-label="Закрыть">&#xe66c;</button>
+      </div>
+    </header>
+    <div class="pe__body">
+      <div class="pe__card">
+        <div class="pe__title">Заголовок группы</div>
+        <div class="pe__rows">
+          <div class="pe__row"><span class="pe__label">Метка</span><span class="pe__editor is-readonly">Редактор</span></div>
+          <div class="pe__row"><span class="pe__label">Длинная метка</span><span class="pe__editor is-readonly">Редактор</span></div>
+          <div class="pe__row"><span class="pe__label">Метка</span><span class="pe__editor is-readonly">Редактор</span></div>
+        </div>
+      </div>
+      <div class="pe__card pe__card--size">
+        <div class="pe__size">
+          <span class="pe__label">Ширина</span>
+          <label class="pe__dim pe__dim--auto" data-pe-dim="w"><input class="pe__dim-value" value="115" inputmode="numeric" maxlength="4" aria-label="Ширина"><button type="button" class="pe__dim-unit">по контенту</button></label>
+          <span></span>
+          <span class="pe__label">Высота</span>
+          <label class="pe__dim pe__dim--auto" data-pe-dim="h"><input class="pe__dim-value" value="32" inputmode="numeric" maxlength="4" aria-label="Высота"><button type="button" class="pe__dim-unit">по контенту</button></label>
+          <span></span>
+        </div>
+        <button type="button" class="pe__arrow" aria-label="Ограничения размера"></button>
+      </div>
+      <div class="pe__card">
+        <div class="pe__rows">
+          <div class="pe__row pe__row--style" data-pe-row="radius" hidden>
+            <span class="pe__label pe__label--style">Скругления</span>
+            <div class="pe__row-body">
+              <label class="pe__num"><span class="pe__corners" aria-hidden="true"></span><input class="pe__num-value" value="8" inputmode="numeric" maxlength="3" aria-label="Скругления"></label>
+              <span class="pe__spacer"></span>
+              <button type="button" class="pe__switch" data-pe-split="corners" data-pe-max="100" aria-label="Углы по отдельности">&#xe95f;</button>
+              <button type="button" class="pe__x" data-pe-clear aria-label="Скругления: убрать">&#xe66c;</button>
+            </div>
+          </div>
+          <div class="pe__row pe__row--style" data-pe-row="border" hidden>
+            <span class="pe__label pe__label--style">Границы</span>
+            <div class="pe__row-body">
+              <button type="button" class="pe__swatch" data-pe-color="#000000" data-pe-title="Границы" aria-label="Цвет границы"></button>
+              <button type="button" class="pe__line" aria-label="Тип линии" aria-haspopup="menu"></button>
+              <label class="pe__num pe__num--edge"><input class="pe__num-value" value="1" inputmode="numeric" maxlength="2" aria-label="Толщина"></label>
+              <span class="pe__spacer"></span>
+              <button type="button" class="pe__switch" data-pe-split="sides" data-pe-max="20" aria-label="Стороны по отдельности">&#xebce;</button>
+              <button type="button" class="pe__x" data-pe-clear aria-label="Границы: убрать">&#xe66c;</button>
+            </div>
+          </div>
+          <div class="pe__row pe__row--style" data-pe-row="shadow" hidden>
+            <span class="pe__label pe__label--style">Тень</span>
+            <div class="pe__row-body">
+              <button type="button" class="pe__bubble" data-pe-shadow="#000000" data-pe-opacity="14" data-pe-blur="8"><span class="pe__swatch pe__swatch--alpha"></span><span class="pe__bubble-text"></span></button>
+              <button type="button" class="pe__x" data-pe-clear aria-label="Тень: убрать">&#xe66c;</button>
+            </div>
+          </div>
+          <div class="pe__row pe__row--style" data-pe-row="background" data-pe-also="shadow" hidden>
+            <span class="pe__label pe__label--style">Фон</span>
+            <div class="pe__row-body">
+              <button type="button" class="pe__bubble" data-pe-color="#a39c97" data-pe-title="Фон"><span class="pe__swatch"></span><span class="pe__bubble-text"></span></button>
+              <button type="button" class="pe__x" data-pe-clear aria-label="Фон: убрать">&#xe66c;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pe__chips">
+        <button type="button" class="chips chips--optional" data-pe-chip="radius"><span class="chips__caption">Скругления</span></button>
+        <button type="button" class="chips chips--optional" data-pe-chip="border"><span class="chips__caption">Границы</span></button>
+        <button type="button" class="chips chips--optional" data-pe-chip="shadow"><span class="chips__caption">Тень</span></button>
+        <button type="button" class="chips chips--optional" data-pe-chip="background"><span class="chips__caption">Фон</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Блок «Оформление» и варианты шапки -->
+  <section class="pe" aria-label="Редактор свойств: оформление">
+    <header class="pe__head">
+      <span class="pe__icon" aria-hidden="true">&#xe98e;</span>
+      <button type="button" class="pe__name">Мой заголовок</button>
+      <button type="button" class="pe__mark is-open" aria-label="Вернуть имя">
+        <span class="pe__hint"><span class="pe__hint-icon" aria-hidden="true">&#xe60a;</span><span class="pe__hint-text">Название виджета</span></span>
+      </button>
+      <div class="pe__cmds">
+        <button type="button" class="pe__reset" aria-label="Сбросить настройки">&#xe629;</button>
+        <button type="button" class="pe__done" aria-label="Сохранить и выйти">&#xe75e;</button>
+        <button type="button" class="pe__close" aria-label="Закрыть">&#xe66c;</button>
+      </div>
+    </header>
+    <div class="pe__body">
+      <div class="pe__card">
+        <div class="pe__rows">
+          <div class="pe__row pe__row--style">
+            <span class="pe__label pe__label--style">Скругления</span>
+            <div class="pe__row-body">
+              <label class="pe__num"><span class="pe__corners" aria-hidden="true"></span><input class="pe__num-value" value="8" aria-label="Скругления"></label>
+              <span class="pe__spacer"></span>
+              <button type="button" class="pe__switch" aria-label="Углы по отдельности">&#xe95f;</button>
+              <button type="button" class="pe__x" aria-label="Сбросить">&#xe66c;</button>
+            </div>
+          </div>
+          <div class="pe__row pe__row--style">
+            <span class="pe__label pe__label--style">Границы</span>
+            <div class="pe__row-body">
+              <button type="button" class="pe__swatch" style="--pe-color: #000" aria-label="Цвет границы"></button>
+              <button type="button" class="pe__line" aria-label="Тип линии"></button>
+              <label class="pe__num pe__num--edge"><input class="pe__num-value" value="1" aria-label="Толщина"></label>
+              <span class="pe__spacer"></span>
+              <button type="button" class="pe__switch" aria-label="Стороны по отдельности">&#xebce;</button>
+              <button type="button" class="pe__x" aria-label="Границы: убрать">&#xe66c;</button>
+            </div>
+          </div>
+          <div class="pe__row pe__row--style">
+            <span class="pe__label pe__label--style">Тень</span>
+            <div class="pe__row-body">
+              <button type="button" class="pe__bubble" style="--pe-color: #000; --pe-alpha: 14%"><span class="pe__swatch pe__swatch--alpha"></span>#000000</button>
+              <button type="button" class="pe__x" aria-label="Сбросить">&#xe66c;</button>
+            </div>
+          </div>
+          <div class="pe__row pe__row--style">
+            <span class="pe__label pe__label--style">Фон</span>
+            <div class="pe__row-body">
+              <button type="button" class="pe__bubble" style="--pe-color: #a39c97"><span class="pe__swatch"></span>#A39C97</button>
+              <button type="button" class="pe__x" aria-label="Сбросить">&#xe66c;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Режим правки и «Провал» -->
+  <div style="display: grid; gap: 16px; align-content: start">
+    <section class="pe" aria-label="Правка названия">
+      <header class="pe__head">
+        <span class="pe__icon pe__icon--s" aria-hidden="true">&#xebb9;</span>
+        <label class="pe__name pe__name--edit"><input class="pe__name-input" value="Мой заголовок" aria-label="Название"></label>
+        <div class="pe__cmds">
+          <button type="button" class="pe__reset" aria-label="Сбросить настройки">&#xe629;</button>
+          <button type="button" class="pe__done" aria-label="Сохранить и выйти">&#xe75e;</button>
+          <button type="button" class="pe__close" aria-label="Закрыть">&#xe66c;</button>
+        </div>
+      </header>
+    </section>
+    <section class="pe" aria-label="Пустое название">
+      <header class="pe__head">
+        <span class="pe__icon pe__icon--s" aria-hidden="true">&#xebb9;</span>
+        <label class="pe__name pe__name--edit"><input class="pe__name-input" placeholder="Название виджета" aria-label="Название"></label>
+        <div class="pe__cmds">
+          <button type="button" class="pe__reset" aria-label="Сбросить настройки">&#xe629;</button>
+          <button type="button" class="pe__done" aria-label="Сохранить и выйти">&#xe75e;</button>
+          <button type="button" class="pe__close" aria-label="Закрыть">&#xe66c;</button>
+        </div>
+      </header>
+    </section>
+    <section class="pe" aria-label="Провал в пункт">
+      <header class="pe__head">
+        <button type="button" class="pe__back" aria-label="Назад">&#xeb9e;</button>
+        <button type="button" class="pe__name">Название пункта</button>
+        <div class="pe__cmds">
+          <button type="button" class="pe__reset" disabled aria-label="Сбросить настройки">&#xe629;</button>
+          <button type="button" class="pe__done" aria-label="Сохранить и выйти">&#xe75e;</button>
+          <button type="button" class="pe__close" aria-label="Закрыть">&#xe66c;</button>
+        </div>
+      </header>
+    </section>
+  </div>
+
+</div>
+<script>PropertyEditor.mount(document.getElementById('demo'));</script>
+</body>
+</html>

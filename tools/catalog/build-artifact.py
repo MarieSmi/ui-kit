@@ -29,6 +29,8 @@ page = page.replace('<link rel="stylesheet" href="../components/chips/chips.css"
 page = page.replace('<link rel="stylesheet" href="../components/input/input.css" data-kit="input">', '<style data-kit="input">' + read('components/input/input.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">', '<style data-kit="toolbar">' + read('components/toolbar/toolbar.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">', '<style data-kit="widget">' + read('components/widget/widget.css') + '</style>')
+page = page.replace('<link rel="stylesheet" href="../components/property-editor/property-editor.css" data-kit="property-editor">', '<style data-kit="property-editor">' + read('components/property-editor/property-editor.css') + '</style>')
+page = page.replace('<script src="../components/property-editor/property-editor.js" data-kit="property-editor"></script>', '<script data-kit="property-editor">' + read('components/property-editor/property-editor.js') + '</script>')
 page = page.replace('<link rel="stylesheet" href="../components/master-list/master-list.css" data-kit="master-list">', '<style data-kit="master-list">' + read('components/master-list/master-list.css') + '</style>')
 page = page.replace("'../components/widget/example/content.png'", "'data:image/png;base64," + base64.b64encode((ROOT / 'components/widget/example/content.png').read_bytes()).decode('ascii') + "'")
 page = re.sub(r'src="\.\./components/demo-frame/example/index\.html"', lambda m: 'srcdoc="' + html.escape(ex, quote=True) + '"', page)

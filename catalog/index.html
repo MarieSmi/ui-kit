@@ -16,6 +16,8 @@
 <link rel="stylesheet" href="../components/input/input.css" data-kit="input">
 <link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">
 <link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">
+<link rel="stylesheet" href="../components/property-editor/property-editor.css" data-kit="property-editor">
+<script src="../components/property-editor/property-editor.js" data-kit="property-editor"></script>
 <link rel="stylesheet" href="../components/master-list/master-list.css" data-kit="master-list">
 <style>
 /* Каталог: шапка с переключателями темы и размера, дальше секции токенов и компонентов.
@@ -144,6 +146,15 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .tb.tb-bare { background: none; box-shadow: none; overflow: visible; }
 .tb.tb-bare::after { content: none; }
 #widget-body { display: grid; gap: 32px; }
+#property-editor-body, #pe-snaps { display: grid; gap: 32px; }
+.pe-grid td { vertical-align: top; }
+.pe-grid.pe-top tr > th:first-child { vertical-align: top; padding-top: 10px; }
+/* Элементы окна без самого окна: .pe даёт им шрифт и токены, фон и тень прячем */
+.pe.pe-bare { width: auto; background: none; box-shadow: none; }
+.pe-bare .pe__rows { width: 100%; }
+.pe-hint-cell { padding-top: 44px; } /* место над меткой под открытую подсказку */
+.pe-snap { align-items: flex-start; }
+.pe-snap > .pe__menu, .pe-snap > .pe__pop { position: static; margin: 20px; } /* снимок на месте, с полями под тень */
 /* Виджет: место сверху под тулбар (40px) и по бокам под кружки (10px), содержимое — картинка из макета (_Контент виджета) */
 .wg-grid td { padding: 52px 32px 16px 12px; }
 .wg-grid tr:first-child th + th { padding-left: 12px; } /* подпись столбца — по левому краю виджета */
@@ -175,7 +186,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.11.0</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.12.0</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -208,6 +219,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         <optgroup label="Конструктор">
           <option value="widget">Виджет</option>
           <option value="toolbar">Тулбар</option>
+          <option value="property-editor">Редактор свойств</option>
           <option value="demo-frame">Вспом. обл.</option>
         </optgroup>
         <optgroup label="Стандартные">
@@ -274,6 +286,10 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       <article class="comp" id="widget">
         <div class="comp-head"><h3>Виджет</h3><code>components/widget</code></div>
         <div id="widget-body"></div>
+      </article>
+      <article class="comp" id="property-editor">
+        <div class="comp-head"><h3>Редактор свойств</h3><code>components/property-editor</code></div>
+        <div id="property-editor-body"></div>
       </article>
       <article class="comp" id="master-list">
         <div class="comp-head"><h3>Мастер-список</h3><code>components/master-list</code>
@@ -687,6 +703,135 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     host.innerHTML = wg + em + pl;
   }
 
+  // Редактор свойств: рабочее окно, дальше варианты шапки и элементов. Всплывающие окна — снимки разметки, которую строит property-editor.js
+  var PE_G = { reset: '&#xe629;', done: '&#xe75e;', close: '&#xe66c;', icon: '&#xebb9;', percent: '&#xe98e;', back: '&#xeb9e;', hint: '&#xe60a;', corners: '&#xe95f;', sides: '&#xebce;' };
+  function peBtn(cls, glyph, label, attrs) { return '<button type="button" class="' + cls + '"' + (attrs || '') + ' aria-label="' + label + '">' + (glyph || '') + '</button>'; }
+  function peCmds(resetAttrs) {
+    return '<div class="pe__cmds">' + peBtn('pe__reset', PE_G.reset, 'Сбросить настройки', resetAttrs) + peBtn('pe__done', PE_G.done, 'Сохранить и выйти') + peBtn('pe__close', PE_G.close, 'Закрыть') + '</div>';
+  }
+  function peIcon() { return '<span class="pe__icon pe__icon--s" aria-hidden="true">' + PE_G.icon + '</span>'; }
+  function peHead(inner, resetAttrs) { return '<div class="pe"><header class="pe__head">' + inner + peCmds(resetAttrs) + '</header></div>'; }
+  function peEdit(value, name) {
+    return '<label class="pe__name pe__name--edit"><input class="pe__name-input" value="' + value + '" placeholder="' + name + '" aria-label="Название"></label>';
+  }
+  function peMark(cls) {
+    return '<button type="button" class="pe__mark' + (cls || '') + '" aria-label="Вернуть имя"><span class="pe__hint"><span class="pe__hint-icon" aria-hidden="true">' + PE_G.hint + '</span><span class="pe__hint-text">Название виджета</span></span></button>';
+  }
+  function peBox(kind, keys, value) {
+    return '<span class="pe__box pe__box--' + kind + '">' + keys.map(function (k) {
+      return '<input class="pe__box-input pe__box-input--' + k + '" value="' + value + '" aria-label="' + k + '"><i class="pe__box-mark pe__box-mark--' + k + '"></i>';
+    }).join('') + '</span>';
+  }
+  function peRow(label, body, attrs) {
+    return '<div class="pe__row pe__row--style"' + (attrs || '') + '><span class="pe__label pe__label--style">' + label + '</span><div class="pe__row-body">' + body + '</div></div>';
+  }
+  function peX(attrs, cls) { return peBtn('pe__x' + (cls || ''), PE_G.close, 'Убрать', attrs); }
+  function peRadius(open, attrs) {
+    return peRow('Скругления', (open ? peBox('corners', ['tl', 'tr', 'bl', 'br'], 8) : '<label class="pe__num"><span class="pe__corners" aria-hidden="true"></span><input class="pe__num-value" value="8" aria-label="Скругления"></label>') +
+      '<span class="pe__spacer"></span>' + peBtn('pe__switch' + (open ? ' is-active' : ''), PE_G.corners, 'Углы по отдельности', attrs ? ' data-pe-split="corners" data-pe-max="100"' : '') + peX(attrs ? ' data-pe-clear' : ''), attrs);
+  }
+  function peBorder(open, attrs) {
+    return peRow('Границы', peBtn('pe__swatch', '', 'Цвет границы', attrs ? ' data-pe-color="#000000" data-pe-title="Границы"' : ' style="--pe-color: #000"') + peBtn('pe__line', '', 'Тип линии') +
+      (open ? peBox('sides', ['top', 'right', 'bottom', 'left'], 1) : '<label class="pe__num pe__num--edge"><input class="pe__num-value" value="1" aria-label="Толщина"></label>') +
+      '<span class="pe__spacer"></span>' + peBtn('pe__switch' + (open ? ' is-active' : ''), PE_G.sides, 'Стороны по отдельности', attrs ? ' data-pe-split="sides" data-pe-max="20"' : '') + peX(attrs ? ' data-pe-clear' : ''), attrs);
+  }
+  function peBubble(color, alpha, attrs) {
+    return '<button type="button" class="pe__bubble"' + (attrs || ' style="--pe-color: ' + color + (alpha ? '; --pe-alpha: 14%' : '') + '"') + '><span class="pe__swatch' + (alpha ? ' pe__swatch--alpha' : '') + '"></span><span class="pe__bubble-text">' + color.toUpperCase() + '</span></button>';
+  }
+  function buildPropertyEditor() {
+    var host = document.getElementById('property-editor-body');
+    function set(title, code, node, head, rows, cls) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code> <span>' + node + '</span></h4>' +
+        '<div class="btn-scroll"><table class="btn-grid pe-grid' + (cls || '') + '"><tr><th></th>' + head + '</tr>' + rows + '</table></div></div>';
+    }
+    function ths(list) { return list.map(function (t) { return '<th>' + t + '</th>'; }).join(''); }
+    function bare(html, width) { return '<div class="pe pe-bare"' + (width ? ' style="width: ' + width + 'px"' : '') + '>' + html + '</div>'; }
+    function tds(cells) { return cells.map(function (c) { return '<td>' + (c == null ? '' : c) + '</td>'; }).join(''); }
+    function row(label, cells) { return '<tr><th>' + label + '</th>' + tds(cells) + '</tr>'; }
+
+    var live = '<div class="btn-set"><h4>Окно редактора свойств <code>.pe</code> <span>4625:846</span></h4>' +
+      '<p class="btn-note">Рабочее окно на property-editor.js: чипсы, крестики, название, меню величин, тип линии, раскрытие строк, выбор цвета и окно тени.</p>' +
+      '<section class="pe" id="pe-live" aria-label="Редактор свойств"><header class="pe__head">' + peIcon() +
+      '<label class="pe__name"><input class="pe__name-input" value="Название виджета" aria-label="Название" spellcheck="false"></label>' +
+      '<button type="button" class="pe__mark" hidden aria-label="Вернуть имя"><span class="pe__hint"><span class="pe__hint-icon" aria-hidden="true">' + PE_G.hint + '</span><span class="pe__hint-text"></span></span></button>' +
+      peCmds() + '</header><div class="pe__body">' +
+      '<div class="pe__card"><div class="pe__title">Заголовок группы</div><div class="pe__rows">' + ['Метка', 'Длинная метка', 'Метка'].map(function (l) {
+        return '<div class="pe__row"><span class="pe__label">' + l + '</span><span class="pe__editor is-readonly">Редактор</span></div>';
+      }).join('') + '</div></div>' +
+      '<div class="pe__card pe__card--size"><div class="pe__size">' + [['w', 'Ширина', 115], ['h', 'Высота', 32]].map(function (d) {
+        return '<span class="pe__label">' + d[1] + '</span><label class="pe__dim pe__dim--auto" data-pe-dim="' + d[0] + '"><input class="pe__dim-value" value="' + d[2] + '" inputmode="numeric" maxlength="4" aria-label="' + d[1] + '"><button type="button" class="pe__dim-unit">по контенту</button></label><span></span>';
+      }).join('') + '</div>' + peBtn('pe__arrow', '', 'Ограничения размера') + '</div>' +
+      '<div class="pe__card"><div class="pe__rows">' + peRadius(false, ' data-pe-row="radius" hidden') + peBorder(false, ' data-pe-row="border" hidden') +
+      peRow('Тень', peBubble('#000000', true, ' data-pe-shadow="#000000" data-pe-opacity="14" data-pe-blur="8"') + peX(' data-pe-clear'), ' data-pe-row="shadow" hidden') +
+      peRow('Фон', peBubble('#a39c97', false, ' data-pe-color="#a39c97" data-pe-title="Фон"') + peX(' data-pe-clear'), ' data-pe-row="background" data-pe-also="shadow" hidden') + '</div></div>' +
+      '<div class="pe__chips">' + [['radius', 'Скругления'], ['border', 'Границы'], ['shadow', 'Тень'], ['background', 'Фон']].map(function (c) {
+        return '<button type="button" class="chips chips--optional" data-pe-chip="' + c[0] + '"><span class="chips__caption">' + c[1] + '</span></button>';
+      }).join('') + '</div></div></section></div>';
+
+    var name = '<span class="pe__name">Название виджета</span>', point = '<span class="pe__name">Название пункта</span>', mine = '<span class="pe__name">Мой заголовок</span>';
+    var back = peBtn('pe__back', PE_G.back, 'Назад');
+    var pct = '<span class="pe__icon" aria-hidden="true">' + PE_G.percent + '</span>';
+    var heads = set('Шапка окна', '.pe__head', '4608:7879', ths(['Edit=off, Empty=off', 'Edit=on, Empty=on', 'Edit=on, Empty=off']),
+      row('Изменяется · Имя по умолчанию', [peHead(peIcon() + name), peHead(peIcon() + peEdit('', 'Название виджета')), peHead(peIcon() + peEdit('Мой заголовок', 'Название виджета'))]) +
+      row('Изменяется · Измененное имя', [peHead(pct + mine + peMark())]) +
+      row('Изменяется · Провал', [peHead(back + point, ' disabled'), peHead(back + peEdit('', 'Новый пункт'), ' disabled'), peHead(back + peEdit('Название пункта', 'Новый пункт'), ' disabled')]) +
+      row('Не меняется · Имя по умолчанию', [peHead(peIcon() + '<span class="pe__name pe__name--static">Название виджета</span>')]) +
+      row('Не меняется · Провал', [peHead(back + '<span class="pe__name pe__name--static">Название пункта</span>', ' disabled')]));
+
+    var names = set('_Name', '.pe__name', '4608:8089', ths(['покой', 'hover']), [['Empty=off', ''], ['Empty=on', ' is-empty']].map(function (e) {
+      return row(e[0], ['', ' is-hover'].map(function (s) { return bare('<span class="pe__name' + e[1] + s + '">Название виджета</span>'); }));
+    }).join(''));
+    var marks = set('Сброс', '.pe__mark', '4608:7990', ths(['Open=off', 'Open=on']), row('', [bare(peMark()), '<div class="pe-hint-cell">' + bare(peMark(' is-open')) + '</div>']));
+    var states = [['покой', ''], ['hover', ' is-hover'], ['active', ' is-active']];
+    function btnRows(list) {
+      return list.map(function (b) {
+        return row(b[0], states.map(function (s) { return bare(peBtn(b[1] + s[1], b[2], b[3])); }).concat(b[4] ? [bare(peBtn(b[1], b[2], b[3], ' disabled'))] : [null]));
+      }).join('');
+    }
+    var buttons = set('Кнопки шапки', '.pe__reset, .pe__done, .pe__close, .pe__arrow', '4608:8098, 4608:7662', ths(['покой', 'hover', 'active', 'disabled']), btnRows([
+      ['Сброс', 'pe__reset', PE_G.reset, 'Сбросить', true], ['Сохранить', 'pe__done', PE_G.done, 'Сохранить'], ['Закрыть', 'pe__close', PE_G.close, 'Закрыть'], ['Стрелка', 'pe__arrow', '', 'Ограничения'], ['Назад', 'pe__back', PE_G.back, 'Назад']]));
+
+    var labels = set('Метка+редактор PG', '.pe__row, .pe__title', '6c2fc2d0…', ths(['редактор']), row('', [bare('<div class="pe__title">Заголовок группы</div><div class="pe__rows"><div class="pe__row"><span class="pe__label">Метка</span><span class="pe__editor is-readonly">Редактор</span></div><div class="pe__row"><span class="pe__label">Длинная метка</span><input class="pe__editor" value="Значение" aria-label="Длинная метка"></div></div>', 318)]));
+    function dim(cls, value, unit, ph) {
+      return bare('<label class="pe__dim' + cls + '"><input class="pe__dim-value" value="' + value + '" placeholder="' + (ph || '') + '" aria-label="Размер"><span class="pe__dim-unit">' + unit + '</span></label>', 130);
+    }
+    var dims = set('Поле ввода', '.pe__dim', '4614:20979', ths(['покой', 'hover']), [['Type=fix', '', '24', 'px'], ['Type=auto', ' pe__dim--auto', '', 'по контенту', '115'], ['Type=fill', ' pe__dim--auto', '', 'заполнить', '115']].map(function (t) {
+      return row(t[0], ['', ' is-hover'].map(function (s) { return dim(t[1] + s, t[2], t[3], t[4]); }));
+    }).join(''));
+
+    var style = set('Строки оформления', '.pe__row--style', '4629:5073, 4629:2701, 4629:3650, 4629:3539', ths(['Open=off', 'Open=on']),
+      row('Скругления', [bare('<div class="pe__rows">' + peRadius(false) + '</div>', 318), bare('<div class="pe__rows">' + peRadius(true) + '</div>', 318)]) +
+      row('Границы', [bare('<div class="pe__rows">' + peBorder(false) + '</div>', 318), bare('<div class="pe__rows">' + peBorder(true) + '</div>', 318)]) +
+      row('Тень', [bare('<div class="pe__rows">' + peRow('Тень', peBubble('#000000', true) + peX()) + '</div>', 318), null]) +
+      row('Фон', [bare('<div class="pe__rows">' + peRow('Фон', peBubble('#a39c97', false) + peX()) + '</div>', 318), null]), ' pe-top');
+    var parts = set('Элементы строк', '.pe__switch, .pe__x, .pe__swatch, .pe__bubble, .pe__line', '', ths(['покой', 'hover', 'Active=on', 'Active=on, hover', 'dashed']),
+      row('Переключатель', [bare(peBtn('pe__switch', PE_G.sides, 'Стороны')), bare(peBtn('pe__switch is-hover', PE_G.sides, 'Стороны')), bare(peBtn('pe__switch is-active', PE_G.sides, 'Стороны')), bare(peBtn('pe__switch is-active is-hover', PE_G.sides, 'Стороны')), null]) +
+      row('Крестик', [bare(peX()), bare(peX('', ' is-hover')), null, null, null]) +
+      row('Кружок цвета', [bare(peBtn('pe__swatch', '', 'Цвет', ' style="--pe-color: #a39c97"')), bare(peBtn('pe__swatch is-hover', '', 'Цвет', ' style="--pe-color: #a39c97"')), null, null, null]) +
+      row('Пилюля цвета', [bare(peBubble('#a39c97', false)), bare(peBubble('#a39c97', false).replace('pe__bubble"', 'pe__bubble is-hover"')), null, null, null]) +
+      row('Тип линии', [bare(peBtn('pe__line', '', 'Сплошная')), null, null, null, bare(peBtn('pe__line pe__line--dashed', '', 'Пунктир'))]));
+
+    host.innerHTML = live + heads + names + marks + buttons + labels + dims + style + parts + '<div id="pe-snaps"></div>';
+
+    // Снимки всплывающих окон: разметка та же, что строит рабочее окно
+    var win = document.getElementById('pe-live');
+    window.PropertyEditor.mount(win);
+    function snap(opener, sel) {
+      win.querySelector(opener).click();
+      var el = win.querySelector(sel), html = el.outerHTML;
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      return html;
+    }
+    function popSet(title, code, node, html) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code> <span>' + node + '</span></h4><div class="pe pe-bare pe-snap">' + html + '</div></div>';
+    }
+    document.getElementById('pe-snaps').innerHTML =
+      popSet('Меню величин', '.pe__menu--size', '4614:20951', snap('[data-pe-dim="w"] .pe__dim-unit', '.pe__menu--size')) +
+      popSet('Меню выбора линии', '.pe__menu--line', '4629:2697', snap('[data-pe-row="border"] .pe__line', '.pe__menu--line')) +
+      popSet('Выбор цвета', '.pe__pop--color', '4629:3533', snap('[data-pe-row="background"] .pe__bubble', '.pe__pop--color')) +
+      popSet('Тень', '.pe__pop--shadow', '4629:3606', snap('[data-pe-row="shadow"] .pe__bubble', '.pe__pop--shadow'));
+  }
+
   // Мастер-список: «Список» и «Навигация» — таблица «itemType × состояние», переключатель, дерево и заголовок группы.
   // iconPosition — порядок стрелки и подписи, arrowType — вид всех стрелок пунктов, expanderAlign — у заголовка группы
   var ML_STATES = [['default', ''], ['hover', ' is-hover'], ['selected', ' is-selected'], ['selected · hover', ' is-selected is-hover']];
@@ -764,9 +909,9 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
   // Меню: раздел «Компоненты» показывает один компонент (#button, #checkbox, #chips, #input, #toolbar, #widget, #demo-frame), раздел «Переменные» — цвета,
   // размеры и тени одной лентой (#colors, #sizes, #shadows). Показан только выбранный раздел.
-  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', chips: 'components', input: 'components', toolbar: 'components', widget: 'components', 'master-list': 'components', 'demo-frame': 'components',
+  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', chips: 'components', input: 'components', toolbar: 'components', widget: 'components', 'property-editor': 'components', 'master-list': 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
-  var COMPS = ['button', 'checkbox', 'chips', 'input', 'toolbar', 'widget', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
+  var COMPS = ['button', 'checkbox', 'chips', 'input', 'toolbar', 'widget', 'property-editor', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
   var header = document.querySelector('header.top'), group = null, comp = 'button';
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
   function markSub(id) { nav('.toc-sub a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + id); }); }
@@ -849,7 +994,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
   var start = location.hash.slice(1);
   if (!go(start, false)) go('button', false);
-  buildButtons(); buildCheckboxes(); buildChips(); buildInputs(); buildToolbars(); buildWidgets(); buildMasterList(); buildColors(); buildSizes(); buildShadows();
+  buildButtons(); buildCheckboxes(); buildChips(); buildInputs(); buildToolbars(); buildWidgets(); buildPropertyEditor(); buildMasterList(); buildColors(); buildSizes(); buildShadows();
   if (ROUTES[start]) { // открыт по адресу раздела — прокрутить к нему, когда всё построено
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     go(start, true);

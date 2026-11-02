@@ -16,13 +16,13 @@
 Файлы раздаёт jsDelivr прямо из GitHub по тегу:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.11.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.11.0/components/<имя>/<имя>.css">
-<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.11.0/components/<имя>/<имя>.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.12.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.12.0/components/<имя>/<имя>.css">
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.12.0/components/<имя>/<имя>.js"></script>
 ```
 
 - `tokens.css` подключается **первым**: компоненты берут значения из его переменных.
-- Версия в адресе (`@1.11.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
+- Версия в адресе (`@1.12.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
 - Во всех адресах одного прототипа должна стоять одна и та же версия.
 - В артефактах Claude адреса `cdn.jsdelivr.net/gh/` не работают: там код кита вшивается в файл.
 
@@ -32,7 +32,7 @@
 прототип подключает сам, отдельным файлом:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.11.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.12.0/fonts/fonts.css">
 ```
 
 | Шрифт | Файлы | Где используется |
@@ -81,6 +81,7 @@ Figma: он обновит файлы в `tools/tokens/`, запустит `pyth
 | Поля ввода: однострочное, многострочное, дата (период, календарь), время; метка слева / сверху / прыгающая, размеры m / l / xl, контрастный фон, обязательность, иконка и счётчик | [`components/input`](components/input/) | `nuC4KFMiS36uDWDUp9wKGl` · `15786:3347`, `15769:14088`, `15769:13000`, `15769:13857` | 1.9.0 |
 | Тулбар: стили default / info / success, кнопки-иконки, удаление, подтверждение, подпись со стрелкой, разделитель | [`components/toolbar`](components/toolbar/) | `rHabzni5OI5D4fxBLQdj2m` · `854:7085` | 1.4.0 |
 | Виджет: рамка при наведении и выделении, кружки-плюсы на сторонах, слот для тулбара, родитель (уровень 2), пустое состояние | [`components/widget`](components/widget/) | `rHabzni5OI5D4fxBLQdj2m` · `131:17349` | 1.5.0 |
+| Окно редактора свойств: шапка с названием, облачка, строки «метка + редактор», размер с меню величин и Min/Max, скругления, границы, тень и фон с раскрытием, выбор цвета, окно тени, чипсы и крестики; необязательный JS | [`components/property-editor`](components/property-editor/) | `rHabzni5OI5D4fxBLQdj2m` · `4625:846`, `4608:7879`, `4629:3533`, `4629:3606`, `4629:2697` | 1.12.0 |
 | Мастер-список: «Список» и «Навигация», счётчики, кнопка-стрелка, переключатель, дерево до 3 уровней, заголовок группы | [`components/master-list`](components/master-list/) | `nuC4KFMiS36uDWDUp9wKGl` · `25581:1272`, `34211:1076`, `14187:114` | 1.8.0 |
 
 Связь компонентов Figma с классами кита — в [`figma-map.json`](figma-map.json): ключи component set и

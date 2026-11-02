@@ -324,6 +324,51 @@
         "_header.iconVisible#114:0": { "true": "есть .ml__group-expander", "false": "без .ml__group-expander" },
         "_header text": { "kit": "текст в .ml__group-caption" }
       }
+    },
+    "property-editor": {
+      "kit": "components/property-editor",
+      "since": "1.12.0",
+      "figma": {
+        "fileKey": "rHabzni5OI5D4fxBLQdj2m",
+        "file": "⚙️Builder-components",
+        "page": "4607:4970"
+      },
+      "element": "<section class=\"pe\"><header class=\"pe__head\">…</header><div class=\"pe__body\">…</div></section>",
+      "js": "PropertyEditor.mount(el, { onChange, onDone, onClose })",
+      "base": "pe",
+      "sets": [
+        { "name": "Окно редактора свойств", "node": "4625:846", "key": "6df70d5c2338d79016c45c2704ae42492b4c2f8a", "class": "pe", "note": "отдельный компонент, не набор" },
+        { "name": "Шапка окна", "node": "4608:7879", "key": "13042688f89e325cc8cdf8f7082843d82148b0c9", "class": "pe__head" },
+        { "name": "_Name", "node": "4608:8089", "key": "9dbabe302e026c2924d9e4761f6a466d5cf368e7", "class": "pe__name" },
+        { "name": "Сброс", "node": "4608:7990", "key": "46ec5cc1632e3303abf5d5568940589e2a5ae362", "class": "pe__mark" },
+        { "name": "Сброс - Костыль", "node": "4608:8098", "key": "125a8cebda6601698a7215504a29518cfa9a985e", "class": "pe__reset" },
+        { "name": "close button", "node": "4608:7662", "key": "8bc3e011a7f9e9453da6f5e0443bb90d5837d83d", "class": "pe__close", "note": "в окне только type=linkButton" },
+        { "name": "done/doneButton", "node": "4612:17921", "key": "d73da34dee776a1db45da7239aa47c7e28776c82", "class": "pe__done", "note": "в окне только style=success, size=l (28)" },
+        { "name": "Метка+редактор PG", "key": "6c2fc2d05f62d735a6aed71d6fabeb1d95a3cdb4", "class": "pe__row" },
+        { "name": "Поле ввода", "node": "4614:20979", "key": "e0b442cd993c7fd5cbfa8f8bbc0dfb7fcf23d196", "class": "pe__dim" },
+        { "name": "defaul/ArrowButton", "key": "0f07e6d16e33c853e10b5949313f2e6e578db1ed", "class": "pe__arrow", "note": "в окне только styleButton=pale, buttonMode=circle, inlineHeight=m" },
+        { "name": "Скругления", "node": "4629:5073", "key": "bc595b6bd62402831ae415139c6bd305351f5e58", "class": "pe__row", "note": "только Open=off" },
+        { "name": "Границы", "node": "4629:2701", "key": "875cb1ba6aa665ac5056f4a7b921acda64f2abf5", "class": "pe__row", "note": "только Open=off, Active=on" },
+        { "name": "Тень", "node": "4629:3650", "key": "0b286922ab102ad26d78ba50e8eab0d19a808acf", "class": "pe__row", "note": "только Active=on, Количество теней=1" },
+        { "name": "Фон", "node": "4629:3539", "key": "17300949e58d6c60d0f2104a9b83618e12a28063", "class": "pe__row", "note": "только Active=on, Количество цветов=1" },
+        { "name": "кнопка сброса цвета", "node": "4629:2375", "key": "d731a67b320a42901d2279314d5cd7a77a2ea684", "class": "pe__x" },
+        { "name": "Меню выбора линии", "node": "4629:2697", "key": "c4a1a389b2bae6c8b0090a0423299d1386f0a7a9", "class": "pe__menu pe__menu--line", "note": "создаёт property-editor.js" },
+        { "name": "Тень (окно)", "node": "4629:3606", "key": "26e09bcde7548c7f9ac1c72b9a7a84e022c1e546", "class": "pe__pop pe__pop--shadow", "note": "создаёт property-editor.js" },
+        { "name": "Выбор цвета", "node": "4629:3533", "key": "40dee9537c7388133fee20be4a280e2023421b5f", "class": "pe__pop pe__pop--color", "note": "создаёт property-editor.js" }
+      ],
+      "properties": {
+        "ShowЧипсы": { "true": "есть .pe__chips", "false": "без .pe__chips" },
+        "Настройки": { "kit": "слот: содержимое .pe__body, блоки .pe__card" },
+        "Чипсы": { "kit": "слот: .pe__chips с кнопками .chips--optional" },
+        "Название": { "Не меняется": ".pe__name--static", "Изменяется": "" },
+        "Тип": { "Имя по умолчанию": ".pe__icon", "Измененное имя": ".pe__icon и .pe__mark", "Провал": ".pe__back, у .pe__reset disabled" },
+        "Edit": { "on": ".pe__name--edit", "off": "" },
+        "Empty": { "on": ".is-empty", "off": "" },
+        "Hover": { "on": ".is-hover", "off": "" },
+        "Open": { "on": ".is-open у метки; у строк Скругления и Границы — .pe__box", "off": "" },
+        "Type": { "auto": ".pe__dim--auto", "fill": ".pe__dim--auto", "fix": "" },
+        "Расположение метки": { "Слева": ".pe__row", "Без редактора": ".pe__title" }
+      }
     }
   }
 }
