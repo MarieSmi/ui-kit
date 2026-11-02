@@ -10,10 +10,10 @@
 ## Подключение
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.12.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.12.0/fonts/fonts.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.12.0/components/toolbar/toolbar.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.12.0/components/widget/widget.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.13.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.13.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.13.0/components/toolbar/toolbar.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.13.0/components/widget/widget.css">
 ```
 
 `tokens.css` подключается первым. `toolbar.css` и шрифты нужны, только если у виджета есть тулбар.
@@ -51,6 +51,7 @@
 | `.wg__plus.wg__plus--up` / `--down` / `--left` / `--right` | `Plus_up` / `Plus_down` / `Plus_left` / `Plus_right` | кружок 8px, кнопка 20×20 |
 | `.wg__toolbar` | `Плавающий тулбар` | слот для `.tb` над левым верхним углом |
 | `.wg--level-2` | `Уровень=2` | родитель — виджет, внутри которого другие виджеты: пунктирная рамка, без активного состояния |
+| `.wg--style-success` | в макете нет | зелёное оформление: рамка и кружки в цветах тулбара `style=success` |
 
 Кружки и тулбар необязательны, как свойства `Плюсы Вертикальные` (up, down), `Плюсы Горизонтальные`
 (left, right) и `Плавающий тулбар` в Figma: ненужные элементы просто не добавляйте в разметку.
@@ -76,6 +77,23 @@
 | `Hover=false, Active=false` | — | — | белый кружок 8px с рамкой info |
 | `Hover=false, Active=true` | `.is-active` | `:hover`, `:focus-visible` | кружок 16px info с белым плюсом |
 | `Hover=true, Active=true` | `.is-hover` | `:active` | то же, цвет info hover |
+
+## Оформление success
+
+Вариант кита, в компоненте «Виджет» его нет. Цвета те же, что у рамки тулбара `style=success`: вместо
+`border-info_border-color` — `border-success_border-color`, вместо `border-info_hover_border-color` —
+`border-success_hover_border-color`. Состояния и уровни работают как обычно.
+
+Тулбар красится своим классом: виджет его стили не трогает, поэтому `.tb--style-success` ставится на сам тулбар.
+
+```html
+<div class="wg wg--style-success is-active">
+  <div class="wg__content">…любое содержимое…</div>
+  <div class="wg__toolbar">
+    <div class="tb tb--style-success" role="toolbar" aria-label="Виджет">…</div>
+  </div>
+</div>
+```
 
 ## Пустое состояние
 
@@ -108,6 +126,8 @@
 
 ## Допущения
 
+- Оформления `.wg--style-success` в макете нет, оно собрано по образцу info из токенов success. Заливки у виджета
+  нет, как и у info: зелёные только рамка и кружки. Пустая ячейка и её команды остаются прежних цветов.
 - `Уровень=2` в макете есть только в покое. При hover родитель выглядит как виджет (уровень 1):
   пунктир сменяется сплошной рамкой.
 - Кружки и тулбар у неактивного виджета скрыты через `visibility` (в макете — `opacity 0`), чтобы по ним

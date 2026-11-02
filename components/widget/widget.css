@@ -1,16 +1,20 @@
 /*!
  * widget — рамка виджета в конструкторе (Figma rHabzni5OI5D4fxBLQdj2m, «Виджет» 131:17349).
  * Варианты: ⛔ Hover → .is-hover / :hover, Active → .is-active, Уровень=2 (родитель) → .wg--level-2.
+ * Оформление .wg--style-success — в макете нет, цвета как у тулбара style=success (default — info, без класса).
  * Содержимое — любое, в .wg__content. Тулбар — тулбар кита (.tb) в слоте .wg__toolbar: виджет его только
  * располагает и показывает, стили .tb не трогает. Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
  * https://github.com/MarieSmi/ui-kit/tree/main/components/widget
  *
  * Устройство: рамка — ::after поверх содержимого, как stroke INSIDE в Figma, поэтому не сдвигает содержимое
- * и координаты кружков и тулбара считаются от внешнего края, как в макете.
+ * и координаты кружков и тулбара считаются от внешнего края, как в макете. Оформление задаёт акцент рамки и кружков
+ * (--wg-accent, --wg-accent-hover); цвет тулбара задаёт его собственный класс .tb--style-*.
  */
 
 /* ---------- Контейнер (Hover=off, Active=off, Уровень=1 — виджет) ---------- */
 .wg {
+  --wg-accent: var(--border-info_border-color);
+  --wg-accent-hover: var(--border-info_hover_border-color);
   --wg-bd: transparent;
   --wg-bd-style: solid;
 
@@ -24,21 +28,27 @@
   border-radius: inherit;
 }
 
+/* Оформление success: в макете нет, токены те же, что у рамки тулбара style=success */
+.wg--style-success {
+  --wg-accent: var(--border-success_border-color);
+  --wg-accent-hover: var(--border-success_hover_border-color);
+}
+
 .wg--level-2 {
-  --wg-bd: color-mix(in srgb, var(--border-info_border-color) 60%, transparent); /* 60 % — нет токена */
+  --wg-bd: color-mix(in srgb, var(--wg-accent) 60%, transparent); /* 60 % — нет токена */
   --wg-bd-style: dashed;
 }
 
-/* Hover: рамка info 60 % (у родителя — сплошная, в макете нет: допущение) */
+/* Hover: рамка акцента 60 % (у родителя — сплошная, в макете нет: допущение) */
 .wg:hover, .wg.is-hover {
-  --wg-bd: color-mix(in srgb, var(--border-info_border-color) 60%, transparent); /* 60 % — нет токена */
+  --wg-bd: color-mix(in srgb, var(--wg-accent) 60%, transparent); /* 60 % — нет токена */
   --wg-bd-style: solid;
 }
 
-/* Active: рамка info, кружки и тулбар. Hover + Active в макете выглядит как Active.
+/* Active: рамка акцента, кружки и тулбар. Hover + Active в макете выглядит как Active.
    У родителя активного состояния нет: .is-active на .wg--level-2 ничего не меняет */
 .wg.is-active:not(.wg--level-2) {
-  --wg-bd: var(--border-info_border-color);
+  --wg-bd: var(--wg-accent);
   --wg-bd-style: solid;
   z-index: 1; /* тулбар и кружки поверх соседей — в макете нет */
 }
@@ -57,7 +67,7 @@
    Рисуются поверх рамки (z-index выше ::after контейнера) */
 .wg__plus {
   --wg-plus-bg: var(--background-background-color);
-  --wg-plus-bd: var(--border-info_border-color);
+  --wg-plus-bd: var(--wg-accent);
 
   position: absolute; z-index: 1; box-sizing: border-box;
   width: 20px; height: 20px; /* нет токена */
@@ -86,11 +96,11 @@
 /* Active=true: наведение и фокус с клавиатуры */
 .wg__plus.is-active, .wg__plus:focus-visible,
 .wg__plus:hover, .wg__plus.is-hover {
-  --wg-plus-bg: var(--border-info_border-color);
+  --wg-plus-bg: var(--wg-accent);
 }
 /* Hover=true, Active=true: нажатие (:active) — допущение, в макете не подписано */
 .wg__plus:active, .wg__plus.is-hover {
-  --wg-plus-bg: var(--border-info_hover_border-color);
+  --wg-plus-bg: var(--wg-accent-hover);
 }
 .wg__plus.is-active::before, .wg__plus:focus-visible::before,
 .wg__plus:hover::before, .wg__plus.is-hover::before {

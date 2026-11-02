@@ -186,7 +186,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.12.0</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.13.0</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -284,7 +284,11 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         <div id="toolbar-body"></div>
       </article>
       <article class="comp" id="widget">
-        <div class="comp-head"><h3>Виджет</h3><code>components/widget</code></div>
+        <div class="comp-head"><h3>Виджет</h3><code>components/widget</code>
+          <label class="comp-tool" for="wg-style">Оформление
+            <select id="wg-style"><option value="info" selected>info</option><option value="success">success</option></select>
+          </label>
+        </div>
         <div id="widget-body"></div>
       </article>
       <article class="comp" id="property-editor">
@@ -664,16 +668,19 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     host.innerHTML = bar + kinds + sep;
   }
 
-  // Виджет: таблица «уровень (виджет, родитель) × состояние», дальше кружок Plus по состояниям. Тулбар — .tb кита, как в макете
+  // Виджет: таблица «уровень (виджет, родитель) × состояние», дальше кружок Plus по состояниям. Тулбар — .tb кита, как в макете.
+  // Оформление info / success — переключатель в шапке раздела; success в макете нет
   var WG_STATES = [['покой', ''], ['hover', ' is-hover'], ['active', ' is-active'], ['hover + active', ' is-hover is-active']];
   var WG_LEVELS = [['Виджет', ''], ['Родитель', ' wg--level-2']];
   var WG_IMG = '../components/widget/example/content.png'; // build-artifact.py вшивает картинку в data: URL
   function buildWidgets() {
     var host = document.getElementById('widget-body');
-    var plus = ['up', 'down', 'left', 'right'].map(function (d) {
+    var style = document.getElementById('wg-style').value;
+    var wgStyle = style === 'success' ? ' wg--style-success' : '';
+    var plus =['up', 'down', 'left', 'right'].map(function (d) {
       return '<button type="button" class="wg__plus wg__plus--' + d + '" aria-label="Добавить виджет"></button>';
     }).join('');
-    var bar = '<div class="wg__toolbar"><div class="tb tb--style-info" role="toolbar" aria-label="Виджет">' +
+    var bar = '<div class="wg__toolbar"><div class="tb tb--style-' + style + '" role="toolbar" aria-label="Виджет">' +
       tbBtn('', '', TB_ICON.settings) + tbBtn(' tb__btn--delete', '', TB_ICON.del) + tbBtn('', '', TB_ICON.more) + '</div></div>';
     function set(title, code, node, head, rows, cls) {
       return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code> <span>' + node + '</span></h4>' +
@@ -682,12 +689,12 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     var wg = set('Виджет', '.wg', '131:17349', WG_STATES.map(function (s) { return '<th>' + s[0] + '</th>'; }).join(''), WG_LEVELS.map(function (l) {
       return '<tr><th>' + l[0] + '</th>' + WG_STATES.map(function (s) {
         if (l[1] && s[1].indexOf('is-active') >= 0) return '<td></td>'; // у родителя нет активного состояния
-        return '<td><div class="wg' + l[1] + s[1] + '"><div class="wg__content"><img src="' + WG_IMG + '" alt=""></div>' + plus + bar + '</div></td>';
+        return '<td><div class="wg' + wgStyle + l[1] + s[1] + '"><div class="wg__content"><img src="' + WG_IMG + '" alt=""></div>' + plus + bar + '</div></td>';
       }).join('') + '</tr>';
     }).join(''), ' wg-grid');
     var pl = set('Plus', '.wg__plus', '399:49380', '<th>покой</th><th>active</th><th>hover</th>', '<tr><th></th>' +
       ['', ' is-active', ' is-hover'].map(function (s) {
-        return '<td><div class="wg is-active wg-plus"><button type="button" class="wg__plus' + s + '" aria-label="Добавить виджет"></button></div></td>';
+        return '<td><div class="wg' + wgStyle + ' is-active wg-plus"><button type="button" class="wg__plus' + s + '" aria-label="Добавить виджет"></button></div></td>';
       }).join('') + '</tr>');
     // Пустая ячейка 402:9447: размер команд по ширине виджета, сам (container query)
     function empty() {
@@ -698,7 +705,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     }
     var em = set('Пустая ячейка', '.wg__empty', '402:9447', '',
       [['Size #3 · 168', 168], ['Size #2 · 266', 266], ['Size #1 · 326', 326]].map(function (z) {
-        return '<tr><th>' + z[0] + '</th><td><div class="wg" style="width: ' + z[1] + 'px">' + empty() + '</div></td></tr>';
+        return '<tr><th>' + z[0] + '</th><td><div class="wg' + wgStyle + '" style="width: ' + z[1] + 'px">' + empty() + '</div></td></tr>';
       }).join(''), ' wg-empty-grid');
     host.innerHTML = wg + em + pl;
   }
@@ -986,6 +993,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
   document.getElementById('btn-size').addEventListener('change', buildButtons);
   document.getElementById('cb-pos').addEventListener('change', buildCheckboxes);
+  document.getElementById('wg-style').addEventListener('change', buildWidgets);
   document.getElementById('ch-size').addEventListener('change', buildChips);
   document.getElementById('ch-pos').addEventListener('change', buildChips);
   ['in-kind', 'in-size', 'in-label'].forEach(function (id) { document.getElementById(id).addEventListener('change', buildInputs); });

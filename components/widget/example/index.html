@@ -39,6 +39,9 @@
       <option value="">default</option><option>default-dark</option><option>large-light</option><option>large-dark</option>
       <option>dark-v2</option><option>dark-v3</option><option>pink</option><option>blackblue</option><option>gray</option>
     </select></label>
+    <label>Оформление <select id="style">
+      <option value="info">info</option><option value="success">success</option>
+    </select></label>
   </div>
   <div class="sets" id="out"></div>
 
@@ -97,6 +100,16 @@
       clear(); if (w) w.classList.add('is-active');
     });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') clear(); });
+
+    // Оформление (success в макете нет): класс на виджете, тулбар красится своим классом
+    document.getElementById('style').onchange = (e) => {
+      const success = e.target.value === 'success';
+      document.querySelectorAll('.wg').forEach((w) => w.classList.toggle('wg--style-success', success));
+      document.querySelectorAll('.tb').forEach((t) => {
+        t.classList.toggle('tb--style-success', success);
+        t.classList.toggle('tb--style-info', !success);
+      });
+    };
 
     document.getElementById('theme').onchange = (e) => e.target.value
       ? document.documentElement.setAttribute('data-ui-theme', e.target.value)
