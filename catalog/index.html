@@ -19,6 +19,8 @@
 <link rel="stylesheet" href="../components/property-editor/property-editor.css" data-kit="property-editor">
 <script src="../components/property-editor/property-editor.js" data-kit="property-editor"></script>
 <link rel="stylesheet" href="../components/master-list/master-list.css" data-kit="master-list">
+<link rel="stylesheet" href="../components/pg-editors/pg-editors.css" data-kit="pg-editors">
+<script src="../components/pg-editors/pg-editors.js" data-kit="pg-editors"></script>
 <style>
 /* Каталог: шапка с переключателями темы и размера, дальше секции токенов и компонентов.
    Цвета страницы — только токены кита, поэтому каталог перекрашивается вместе с выбранной темой. */
@@ -147,6 +149,13 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .tb.tb-bare::after { content: none; }
 #widget-body { display: grid; gap: 32px; }
 #property-editor-body, #pe-snaps { display: grid; gap: 32px; }
+/* Редакторы PropertyGrid: облачко с редакторами и образец, к которому применяются значения */
+.pg-demo { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px; padding-top: 72px; } /* место сверху под окно цвета */
+.pg-stack { display: flex; flex-direction: column; gap: var(--offset-offset_2xs); width: 342px; max-width: 100%; } /* облачка окна: зазор 4 */
+.pg-card { width: 342px; max-width: 100%; padding: var(--offset-offset_s) var(--offset-offset_m); border-radius: var(--border-radius-border-radius_s); background: var(--surface); } /* ширина облачка в окне 350 — нет токена */
+.pg-preview { width: 320px; max-width: 100%; height: 260px; overflow: hidden; box-sizing: border-box; } /* невидимый родитель образца: от него считаются «заполнить», % и внешние отступы */
+.pg-box { box-sizing: border-box; display: flex; align-items: center; justify-content: center; color: var(--muted); }
+.pg-box > span { padding: 4px 8px; border-radius: 4px; background: var(--background-contrast-pale_color); }
 .pe-grid td { vertical-align: top; }
 .pe-grid.pe-top tr > th:first-child { vertical-align: top; padding-top: 10px; }
 /* Элементы окна без самого окна: .pe даёт им шрифт и токены, фон и тень прячем */
@@ -186,7 +195,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.13.0</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.14.0</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -219,8 +228,11 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         <optgroup label="Конструктор">
           <option value="widget">Виджет</option>
           <option value="toolbar">Тулбар</option>
-          <option value="property-editor">Редактор свойств</option>
           <option value="demo-frame">Вспом. обл.</option>
+        </optgroup>
+        <optgroup label="Свойства виджета">
+          <option value="property-editor">Окно редактора свойств</option>
+          <option value="pg-editors">PropertyGrid</option>
         </optgroup>
         <optgroup label="Стандартные">
           <option value="button">Кнопка</option>
@@ -292,8 +304,28 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         <div id="widget-body"></div>
       </article>
       <article class="comp" id="property-editor">
-        <div class="comp-head"><h3>Редактор свойств</h3><code>components/property-editor</code></div>
+        <div class="comp-head"><h3>Окно редактора свойств</h3><code>components/property-editor</code></div>
         <div id="property-editor-body"></div>
+      </article>
+      <article class="comp" id="pg-editors">
+        <div class="comp-head"><h3>PropertyGrid</h3><code>components/pg-editors</code></div>
+        <p class="btn-note">Редакторы из прототипа STV на pg-editors.js. Правки сразу видны на образце справа.</p>
+        <div class="pg-demo">
+          <div class="pg-stack">
+          <div class="pg-card"><div id="pg-size"></div></div>
+          <div class="pg-card">
+            <div class="pge-form">
+              <span class="pge-label">Фон</span><div id="pg-bg"></div>
+              <span class="pge-label">Тень</span><div id="pg-shadow"></div>
+              <span class="pge-label">Скругления</span><div id="pg-radius"></div>
+              <span class="pge-label">Границы</span><div id="pg-border"></div>
+              <span class="pge-label">Внутренние</span><div id="pg-padding"></div>
+              <span class="pge-label">Внешние</span><div id="pg-margin"></div>
+            </div>
+          </div>
+          </div>
+          <div class="pg-preview" id="pg-outer"><div class="pg-box" id="pg-box"><span>Виджет</span></div></div>
+        </div>
       </article>
       <article class="comp" id="master-list">
         <div class="comp-head"><h3>Мастер-список</h3><code>components/master-list</code>
@@ -914,11 +946,43 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     }).join('');
   }
 
+  // Редакторы PropertyGrid: пять редакторов pg-editors.js, значения применяются к образцу
+  function buildPgEditors() {
+    var box = document.getElementById('pg-box'), outer = document.getElementById('pg-outer');
+    var v = {};
+    function paint() {
+      Object.assign(box.style, PGEditors.css.size(v.size));
+      box.style.background = PGEditors.css.background(v.bg);
+      box.style.boxShadow = PGEditors.css.shadow(v.shadow);
+      box.style.borderRadius = PGEditors.css.radius(v.radius);
+      Object.assign(box.style, PGEditors.css.border(v.border));
+      box.style.padding = PGEditors.css.padding(v.padding);
+      outer.style.padding = PGEditors.css.padding(v.margin);
+    }
+    function mount(kind, id, options) {
+      var ed = PGEditors[kind](document.getElementById('pg-' + id), Object.assign({
+        onChange: function (val) { v[id] = val; paint(); }
+      }, options));
+      v[id] = ed.get();
+    }
+    mount('background', 'bg');
+    mount('shadow', 'shadow');
+    mount('radius', 'radius');
+    mount('border', 'border');
+    mount('padding', 'padding', { label: 'Внутренние' });
+    mount('padding', 'margin', { label: 'Внешние', value: { top: 0, right: 0, bottom: 0, left: 0 } });
+    mount('size', 'size', {
+      value: { w: { mode: 'fill', px: 320, pct: 100 }, h: { mode: 'px', px: 120, pct: 100 } },
+      actual: function (axis) { return axis === 'w' ? box.offsetWidth : box.offsetHeight; }
+    });
+    paint();
+  }
+
   // Меню: раздел «Компоненты» показывает один компонент (#button, #checkbox, #chips, #input, #toolbar, #widget, #demo-frame), раздел «Переменные» — цвета,
   // размеры и тени одной лентой (#colors, #sizes, #shadows). Показан только выбранный раздел.
-  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', chips: 'components', input: 'components', toolbar: 'components', widget: 'components', 'property-editor': 'components', 'master-list': 'components', 'demo-frame': 'components',
+  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', chips: 'components', input: 'components', toolbar: 'components', widget: 'components', 'property-editor': 'components', 'pg-editors': 'components', 'master-list': 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
-  var COMPS = ['button', 'checkbox', 'chips', 'input', 'toolbar', 'widget', 'property-editor', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
+  var COMPS = ['button', 'checkbox', 'chips', 'input', 'toolbar', 'widget', 'property-editor', 'pg-editors', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
   var header = document.querySelector('header.top'), group = null, comp = 'button';
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
   function markSub(id) { nav('.toc-sub a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + id); }); }
@@ -1002,7 +1066,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
   var start = location.hash.slice(1);
   if (!go(start, false)) go('button', false);
-  buildButtons(); buildCheckboxes(); buildChips(); buildInputs(); buildToolbars(); buildWidgets(); buildPropertyEditor(); buildMasterList(); buildColors(); buildSizes(); buildShadows();
+  buildButtons(); buildCheckboxes(); buildChips(); buildInputs(); buildToolbars(); buildWidgets(); buildPropertyEditor(); buildPgEditors(); buildMasterList(); buildColors(); buildSizes(); buildShadows();
   if (ROUTES[start]) { // открыт по адресу раздела — прокрутить к нему, когда всё построено
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     go(start, true);

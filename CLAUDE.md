@@ -1,5 +1,16 @@
 # ui-kit — правила для Claude
 
+## Ссылки
+
+- **Демо (каталог кита):** https://claude.ai/artifact/5zQL1gsjZqJrgq7JMi5CRU
+- **Репозиторий:** https://github.com/MarieSmi/ui-kit
+- **CDN (jsDelivr):** https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@<версия>/
+- **Figma — 🌍 Global Variables:** https://www.figma.com/design/mcpY3I5yWjkPfnk1IdEiqw
+- **Figma — ⚙️ Default components:** https://www.figma.com/design/nuC4KFMiS36uDWDUp9wKGl
+- **Figma — ⚙️Builder-components:** https://www.figma.com/design/rHabzni5OI5D4fxBLQdj2m
+
+Новые основные ссылки добавляй в этот блок, он всегда остаётся первым в документе.
+
 Кит компонентов и токенов для HTML-прототипов по макетам Figma. Общие правила (подключение,
 именование, версии) — в README.md, здесь только то, что важно при работе с китом.
 

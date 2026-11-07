@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Редакторы PropertyGrid</title>
+<link rel="stylesheet" href="../../../tokens.css">
+<link rel="stylesheet" href="../../../fonts/fonts.css">
+<link rel="stylesheet" href="../pg-editors.css">
+<script src="../pg-editors.js"></script>
+<style>
+  body { margin: 0; padding: 96px 32px 32px; background: var(--background-unaccented_background-color); font-family: var(--font-font-family-default), sans-serif; }
+  .stage { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px; }
+  .stack { display: flex; flex-direction: column; gap: var(--offset-offset_2xs); }
+  .card { width: 342px; padding: var(--offset-offset_s) var(--offset-offset_m); border-radius: var(--border-radius-border-radius_s); background: var(--background-background-color); }
+  .preview { width: 320px; height: 260px; overflow: hidden; box-sizing: border-box; background: var(--background-contrast_background-color); border-radius: var(--border-radius-border-radius_s); }
+  .preview__box { box-sizing: border-box; display: flex; align-items: center; justify-content: center; color: var(--text-label_text-color); }
+  .preview__box > span { padding: 4px 8px; border-radius: 4px; background: var(--background-contrast-pale_color); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="stack">
+  <div class="card"><div id="size"></div></div>
+  <div class="card">
+    <div class="pge-form">
+      <span class="pge-label">Фон</span><div id="bg"></div>
+      <span class="pge-label">Тень</span><div id="shadow"></div>
+      <span class="pge-label">Скругления</span><div id="radius"></div>
+      <span class="pge-label">Границы</span><div id="border"></div>
+      <span class="pge-label">Внутренние</span><div id="padding"></div>
+      <span class="pge-label">Внешние</span><div id="margin"></div>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="preview" id="outer"><div class="preview__box" id="box"><span>Виджет</span></div></div>
+</div>
+
+<script>
+  const box = document.getElementById('box');
+  const outer = document.getElementById('outer');
+  const v = {};
+  function paint() {
+    Object.assign(box.style, PGEditors.css.size(v.size));
+    box.style.background = PGEditors.css.background(v.bg);
+    box.style.boxShadow = PGEditors.css.shadow(v.shadow);
+    box.style.borderRadius = PGEditors.css.radius(v.radius);
+    Object.assign(box.style, PGEditors.css.border(v.border));
+    box.style.padding = PGEditors.css.padding(v.padding);
+    outer.style.padding = PGEditors.css.padding(v.margin);
+  }
+  function mount(kind, id, options) {
+    const ed = PGEditors[kind](document.getElementById(id), Object.assign({
+      onChange: function (val) { v[id] = val; paint(); }
+    }, options));
+    v[id] = ed.get();
+    return ed;
+  }
+  mount('background', 'bg');
+  mount('shadow', 'shadow');
+  mount('radius', 'radius');
+  mount('border', 'border', { value: { top: 1, right: 1, bottom: 1, left: 1 } });
+  mount('padding', 'padding', { label: 'Внутренние' });
+  mount('padding', 'margin', { label: 'Внешние', value: { top: 0, right: 0, bottom: 0, left: 0 } });
+  mount('size', 'size', {
+    value: { w: { mode: 'fill', px: 320, pct: 100 }, h: { mode: 'px', px: 120, pct: 100 } },
+    actual: function (axis) { return axis === 'w' ? box.offsetWidth : box.offsetHeight; }
+  });
+  paint();
+</script>
+</body>
+</html>

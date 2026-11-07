@@ -1,0 +1,389 @@
+/*!
+ * pg-editors — редакторы PropertyGrid: размер, тень, отступы, скругления, фон, границы.
+ * Перенесены из прототипа STV (Figma 44fX18O5Huk4hmoaANMNIC), вид — по библиотеке PropertyGrid
+ * (lw5BTOhkhczQmdiTvlnhnG, раздел «Оформление» 23882:236259): переключатель 23882:236391, блок по сторонам 24008:202581,
+ * блок по углам 24015:203063, отступы 23882:236302, бабл тени 23716:135002, готовые тени 30654:47696, окно «Тень» 24121:213185,
+ * меню типа линии 25056:208942. Окно цвета — «окно текста/фона со сбросом» STV (11931:124402).
+ * Разметку строит pg-editors.js. Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/pg-editors
+ *
+ * Иконки — глифы шрифтов cbuc-icons и cbuc-icons24, текст — Inter; шрифты подключает проект.
+ */
+
+/* ---------- Общее ---------- */
+.pge, .pge-pop, .pge-form {
+  font-family: var(--font-font-family-default), sans-serif;
+  font-size: var(--font-font-size-font-size_m); font-weight: var(--font-font-weight-regular); line-height: normal;
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  color: var(--text-text-color);
+}
+:where(.pge, .pge-pop) *, :where(.pge, .pge-pop) *::before, :where(.pge, .pge-pop) *::after { box-sizing: border-box; }
+:where(.pge, .pge-pop) button {
+  margin: 0; padding: 0; border: 0; background: none;
+  font: inherit; letter-spacing: inherit; color: inherit; cursor: pointer;
+}
+:where(.pge, .pge-pop) button:disabled { cursor: default; }
+:where(.pge, .pge-pop) input {
+  width: 100%; min-width: 0; margin: 0; padding: 0; border: 0; background: none; outline: none;
+  font: inherit; letter-spacing: inherit; color: var(--text-text-color);
+}
+:where(.pge, .pge-pop) svg { display: block; flex: none; }
+
+/* Глиф шрифта: 24 px из cbuc-icons24, --s — 16 px из cbuc-icons */
+.pge__ico {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: var(--icon-icon_size-icon-size_m); height: var(--icon-icon_size-icon-size_m);
+  font-family: var(--icon-font-family-m_icon_font-family); font-size: var(--icon-icon_size-icon-size_m);
+  font-style: normal; font-weight: var(--font-font-weight-regular); line-height: 1; letter-spacing: 0;
+}
+.pge__ico--s {
+  width: var(--icon-icon_size-icon-size_s); height: var(--icon-icon_size-icon-size_s);
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+}
+
+/* Сетка «подпись — редактор» для своих форм: колонка подписей по самой длинной, редактор в 8 px от неё */
+.pge-form {
+  display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: start;
+  gap: var(--offset-offset_s);
+}
+.pge-label {
+  display: flex; align-items: center; min-height: var(--inline_height-inline_height_m);
+  color: var(--text-label_text-color); white-space: nowrap;
+}
+
+/* Корень редактора: строка высотой 24, раскрытый блок растёт вниз */
+.pge[hidden], .pge-label[hidden] { display: none; }
+.pge { position: relative; display: flex; align-items: flex-start; gap: var(--offset-offset_2xs); min-height: var(--inline_height-inline_height_m); min-width: 0; }
+.pge__group { display: flex; align-items: flex-start; gap: var(--offset-offset_3xs); }
+.pge--border { gap: var(--offset-offset_s); }
+.pge__end { display: flex; align-items: center; gap: var(--offset-offset_2xs); margin-left: auto; }
+
+/* ---------- Поле с подчёркиванием (скругления 56, границы 38) ---------- */
+.pge__num {
+  display: flex; align-items: center; gap: var(--offset-offset_xs); flex: none;
+  width: 56px; height: var(--inline_height-inline_height_m); /* ширина из макета — нет токена */
+  border-bottom: 1px solid var(--border-unaccented_border-color);
+  color: var(--icon-label_icon-color);
+}
+.pge__num--s { width: 38px; } /* из макета — нет токена */
+.pge__num:focus-within { border-bottom-color: var(--text-link_text-color); }
+.pge__pads { display: flex; gap: var(--offset-offset_s); }
+
+/* ---------- Переключатель «по сторонам / по углам» ---------- */
+.pge__switch {
+  display: flex; align-items: center; justify-content: center; flex: none;
+  width: var(--inline_height-inline_height_m); height: var(--inline_height-inline_height_m);
+  border-radius: var(--border-radius-border-radius_2xs);
+  color: var(--icon-secondary_icon-color);
+}
+.pge .pge__switch:is(:hover, .is-hover) { background: var(--background-hover_background-color); }
+.pge .pge__switch.is-active { background: var(--background-same-info_same_background-color); color: var(--icon-info_icon-color); }
+.pge .pge__switch.is-active:is(:hover, .is-hover) { background: var(--background-same-info_hover_same_background-color); }
+
+/* ---------- Блок по сторонам 104×74 и по углам 104×64 ---------- */
+.pge__box {
+  position: relative; display: block; flex: none;
+  width: 104px; height: 74px; /* из макета — нет токена */
+  border-radius: var(--border-radius-border-radius_s);
+  background: var(--background-contrast-pale_color);
+}
+.pge__box--corners { height: 64px; } /* из макета — нет токена */
+.pge__box input {
+  position: absolute; width: 38px; height: var(--inline_height-inline_height_m); /* ширина из макета — нет токена */
+  border-radius: var(--border-radius-border-radius_2xs);
+}
+/* Позиции полей и меток из макета — нет токена */
+.pge__in--top, .pge__in--bottom { left: 50%; transform: translateX(-50%); text-align: center; }
+.pge__in--top, .pge__in--tl, .pge__in--tr { top: 5px; }
+.pge__in--bottom, .pge__in--bl, .pge__in--br { bottom: 5px; }
+.pge__in--left, .pge__in--right { top: 25px; }
+.pge__in--left, .pge__in--tl, .pge__in--bl { left: 12px; text-align: left; }
+.pge__in--right, .pge__in--tr, .pge__in--br { right: 12px; text-align: right; }
+.pge__bar { position: absolute; border-radius: var(--border-radius-border-radius_3xs); background: var(--background-same-info_active_same_background-color); pointer-events: none; }
+.pge__bar--top, .pge__bar--bottom { left: 50%; width: 20px; height: 2px; transform: translateX(-50%); }
+.pge__bar--top { top: 2px; }
+.pge__bar--bottom { bottom: 2px; }
+.pge__bar--left, .pge__bar--right { top: 50%; width: 2px; height: 20px; transform: translateY(-50%); }
+.pge__bar--left { left: 2px; }
+.pge__bar--right { right: 2px; }
+.pge__corner { position: absolute; width: 14px; height: 14px; color: var(--background-same-info_active_same_background-color); pointer-events: none; }
+.pge__corner--tl { left: 3px; top: 3px; }
+.pge__corner--tr { right: 3px; top: 3px; transform: scaleX(-1); }
+.pge__corner--br { right: 3px; bottom: 3px; transform: rotate(180deg); }
+.pge__corner--bl { left: 3px; bottom: 3px; transform: scaleY(-1); }
+/* Активное поле подсвечивает свою сторону или угол */
+.pge__in:focus + .pge__bar { background: var(--border-info_border-color); }
+.pge__in:focus + .pge__corner { color: var(--border-info_border-color); }
+
+/* ---------- Крестик «убрать» ---------- */
+.pge__x {
+  display: flex; align-items: center; justify-content: center; flex: none;
+  width: var(--icon-icon_size-icon-size_s); height: var(--inline_height-inline_height_m);
+  color: var(--icon-unaccented_icon-color);
+}
+.pge .pge__x:is(:hover, .is-hover) { color: var(--icon-secondary_icon-color); }
+
+/* ---------- Кружок цвета ---------- */
+.pge__swatch {
+  display: block; flex: none;
+  width: var(--inline_height-inline_height_m); height: var(--inline_height-inline_height_m);
+  border: 1px solid var(--border-unaccented_border-color); border-radius: 50%;
+  background: var(--pge-color, var(--background-background-color));
+}
+/* Наведение: кружок растёт на 4 px от центра, соседи не сдвигаются */
+.pge .pge__swatch:is(:hover, .is-hover) { width: 28px; height: 28px; margin: -2px; } /* из макета — нет токена */
+/* «Нет цвета»: белый круг, перечёркнутый «/» */
+.pge__swatch.is-none {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3Cpath d='M1 0L0 1' stroke='%23d2d6da' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") border-box 0 0 / 100% 100%, var(--background-background-color); /* цвет линии = Border/unaccented_border-color, в data-URL токен не подставить */
+}
+
+/* ---------- Тень: бабл и кружок с половинкой цвета ---------- */
+.pge__bubble {
+  display: flex; align-items: center; gap: var(--offset-offset_xs);
+  padding-right: var(--offset-offset_m);
+  border-radius: var(--border-radius-border-radius_m); white-space: nowrap;
+  background: var(--pge-bubble, none) 0 0 / 100% 100% no-repeat, var(--background-background-color);
+}
+.pge__half {
+  position: relative; display: block; flex: none; overflow: hidden;
+  width: var(--inline_height-inline_height_m); height: var(--inline_height-inline_height_m);
+  border: 1px solid var(--border-unaccented_border-color); border-radius: 50%;
+  background: linear-gradient(var(--pge-tint), var(--pge-tint)), var(--background-background-color);
+}
+/* Шахматка под полупрозрачным цветом: клетка 4 px, непрозрачность 0.15 — нет токена */
+.pge__half::before, .pge-picker__current::before {
+  content: ""; position: absolute; inset: 0; opacity: .15;
+  background: repeating-conic-gradient(#000 0 25%, transparent 0 50%) 0 0 / 8px 8px; /* нет токена */
+}
+.pge__half::after { content: ""; position: absolute; left: 0; top: 0; width: 50%; height: 100%; background: var(--pge-color); }
+.pge__half--l { width: var(--inline_height-inline_height_l); height: var(--inline_height-inline_height_l); }
+.pge__bubble:is(:hover, .is-hover) > .pge__half { width: 28px; height: 28px; margin: -2px; } /* +4 px — нет токена */
+
+/* ---------- Границы: тип линии ---------- */
+.pge__line-btn {
+  display: flex; align-items: center; justify-content: center; flex: none;
+  width: var(--inline_height-inline_height_m); height: var(--inline_height-inline_height_m);
+  border-radius: 50%; color: var(--icon-secondary_icon-color);
+}
+.pge .pge__line-btn:is(:hover, .is-hover) { background: var(--background-hover_background-color); }
+.pge__line { display: block; width: 14px; height: 1px; border-top: 1px solid currentColor; } /* из макета — нет токена */
+.pge__line--dashed { border-top-style: dashed; }
+
+/* ---------- Окна ---------- */
+.pge-pop {
+  position: absolute; z-index: 5;
+  background: var(--background-background-color);
+  border-radius: var(--border-radius-border-radius_s);
+  box-shadow: 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a), 0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a); /* смещение 0 0 — нет токена */
+}
+.pge-pop--shadow { z-index: 4; } /* окно цвета тени открывается поверх окна «Тень» */
+
+/* Меню типа линии */
+.pge-pop--line { display: flex; flex-direction: column; gap: var(--offset-offset_xs); padding: var(--offset-offset_s); }
+.pge-pop--line button {
+  display: flex; align-items: center; justify-content: center;
+  width: 48px; min-height: 32px; /* из макета — нет токена */
+  border-radius: var(--border-radius-border-radius_l); color: var(--icon-secondary_icon-color);
+}
+.pge-pop--line button:is(:hover, .is-hover, [aria-checked="true"]) { background: var(--background-hover_background-color); }
+
+/* ---------- Окно цвета (366 px) ---------- */
+.pge-picker {
+  display: flex; flex-direction: column;
+  width: 366px; /* из макета — нет токена */
+  background: var(--background-contrast_background-color);
+  border-radius: var(--border-radius-border-radius_m);
+}
+.pge-picker__head { display: flex; align-items: center; min-height: 56px; } /* из макета — нет токена */
+.pge-picker__caption {
+  align-self: stretch; display: flex; align-items: flex-end;
+  padding: 0 0 19px var(--offset-offset_l); /* 19px из макета — нет токена */
+  font-size: var(--font-font-size-font-size_2xl); white-space: nowrap;
+}
+.pge-picker__mid { flex: 1 1 auto; display: flex; align-items: center; padding-left: var(--offset-offset_xs); }
+.pge-picker__cmds { display: flex; align-items: center; gap: var(--offset-offset_m); padding-right: var(--offset-offset_m); }
+.pge-picker__tools { display: flex; align-items: center; gap: var(--offset-offset_xs); }
+.pge-picker__tool {
+  display: flex; align-items: center; justify-content: center;
+  width: var(--inline_height-inline_height_l); height: var(--inline_height-inline_height_l);
+  border-radius: 50%; color: var(--icon-secondary_icon-color);
+}
+.pge-picker__tool.is-idle { color: var(--icon-unaccented_icon-color); }
+.pge-picker__close { display: flex; padding-right: var(--offset-offset_s); color: var(--icon-secondary_icon-color); }
+.pge-picker__close svg { width: var(--icon-icon_size-icon-size_m); height: var(--icon-icon_size-icon-size_m); }
+
+/* Кнопка ✓ */
+.pge__apply {
+  display: flex; align-items: center; justify-content: center; flex: none;
+  width: var(--inline_height-inline_height_l); height: var(--inline_height-inline_height_l);
+  border-radius: 50%;
+  background: var(--background-contrast-success_color);
+  box-shadow: 0 0 var(--blur-shadow-blur_d) var(--color-shadow-color_d); /* смещение 0 0 — нет токена */
+  color: var(--icon-contrast_icon-color);
+}
+.pge__apply:is(:hover, .is-hover) { background: var(--background-contrast-success_hover_color); }
+
+/* Тумблер «Цвет / Картинка» (только у фона) */
+.pge-tumbler { display: flex; gap: var(--offset-offset_3xs); padding: 1px; border-radius: 999px; background: var(--background-contrast-pale_color); } /* 1px и 999px — нет токена */
+.pge-tumbler__item {
+  display: flex; align-items: center; height: 26px; /* из макета — нет токена */
+  padding: 0 var(--offset-offset_m); border-radius: 999px; /* нет токена */
+  font-size: var(--font-font-size-font-size_l); color: var(--text-label_contrast_text-color); cursor: default;
+}
+.pge-tumbler__item.is-active {
+  background: var(--background-background-color); color: var(--text-text-color);
+  box-shadow: 0 0 var(--blur-shadow-blur_d) var(--color-shadow-color_d); /* смещение 0 0 — нет токена */
+}
+
+.pge-picker__body { display: flex; flex-direction: column; gap: var(--offset-offset_2xs); padding: 0 var(--offset-offset_2xs) var(--offset-offset_2xs); }
+.pge-picker__cloud { padding: var(--offset-offset_s) var(--offset-offset_m); border-radius: var(--border-radius-border-radius_s); background: var(--background-background-color); }
+.pge-picker__cloud--colors { padding: 0 var(--offset-offset_m); }
+.pge-picker__code { display: flex; align-items: center; justify-content: space-between; }
+.pge-picker__current {
+  position: relative; overflow: hidden;
+  width: 70px; height: 32px; /* из макета — нет токена */
+  border: 1px solid var(--border-unaccented_border-color); border-radius: 18px; /* из макета — нет токена */
+  background: var(--background-background-color);
+}
+.pge-picker__current::after { content: ""; position: absolute; inset: 0; background: var(--pge-current, transparent); }
+.pge-picker__current.is-none::before { display: none; }
+.pge-picker__current.is-none {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='32'%3E%3Cpath d='M51 0L19 32' stroke='%23d2d6da'/%3E%3C/svg%3E") border-box, var(--background-background-color); /* линия = Border/unaccented_border-color — нет токена в data-URL */
+}
+.pge-picker__fields { display: flex; align-items: center; gap: var(--offset-offset_s); }
+.pge-picker__alpha { display: flex; align-items: flex-end; gap: var(--offset-offset_2xs); }
+.pge-picker__pct { display: flex; align-items: flex-end; width: 11px; height: var(--inline_height-inline_height_m); padding-bottom: 3px; } /* из макета — нет токена */
+.pge-picker__code.is-none .pge-picker__alpha-in { color: var(--icon-unaccented_icon-color); }
+
+/* Поля с подчёркиванием окна цвета */
+.pge-ufield {
+  position: relative; display: flex; align-items: flex-end;
+  height: var(--inline_height-inline_height_m); padding-bottom: 3px; /* 3px из макета — нет токена */
+  border-bottom: 1px solid var(--border-unaccented_border-color);
+}
+.pge-ufield:focus-within { border-bottom-color: var(--text-link_text-color); }
+.pge-ufield--format { width: 46px; } /* из макета — нет токена */
+.pge-ufield--format .pge__ico { position: absolute; right: 0; top: calc(50% - 8.5px); color: var(--icon-unaccented_icon-color); } /* из макета — нет токена */
+.pge-ufield--hex { width: 66px; } /* из макета — нет токена */
+.pge-ufield--alpha { width: var(--inline_height-inline_height_m); }
+.pge-ufield--alpha input { text-align: right; }
+/* Подсказка пустого HEX: «#» цветом текста, цифры серым; пропадает при вводе */
+.pge-ufield__ph { position: absolute; left: 0; bottom: 3px; color: var(--text-text-color); pointer-events: none; }
+.pge-ufield__ph span { color: var(--icon-unaccented_icon-color); }
+.pge-ufield--hex input:not(:placeholder-shown) + .pge-ufield__ph { display: none; }
+
+/* Палитра 28 px, 10 в ряд */
+.pge-palette { display: flex; flex-wrap: wrap; gap: var(--offset-offset_s) var(--offset-offset_xs); padding: var(--offset-offset_m) 0 var(--offset-offset_3xs); }
+.pge-palette__item {
+  display: block; flex: none;
+  width: var(--inline_height-inline_height_l); height: var(--inline_height-inline_height_l);
+  border: 1px solid var(--border-unaccented_border-color); border-radius: 50%;
+  background: var(--pge-color);
+}
+.pge-palette__item:is(:hover, .is-hover) { width: 32px; height: 32px; margin: -2px; } /* +4 px — нет токена */
+.pge-palette__item.is-none { border: 0; background: none; }
+.pge-palette__item.is-none svg { width: 100%; height: 100%; }
+/* Готовые тени: кружок с половинкой цвета вместо заливки */
+.pge-palette__shadow { display: block; width: var(--inline_height-inline_height_l); height: var(--inline_height-inline_height_l); }
+.pge-palette__shadow:is(:hover, .is-hover) .pge__half--l { width: 32px; height: 32px; margin: -2px; } /* +4 px — нет токена */
+.pge-palette__add {
+  display: flex; align-items: center; justify-content: center;
+  width: var(--inline_height-inline_height_l); height: var(--inline_height-inline_height_l);
+  border-radius: 50%; color: var(--icon-secondary_icon-color);
+}
+.pge-palette__add:is(:hover, .is-hover) { background: var(--background-hover_background-color); }
+
+.pge-picker__links { display: flex; flex-direction: column; gap: var(--offset-offset_m); padding: var(--offset-offset_l) 0 var(--offset-offset_m); }
+.pge-picker__links::before { content: ""; height: 1px; margin: 0 var(--offset-offset_m); background: var(--border-border-color); }
+.pge-picker__links > div { display: flex; gap: 20px; height: var(--inline_height-inline_height_m); padding-left: var(--offset-offset_3xs); } /* 20px из макета — нет токена */
+.pge-picker__link { color: var(--text-secondary_text-color); white-space: nowrap; }
+.pge-picker__link:not(:disabled):is(:hover, .is-hover) { text-decoration: underline; text-underline-offset: 3px; }
+.pge-native { position: absolute; width: 0; height: 0; padding: 0; border: 0; opacity: 0; pointer-events: none; }
+
+/* ---------- Окно «Тень» (300 px) ---------- */
+.pge-shadow {
+  width: 300px; /* из макета — нет токена */
+  background: var(--background-contrast_background-color);
+  border-radius: var(--border-radius-border-radius_m);
+}
+.pge-shadow__head {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 44px; padding: var(--offset-offset_xs) var(--offset-offset_2xs) var(--offset-offset_xs) var(--offset-offset_m); /* высота из макета — нет токена */
+}
+.pge-shadow__title { padding-left: var(--offset-offset_2xs); font-size: var(--font-font-size-font-size_xl); font-weight: var(--font-font-weight-bold); }
+.pge-shadow__cmds { display: flex; align-items: center; gap: var(--offset-offset_m); }
+.pge-shadow__cmd { display: flex; align-items: center; justify-content: center; color: var(--icon-secondary_icon-color); }
+.pge-shadow__cmd.is-idle { color: var(--icon-unaccented_icon-color); }
+.pge-shadow__body { padding: 0 var(--offset-offset_2xs) var(--offset-offset_2xs); }
+.pge-shadow__cloud {
+  display: flex; flex-direction: column; gap: var(--offset-offset_s);
+  padding: var(--offset-offset_s) var(--offset-offset_m);
+  border-radius: var(--border-radius-border-radius_s); background: var(--background-background-color);
+}
+.pge-shadow__row { display: flex; align-items: center; gap: var(--offset-offset_s); min-height: var(--inline_height-inline_height_m); }
+.pge-shadow__row > .pge-label { flex: none; width: 49px; } /* из макета — нет токена */
+.pge-shadow__slider { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: var(--offset-offset_s); }
+.pge-shadow__slider input[type="range"] {
+  flex: 1 1 0; height: 12px; background: transparent; cursor: pointer; /* из макета — нет токена */
+  -webkit-appearance: none; appearance: none;
+}
+.pge-shadow__slider input[type="range"]::-webkit-slider-runnable-track {
+  height: 2px; border-radius: var(--border-radius-border-radius_s); /* 2px из макета — нет токена */
+  background: linear-gradient(90deg, var(--background-contrast-secondary_color) var(--p, 50%), var(--background-contrast-unaccented_contrast_background-color) var(--p, 50%));
+}
+.pge-shadow__slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 12px; height: 12px; margin-top: -5px; /* из макета — нет токена */
+  border-radius: 50%; background: var(--background-background-color);
+  box-shadow: 0 1px 4px rgb(0 0 0 / .25); /* из макета — нет токена */
+}
+.pge-shadow__slider input[type="range"]::-moz-range-track { height: 2px; border-radius: var(--border-radius-border-radius_s); background: var(--background-contrast-unaccented_contrast_background-color); }
+.pge-shadow__slider input[type="range"]::-moz-range-progress { height: 2px; border-radius: var(--border-radius-border-radius_s); background: var(--background-contrast-secondary_color); }
+.pge-shadow__slider input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--background-background-color); box-shadow: 0 1px 4px rgb(0 0 0 / .25); }
+
+/* ---------- Размер: ширина, высота, Min/Max (PropertyGrid 23509:285817) ---------- */
+.pge--size { display: block; }
+.pge-size { display: grid; grid-template-columns: max-content auto; align-items: center; gap: var(--offset-offset_s); }
+/* Поле размера: значение и единица справа — кнопка меню величин (23509:285935) */
+.pge__dim {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--offset-offset_2xs);
+  width: 130px; height: var(--inline_height-inline_height_m); /* ширина из макета — нет токена */
+  border-bottom: 1px solid var(--border-unaccented_border-color);
+}
+/* Ховер — как у .pe__dim в property-editor: подчёркивание поля темнеет, единица-кнопка синеет только под курсором */
+.pge__dim:is(:hover, .is-hover) { border-bottom-color: var(--border-unaccented_hover_border-color); }
+.pge__dim input::placeholder { color: var(--components-input-placeholder-color_inputtext); opacity: 1; }
+.pge__unit { flex: none; color: var(--text-label_text-color); white-space: nowrap; }
+/* Единица-кнопка — как кнопка-ссылка кита .btn--link.btn--style-label: при наведении темнее и с подчёркиванием */
+.pge button.pge__unit:is(:hover, .is-hover) { color: var(--text-label_hover_text-color); text-decoration-line: underline; }
+.pge__edge { display: flex; align-items: center; gap: var(--offset-offset_2xs); }
+.pge__edge .pge__ico--s { font-size: var(--icon-icon_size-icon-size_2xs); } /* «Сброс»: cbuc-icons 12 px */
+
+/* Меню величин (23509:289386) */
+.pge-pop--menu {
+  display: flex; flex-direction: column; gap: var(--offset-offset_xs);
+  width: 214px; padding: var(--offset-offset_m) var(--offset-offset_s); /* 198 + место под ✕ в углу — нет токена */
+  box-shadow: 0 0 18px var(--color-shadow-color_a); /* 18px и смещение 0 0 из макета — нет токена */
+}
+.pge-menu__item {
+  display: flex; align-items: center; gap: var(--offset-offset_3xs);
+  min-height: 32px; padding: 0 var(--offset-offset_s); /* высота пункта из макета — нет токена */
+  border-radius: var(--border-radius-border-radius_l);
+  font-size: var(--font-font-size-font-size_xl); text-align: left; white-space: nowrap;
+}
+.pge-pop .pge-menu__item:is(:hover, .is-hover) { background: var(--background-hover_background-color); }
+.pge-menu__item--edge { padding-left: 22px; } /* 2 + отступ дерева 20 из макета — нет токена */
+.pge-menu__bullet { width: 12px; height: 12px; color: var(--extra-marker_color); } /* из макета — нет токена */
+.pge-menu__bullet.is-off { visibility: hidden; color: var(--border-border-color); }
+.pge-menu__item:is(:hover, .is-hover) .pge-menu__bullet.is-off { visibility: visible; }
+.pge-menu__group {
+  padding: var(--offset-offset_2xs) var(--offset-offset_l) var(--offset-offset_2xs) 22px; /* 22px — нет токена */
+  color: var(--text-label_text-color); text-transform: uppercase; letter-spacing: 1.25px; /* нет токена */
+}
+.pge-menu__close {
+  position: absolute; right: -14px; top: var(--offset-offset_s); /* −14px из макета — нет токена */
+  display: flex; align-items: center; justify-content: center;
+  width: var(--inline_height-inline_height_l); height: var(--inline_height-inline_height_l); border-radius: 50%;
+  background: var(--background-opacity-translucent_background-color);
+  color: var(--background-background-color);
+}
+.pge-menu__close svg { width: 12px; height: 12px; } /* нет токена */
