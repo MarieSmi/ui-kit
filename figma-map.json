@@ -369,6 +369,60 @@
         "Type": { "auto": ".pe__dim--auto", "fill": ".pe__dim--auto", "fix": "" },
         "Расположение метки": { "Слева": ".pe__row", "Без редактора": ".pe__title" }
       }
+    },
+    "text-editor": {
+      "kit": "components/text-editor",
+      "since": "1.15.0",
+      "base": "te",
+      "source": {
+        "repository": "https://github.com/pershmary/table-widget",
+        "files": [
+          "demo.html",
+          "css/table-widget.css",
+          "js/editor-toolbar-shadow.js"
+        ],
+        "note": "Перенос из кода без повторной сверки с Figma. Не сопоставлять по ключу component set: он не установлен."
+      },
+      "figma": {
+        "node": "1265:76984",
+        "fileKey": null,
+        "verified": false,
+        "note": "Ключ файла исходного фрейма не указан в проекте."
+      },
+      "element": "<div class=\"te\">…</div>; разметку создаёт TextEditor.mount",
+      "parts": {
+        "header": "te__head",
+        "left": "te__left",
+        "right": "te__right",
+        "toolbar": "te__toolbar",
+        "viewport": "te__viewport",
+        "document": "te__document"
+      },
+      "properties": {
+        "hover": {
+          "class": "is-hover",
+          "alt": ":hover"
+        },
+        "disabled": {
+          "class": "is-disabled",
+          "alt": ":disabled",
+          "note": "Добавлено для интеграции; вариант Figma не проверен."
+        },
+        "scroll": {
+          "class": "is-scrolled",
+          "note": "Вычисляется по scrollTop области документа."
+        }
+      },
+      "js": {
+        "global": "TextEditor",
+        "mount": "TextEditor.mount(element, options)",
+        "methods": [
+          "setTitle",
+          "setContent",
+          "setEditable",
+          "destroy"
+        ]
+      }
     }
   }
 }
