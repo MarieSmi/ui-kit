@@ -21,6 +21,8 @@
 <link rel="stylesheet" href="../components/master-list/master-list.css" data-kit="master-list">
 <link rel="stylesheet" href="../components/pg-editors/pg-editors.css" data-kit="pg-editors">
 <script src="../components/pg-editors/pg-editors.js" data-kit="pg-editors"></script>
+<link rel="stylesheet" href="../components/text-editor/text-editor.css" data-kit="text-editor">
+<script src="../components/text-editor/text-editor.js" data-kit="text-editor"></script>
 <style>
 /* Каталог: шапка с переключателями темы и размера, дальше секции токенов и компонентов.
    Цвета страницы — только токены кита, поэтому каталог перекрашивается вместе с выбранной темой. */
@@ -195,7 +197,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.14.0</span></div>
+    <div class="brand"><h1>ui-kit</h1><span class="ver">1.15.0</span></div>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -239,6 +241,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
           <option value="checkbox">Чекбокс</option>
           <option value="chips">Чипсы</option>
           <option value="input">Поля ввода</option>
+          <option value="text-editor">Окно текстового редактора</option>
           <option value="master-list">Мастер-список</option>
         </optgroup>
       </select>
@@ -306,6 +309,15 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       <article class="comp" id="property-editor">
         <div class="comp-head"><h3>Окно редактора свойств</h3><code>components/property-editor</code></div>
         <div id="property-editor-body"></div>
+      </article>
+      <article class="comp" id="text-editor">
+        <div class="comp-head"><h3>Окно текстового редактора</h3><code>components/text-editor</code>
+          <label class="comp-tool"><input id="te-editable" type="checkbox" checked> Редактирование</label>
+        </div>
+        <p class="btn-note">Из table-widget: шапка, боковые панели, верхний тулбар и документ. Команды передаются прототипу. С Figma повторно не сверено.</p>
+        <div id="te-demo" style="height: 560px"><h1 style="margin: 0 0 32px; font-size: 36px; line-height: 46px">Новый документ</h1><p>Введите текст или прокрутите документ. Панели остаются на месте.</p></div>
+        <p class="btn-note" id="te-status" aria-live="polite">Команды передаются обработчику onAction.</p>
+        <div class="group"><h3>Состояния кнопок</h3><div id="te-states" class="btn-grid"></div></div>
       </article>
       <article class="comp" id="pg-editors">
         <div class="comp-head"><h3>PropertyGrid</h3><code>components/pg-editors</code></div>
@@ -980,9 +992,38 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
   // Меню: раздел «Компоненты» показывает один компонент (#button, #checkbox, #chips, #input, #toolbar, #widget, #demo-frame), раздел «Переменные» — цвета,
   // размеры и тени одной лентой (#colors, #sizes, #shadows). Показан только выбранный раздел.
-  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', chips: 'components', input: 'components', toolbar: 'components', widget: 'components', 'property-editor': 'components', 'pg-editors': 'components', 'master-list': 'components', 'demo-frame': 'components',
+  // Окно редактора: нативный ввод, события команд и независимая прокрутка.
+  var te = TextEditor.mount(document.getElementById('te-demo'), {
+    initials: 'АБ', revision: 'Текущая версия',
+    onAction: function (e) { document.getElementById('te-status').textContent = 'Команда: ' + e.action; },
+    onInput: function () { document.getElementById('te-status').textContent = 'Документ изменён'; }
+  });
+  for (var ti = 1; ti <= 16; ti++) {
+    var tp = document.createElement('p'); tp.textContent = 'Абзац ' + ti + '. Пример длинного документа для проверки прокрутки и тени тулбара.';
+    te.elements.document.appendChild(tp);
+  }
+  document.getElementById('te-editable').onchange = function () { te.setEditable(this.checked); };
+  ['Default', 'Hover', 'Disabled', 'Focus'].forEach(function (state) {
+    var cell = document.createElement('div');
+    var label = document.createElement('p'); label.textContent = state; cell.appendChild(label);
+    var tray = document.createElement('div'); tray.className = 'te';
+    tray.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;min-height:0;height:auto;padding:8px';
+    var head = document.createElement('div'); head.className = 'te__head-right'; tray.appendChild(head);
+    ['undo', 'save', 'close', 'add', 'sidebar-more', 'table', 'table-options', 'zoom'].forEach(function (action) {
+      var button = te.elements.root.querySelector('[data-te-action="' + action + '"]').cloneNode(true);
+      if (state === 'Hover') button.classList.add('is-hover');
+      if (state === 'Disabled') button.disabled = true;
+      head.appendChild(button);
+    });
+    if (state === 'Focus') {
+      var hint = document.createElement('p'); hint.textContent = 'Нажмите Tab для клавиатурного фокуса.'; cell.appendChild(hint);
+    }
+    cell.appendChild(tray); document.getElementById('te-states').appendChild(cell);
+  });
+
+  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', chips: 'components', input: 'components', toolbar: 'components', widget: 'components', 'property-editor': 'components', 'pg-editors': 'components', 'text-editor': 'components', 'master-list': 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
-  var COMPS = ['button', 'checkbox', 'chips', 'input', 'toolbar', 'widget', 'property-editor', 'pg-editors', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
+  var COMPS = ['button', 'checkbox', 'chips', 'input', 'toolbar', 'widget', 'property-editor', 'pg-editors', 'text-editor', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
   var header = document.querySelector('header.top'), group = null, comp = 'button';
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
   function markSub(id) { nav('.toc-sub a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + id); }); }

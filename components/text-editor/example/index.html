@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Окно текстового редактора — ui-kit</title>
+<link rel="stylesheet" href="../../../tokens.css">
+<link rel="stylesheet" href="../../../fonts/fonts.css">
+<link rel="stylesheet" href="../text-editor.css">
+<style>
+body { margin: 0; background: var(--background-background-color); color: var(--text-text-color); font: 14px/1.5 Inter, sans-serif; }
+.demo-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px; }
+#editor { height: calc(100dvh - 80px); }
+#editor h1 { margin: 0 0 32px; font-size: 36px; line-height: 46px; font-weight: 600; }
+#editor p { margin: 0 0 16px; }
+#status { margin: 0; }
+</style>
+<script src="../text-editor.js"></script>
+</head>
+<body>
+<div class="demo-controls">
+<label>Тема <select id="theme"><option value="">Светлая</option><option value="default-dark">Тёмная</option><option value="pink">Розовая</option></select></label>
+<label><input id="editable" type="checkbox" checked> Редактирование</label>
+<button type="button" id="long">Длинный документ</button>
+<output id="status" aria-live="polite">Команды передаются прототипу</output>
+</div>
+<div id="editor"><h1>Новый документ</h1><p>Введите текст. Шапка, панели и тулбар остаются на месте при прокрутке документа.</p><p>В область документа можно поместить собственные виджеты. Кнопки передают команды обработчику onAction; форматирование и сохранение подключает прототип.</p></div>
+<script>
+var editor = TextEditor.mount(document.getElementById('editor'), {
+  title: 'Новый документ', initials: 'АБ', revision: 'Текущая версия',
+  onAction: function (event) { document.getElementById('status').textContent = 'Команда: ' + event.action; },
+  onInput: function () { document.getElementById('status').textContent = 'Документ изменён'; }
+});
+document.getElementById('theme').onchange = function () {
+  if (this.value) document.documentElement.setAttribute('data-ui-theme', this.value);
+  else document.documentElement.removeAttribute('data-ui-theme');
+};
+document.getElementById('editable').onchange = function () { editor.setEditable(this.checked); };
+document.getElementById('long').onclick = function () {
+  var fragment = document.createDocumentFragment();
+  for (var i = 1; i <= 40; i++) {
+    var p = document.createElement('p'); p.textContent = 'Абзац ' + i + '. Прокручивается только документ, окно сохраняет своё положение.'; fragment.appendChild(p);
+  }
+  editor.setContent(fragment);
+};
+</script>
+</body>
+</html>

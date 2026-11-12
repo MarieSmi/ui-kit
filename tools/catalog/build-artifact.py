@@ -34,6 +34,8 @@ page = page.replace('<script src="../components/property-editor/property-editor.
 page = page.replace('<link rel="stylesheet" href="../components/master-list/master-list.css" data-kit="master-list">', '<style data-kit="master-list">' + read('components/master-list/master-list.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/pg-editors/pg-editors.css" data-kit="pg-editors">', '<style data-kit="pg-editors">' + read('components/pg-editors/pg-editors.css') + '</style>')
 page = page.replace('<script src="../components/pg-editors/pg-editors.js" data-kit="pg-editors"></script>', '<script data-kit="pg-editors">' + read('components/pg-editors/pg-editors.js') + '</script>')
+page = page.replace('<link rel="stylesheet" href="../components/text-editor/text-editor.css" data-kit="text-editor">', '<style data-kit="text-editor">' + read('components/text-editor/text-editor.css') + '</style>')
+page = page.replace('<script src="../components/text-editor/text-editor.js" data-kit="text-editor"></script>', '<script data-kit="text-editor">' + read('components/text-editor/text-editor.js') + '</script>')
 page = page.replace("'../components/widget/example/content.png'", "'data:image/png;base64," + base64.b64encode((ROOT / 'components/widget/example/content.png').read_bytes()).decode('ascii') + "'")
 page = re.sub(r'src="\.\./components/demo-frame/example/index\.html"', lambda m: 'srcdoc="' + html.escape(ex, quote=True) + '"', page)
 page = re.sub(r'<!doctype html>\s*|</?html[^>]*>\s*|</?head>\s*|</?body>\s*|<meta charset="utf-8">\s*|<meta name="viewport"[^>]*>\s*', '', page, flags=re.I)
