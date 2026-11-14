@@ -1,6 +1,6 @@
 # ui-kit
 
-**Демо (каталог кита):** https://claude.ai/artifact/5zQL1gsjZqJrgq7JMi5CRU
+**Демо (каталог кита):** https://mariesmi.github.io/ui-kit/catalog/
 
 Компоненты и токены для интерактивных HTML-прототипов по макетам Figma.
 

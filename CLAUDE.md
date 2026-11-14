@@ -2,7 +2,8 @@
 
 ## Ссылки
 
-- **Демо (каталог кита):** https://claude.ai/artifact/5zQL1gsjZqJrgq7JMi5CRU
+- **Демо (каталог кита, GitHub Pages):** https://mariesmi.github.io/ui-kit/catalog/
+- **Каталог в артефакте Claude:** https://claude.ai/artifact/5zQL1gsjZqJrgq7JMi5CRU
 - **Репозиторий:** https://github.com/MarieSmi/ui-kit
 - **CDN (jsDelivr):** https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@<версия>/
 - **Figma — 🌍 Global Variables:** https://www.figma.com/design/mcpY3I5yWjkPfnk1IdEiqw
