@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tabs — пример</title>
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../tabs.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: var(--font-font-family-default), sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    h2:first-child { margin-top: 0; }
+    .row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+    .row > span { flex: none; width: 140px; color: var(--text-label_text-color); }
+    .box { width: 480px; }
+    .wide { width: 640px; }
+    .gray { padding: 12px; background: var(--background-unaccented_background-color); }
+  </style>
+</head>
+<body>
+  <!-- Вкладки — label с радиокнопкой: выбор по клику работает без JS -->
+
+  <h2>Разделы карточки: вкладки справа, без линии</h2>
+  <div class="wide gray">
+    <div class="tabs tabs--no-border" role="tablist">
+      <span class="tabs__space"></span>
+      <label class="tabs__item"><input class="tabs__input" type="radio" name="card" checked><span class="tabs__caption" data-caption="Страница">Страница</span></label>
+      <label class="tabs__item"><input class="tabs__input" type="radio" name="card"><span class="tabs__caption" data-caption="Данные">Данные</span></label>
+      <label class="tabs__item"><input class="tabs__input" type="radio" name="card"><span class="tabs__caption" data-caption="Статистика">Статистика</span></label>
+      <label class="tabs__item"><input class="tabs__input" type="radio" name="card"><span class="tabs__caption" data-caption="Посетители">Посетители</span></label>
+      <label class="tabs__item"><input class="tabs__input" type="radio" name="card"><span class="tabs__caption" data-caption="Заявки">Заявки</span></label>
+    </div>
+  </div>
+
+  <h2>Главная вкладка слева, остальные справа</h2>
+  <div class="wide">
+    <div class="tabs" role="tablist">
+      <label class="tabs__item tabs__item--main"><input class="tabs__input" type="radio" name="main"><span class="tabs__caption">Параметры сайта</span></label>
+      <span class="tabs__space"></span>
+      <label class="tabs__item"><input class="tabs__input" type="radio" name="main" checked><span class="tabs__caption" data-caption="SEO">SEO</span></label>
+      <label class="tabs__item"><input class="tabs__input" type="radio" name="main"><span class="tabs__caption" data-caption="Домен">Домен</span></label>
+      <label class="tabs__item"><input class="tabs__input" type="radio" name="main"><span class="tabs__caption" data-caption="Сценарии">Сценарии</span></label>
+    </div>
+  </div>
+
+  <h2>Иконки и счётчики</h2>
+  <div class="box">
+    <div class="tabs" role="tablist">
+      <label class="tabs__item"><input class="tabs__input" type="radio" name="cnt" checked><span class="tabs__caption" data-caption="Заявки">Заявки</span><span class="tabs__counter">12</span></label>
+      <label class="tabs__item"><input class="tabs__input" type="radio" name="cnt"><span class="tabs__caption" data-caption="Посетители">Посетители</span><span class="tabs__counter">1,5к</span></label>
+      <label class="tabs__item"><input class="tabs__input" type="radio" name="cnt"><span class="tabs__caption" data-caption="Файлы">Файлы</span><span class="tabs__icon" aria-hidden="true">&#xe671;</span></label>
+      <label class="tabs__item" title="Настройки"><input class="tabs__input" type="radio" name="cnt"><span class="tabs__icon" aria-hidden="true">&#xe61b;</span></label>
+    </div>
+  </div>
+
+  <h2>Стили, высота, состояния</h2>
+  <div id="out"></div>
+
+  <script>
+    const ROWS = [
+      ['primary', ''], ['secondary', ' tabs--style-secondary'], ['unaccented', ' tabs--style-unaccented'],
+      ['inlineHeight 4xl', ' tabs--size-4xl'], ['horizontalPadding null', ' tabs--padding-null'],
+      ['hover на третьей', '', ' is-hover'],
+    ];
+    document.getElementById('out').innerHTML = ROWS.map(([title, cls, hover], n) => `
+      <div class="row"><span>${title}</span>
+        <div class="tabs${cls} box" role="tablist">${['Все', 'Опубликованные', 'Черновики'].map((t, i) =>
+          `<label class="tabs__item${i === 2 && hover ? hover : ''}"><input class="tabs__input" type="radio" name="st${n}"${i === 1 ? ' checked' : ''}><span class="tabs__caption" data-caption="${t}">${t}</span></label>`).join('')}</div>
+      </div>`).join('');
+  </script>
+</body>
+</html>

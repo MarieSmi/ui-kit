@@ -19,13 +19,13 @@
 Файлы раздаёт jsDelivr прямо из GitHub по тегу:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.16.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.16.0/components/<имя>/<имя>.css">
-<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.16.0/components/<имя>/<имя>.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.18.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.18.0/components/<имя>/<имя>.css">
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.18.0/components/<имя>/<имя>.js"></script>
 ```
 
 - `tokens.css` подключается **первым**: компоненты берут значения из его переменных.
-- Версия в адресе (`@1.16.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
+- Версия в адресе (`@1.18.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
 - Во всех адресах одного прототипа должна стоять одна и та же версия.
 - В артефактах Claude адреса `cdn.jsdelivr.net/gh/` не работают: там код кита вшивается в файл.
 
@@ -35,14 +35,14 @@
 прототип подключает сам, отдельным файлом:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.16.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.18.0/fonts/fonts.css">
 ```
 
 | Шрифт | Файлы | Где используется |
 |---|---|---|
 | Inter 400 / 500 / 600, прямой и курсив | `fonts/Inter/`: переменные `woff2`, запасные `ttf` | текст, `--font-font-family-default` |
-| cbuc-icons | `fonts/cbuc-icons.ttf` | иконки 16 и 32 px, `--icon-font-family-*` |
-| cbuc-icons24 | `fonts/cbuc-icons24.ttf` | иконки 24 px, `--icon-font-family-m_icon_font-family` |
+| cbuc-icons | `fonts/cbuc-icons.ttf` (CbucIcons 1.6.3) | иконки 16 и 32 px, `--icon-font-family-*` |
+| cbuc-icons24 | `fonts/cbuc-icons24.ttf` (CbucIcons 1.6.3) | иконки 24 px, `--icon-font-family-m_icon_font-family` |
 | Accordion-Font | `fonts/Accordion-Font.ttf` | иконки аккордеона |
 
 Шрифтов тем Large и mobile (SF Pro, sbis-mobile-icons) в ките нет.
@@ -92,6 +92,17 @@ Figma: он обновит файлы в `tools/tokens/`, запустит `pyth
 | Редакторы PropertyGrid из прототипа STV: размер с меню величин и Min/Max, тень (окно цвета тени, готовые тени, окно «Тень»), отступы, скругления, фон с окном цвета, границы с типом линии; по сторонам и углам, отдельное окно цвета | [`components/pg-editors`](components/pg-editors/) | `lw5BTOhkhczQmdiTvlnhnG` · `23882:236259` (не сверено, перенесено из STV) | 1.14.0 |
 | Мастер-список: «Список» и «Навигация», счётчики, кнопка-стрелка, переключатель, дерево до 3 уровней, заголовок группы | [`components/master-list`](components/master-list/) | `nuC4KFMiS36uDWDUp9wKGl` · `25581:1272`, `34211:1076`, `14187:114` | 1.8.0 |
 | Окно текстового редактора: шапка, боковые панели, верхний тулбар, область документа; ввод и события команд | [`components/text-editor`](components/text-editor/) | из table-widget · `1265:76984` (ключ файла не указан, повторно не сверено) | 1.15.0 |
+| Кнопка закрытия: крестик окна или панели, 5 видов, размеры s / m / l | [`components/close-button`](components/close-button/) | `nuC4KFMiS36uDWDUp9wKGl` · `close/closeButton` (из кода Saby, не сверено) | 1.17.0 |
+| Кнопка-стрелка: круглая и вытянутая, стили подложки, 4 направления, размеры s / m / mt / xl / 5xl | [`components/arrow-button`](components/arrow-button/) | `nuC4KFMiS36uDWDUp9wKGl` · `arrow/arrowButton` (из кода Saby, не сверено) | 1.17.0 |
+| Кнопка «Назад»: стрелка или стрелка в круге, заголовок экрана | [`components/back`](components/back/) | `nuC4KFMiS36uDWDUp9wKGl` · `other / backButtonArrow` (из кода Saby, не сверено) | 1.17.0 |
+| Хлебные крошки: путь до папки, шапка проводника с кнопкой «Назад», сворачивание в «…» | [`components/breadcrumbs`](components/breadcrumbs/) | `nuC4KFMiS36uDWDUp9wKGl` (из кода Saby, не сверено) | 1.17.0 |
+| Поле выбора: значение из списка со стрелкой в оформлении поля ввода, меню под полем | [`components/combobox`](components/combobox/) | `nuC4KFMiS36uDWDUp9wKGl` (из кода Saby, не сверено) | 1.17.0 |
+| Переключатель: filled / outlined, размеры s / m / l, подпись слева или справа, только чтение | [`components/switch`](components/switch/) | `nuC4KFMiS36uDWDUp9wKGl` · `switch` `1450:6298` (из кода Saby, не сверено) | 1.17.0 |
+| Тумблер: 2–4 варианта на общей подложке, подписи, иконки, счётчик, контрастная подложка, размеры xs … 5xl, вертикальный | [`components/tumbler`](components/tumbler/) | `nuC4KFMiS36uDWDUp9wKGl` · `tumblerHorizontal` (из кода Saby, не сверено) | 1.17.0 |
+| Вкладки: стили primary / secondary / unaccented, иконки и счётчики, главная вкладка, выравнивание, линия снизу | [`components/tabs`](components/tabs/) | `nuC4KFMiS36uDWDUp9wKGl` · `tabs/horizontal` (из кода Saby, не сверено) | 1.17.0 |
+| Аккордеон и сайдбар: разделы с иконками, подразделы, группы, свёрнутый вид, шапка с логотипом и кнопкой сворачивания | [`components/accordion`](components/accordion/) | «Аккордеон [30.07.26]» (из кода Saby, не сверено) | 1.17.0 |
+| Правый сайдбар конструктора: тулбар с пунктами, панели вкладок, шапка панели, строки полей и слоёв; вписан, по ховеру, закреплён | [`components/right-sidebar`](components/right-sidebar/) | `rHabzni5OI5D4fxBLQdj2m` · `5:28859` | 1.18.0 |
+| Магазин виджетов: виджеты small / medium / big, разделы с превью, расширенный вид с деревом категорий | [`components/shop`](components/shop/) | `rHabzni5OI5D4fxBLQdj2m` · `1517:69549` | 1.18.0 |
 
 Связь компонентов Figma с классами кита — в [`figma-map.json`](figma-map.json): ключи component set и
 соответствие их свойств классам. По ней инстанс из макета переводится в разметку кита.

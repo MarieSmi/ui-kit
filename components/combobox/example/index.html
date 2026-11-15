@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>combobox — пример</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../combobox.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    table { border-collapse: collapse; }
+    th { padding: 4px 16px 4px 0; font-weight: 400; text-align: left; color: var(--text-label_text-color); white-space: nowrap; }
+    td { padding: 6px 24px 6px 0; }
+    td > .combobox { width: 180px; }
+    .gray { background: var(--background-unaccented_background-color); }
+    .gray th:first-child { padding-left: 8px; }
+    .live { padding: 0 0 200px 24px; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>inlineHeight <select id="size">
+      <option value="m" selected>m · 24</option><option value="l">l · 28</option><option value="xl">xl · 32</option>
+    </select></label>
+    <label>borderVisibility <select id="border">
+      <option value="">partial</option><option value="visible">visible</option><option value="hidden">hidden</option>
+    </select></label>
+  </div>
+  <div id="out"></div>
+
+  <h2>Рабочее меню</h2>
+  <div class="live">
+    <div class="combobox" id="live" style="width: 180px">
+      <button type="button" class="combobox__field" aria-haspopup="listbox" aria-expanded="false"><span class="combobox__value">Российский рубль</span></button>
+      <ul class="combobox__menu" role="listbox" hidden>
+        <li class="combobox__item is-selected" role="option">Российский рубль</li>
+        <li class="combobox__item" role="option">Доллар США</li>
+        <li class="combobox__item" role="option">Евро</li>
+        <li class="combobox__item" role="option">Казахстанский тенге</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const STATES = [['покой', ''], ['hover', ' is-hover'], ['открыто', ' is-open'], ['readOnly', ' is-readonly'], ['invalid', ' is-invalid']];
+    const ROWS = [['со значением', '', 'Российский рубль'], ['пустое', ' combobox--empty', 'Выберите валюту']];
+
+    function render() {
+      const border = document.getElementById('border').value;
+      const base = ` combobox--size-${document.getElementById('size').value}${border ? ' combobox--border-' + border : ''}`;
+      const field = (cls, text) => `<div class="combobox${cls}"><button type="button" class="combobox__field"><span class="combobox__value">${text}</span></button></div>`;
+      document.getElementById('out').innerHTML = [['Поле', '', ''], ['На сером фоне (contrastBackground)', ' combobox--contrast', 'gray']].map(([title, extra, gray]) => `
+        <h2>${title}</h2>
+        <table class="${gray}">
+          <tr><th></th>${STATES.map(([t]) => `<th>${t}</th>`).join('')}</tr>
+          ${ROWS.map(([t, cls, text]) => `<tr><th>${t}</th>${STATES.map(([, s]) => `<td>${field(base + extra + cls + s, text)}</td>`).join('')}</tr>`).join('')}
+        </table>`).join('');
+    }
+    document.getElementById('size').onchange = render;
+    document.getElementById('border').onchange = render;
+    render();
+
+    // Меню открывает и закрывает прототип: атрибут hidden у меню и класс is-open у поля
+    const box = document.getElementById('live'), menu = box.querySelector('.combobox__menu'), btn = box.querySelector('.combobox__field');
+    const toggle = (open) => { menu.hidden = !open; box.classList.toggle('is-open', open); btn.setAttribute('aria-expanded', open); };
+    btn.onclick = () => toggle(menu.hidden);
+    menu.onclick = (e) => {
+      const item = e.target.closest('.combobox__item'); if (!item) return;
+      for (const li of menu.children) li.classList.toggle('is-selected', li === item);
+      box.querySelector('.combobox__value').textContent = item.textContent;
+      toggle(false);
+    };
+    document.addEventListener('click', (e) => { if (!box.contains(e.target)) toggle(false); });
+  </script>
+</body>
+</html>

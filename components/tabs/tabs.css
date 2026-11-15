@@ -1,0 +1,137 @@
+/*!
+ * tabs — вкладки: переключение разделов карточки, панели или окна. Выбранная вкладка выделена цветом и маркером снизу.
+ * Перенесены из кода Saby: Controls/tabs:Buttons (Buttons.tsx, TextCounterTabTemplate.tsx, _Buttons.less, _Online.less,
+ * Application/_styles/_marker.less). Figma: component set «tabs/horizontal» библиотеки «⚙️ Default components»
+ * (nuC4KFMiS36uDWDUp9wKGl). Свойства и состояния взяты из кода и живого примера, с макетом не сверялись.
+ * selectedStyle → без класса (primary) / .tabs--style-secondary / .tabs--style-unaccented;
+ * inlineHeight → без класса (s, l) / .tabs--size-4xl; borderVisible=false → .tabs--no-border;
+ * horizontalPadding=null → .tabs--padding-null; isMainTab → .tabs__item--main; align — место вкладки относительно
+ * .tabs__space; выбранная вкладка → .is-selected, aria-selected="true" или :checked у .tabs__input;
+ * наведение → .is-hover (и :hover).
+ * Только CSS. Вкладка — <label> с радиокнопкой (выбор по клику работает без JS) или <button> с классом .is-selected.
+ * Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/tabs
+ *
+ * Устройство: .tabs — строка с линией снизу (::after), .tabs__item — вкладка, её ::after — маркер. Стиль задаёт
+ * --tabs-sel-fg, --tabs-sel-fw и --tabs-sel-mk: цвет и насыщенность текста и цвет маркера выбранной вкладки.
+ */
+
+/* ---------- Основа: selectedStyle=primary, высота s ---------- */
+.tabs {
+  --tabs-h: var(--inline_height-inline_height_xl); /* item_height_tabs 32px: своего токена нет, значение совпадает */
+  --tabs-sel-fg: var(--text-primary_text-color);
+  --tabs-sel-fw: var(--font-font-weight-bold);
+  --tabs-sel-mk: var(--extra-marker_color);
+
+  position: relative; box-sizing: border-box;
+  display: flex; max-width: 100%; height: var(--tabs-h);
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--font-font-size-font-size_l); font-weight: var(--font-font-weight-regular); line-height: normal;
+  user-select: none;
+}
+/* Линия под вкладками (borderVisible) */
+.tabs::after {
+  content: ""; position: absolute; left: 0; bottom: 0; width: 100%;
+  height: 1px; /* толщина линии 1px — нет токена */
+  background: var(--extra-separator_color);
+  pointer-events: none;
+}
+.tabs--no-border::after { display: none; }
+
+/* ---------- Вкладка ---------- */
+.tabs__item {
+  position: relative; box-sizing: border-box;
+  display: inline-flex; align-items: center; flex: 0 1 auto; min-width: 0; max-width: 100%;
+  height: 100%;
+  margin: 0 var(--offset-offset_m); padding: 0; border: 0;
+  font: inherit; white-space: nowrap;
+  color: var(--text-secondary_text-color);
+  background: transparent;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+/* Маркер: в покое прозрачный, при наведении бледный, у выбранной — цвета стиля */
+.tabs__item::after {
+  content: ""; position: absolute; z-index: 1; left: 0; bottom: 0; width: 100%;
+  height: var(--components-tabs-marker_thickness_tabs);
+  border-radius: var(--border-radius-border-radius_2xs);
+  background: transparent;
+  pointer-events: none;
+}
+
+/* Свободное место между левыми и правыми вкладками; сюда же кладётся содержимое tabSpaceTemplate */
+.tabs__space { flex: 1 1 auto; min-width: 0; height: 100%; display: flex; align-items: center; }
+
+/* Радиокнопка вкладки: невидима, но остаётся в фокусе и в форме */
+.tabs__input {
+  position: absolute; left: 0; top: 0; width: 1px; height: 1px; margin: 0; padding: 0;
+  opacity: 0; pointer-events: none;
+}
+
+/* Подпись. С атрибутом data-caption вкладка сразу занимает ширину жирной подписи и не толкает соседей при выборе */
+.tabs__caption { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.tabs__caption[data-caption] { display: inline-grid; }
+.tabs__caption[data-caption]::after {
+  content: attr(data-caption); height: 0; overflow: hidden; visibility: hidden;
+  font-weight: var(--font-font-weight-bold);
+}
+
+/* Иконка — глиф шрифта иконок (cbuc-icons) или svg, размер s. После подписи — бледная, одна — вторичного цвета */
+.tabs__icon {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: var(--icon-icon_size-icon-size_s); height: var(--icon-icon_size-icon-size_s);
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--icon-secondary_icon-color);
+}
+.tabs__icon svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+.tabs__caption + .tabs__icon { margin-left: var(--offset-offset_xs); color: var(--icon-unaccented_icon-color); }
+
+/* Счётчик: бледный, у выбранной вкладки — акцентный; всегда обычной насыщенности */
+.tabs__counter {
+  flex: none; margin-left: var(--offset-offset_xs);
+  font-weight: var(--font-font-weight-regular);
+  color: var(--text-unaccented_text-color);
+}
+.tabs__icon + .tabs__counter { margin-left: var(--offset-offset_3xs); }
+
+/* Фокус: в коде Saby — общий класс платформы, в кит не перенесён: обводка браузера вокруг вкладки */
+.tabs__item:has(> .tabs__input:focus-visible) { outline: auto; outline-offset: 1px; } /* 1px — нет токена */
+
+/* ---------- Главная вкладка (isMainTab): крупный заголовок, короткий маркер ---------- */
+.tabs__item--main {
+  font-size: var(--font-font-size-font-size_4xl); font-weight: var(--font-font-weight-bold);
+  color: var(--text-text-color);
+}
+.tabs__item--main::after { width: 42px; } /* ширина маркера главной вкладки 42px — нет токена */
+
+/* ---------- Высота (inlineHeight) и отступ краёв (horizontalPadding) ---------- */
+.tabs--size-4xl { --tabs-h: 43px; } /* item_height_4xl_tabs 43px — нет токена */
+.tabs--padding-null > .tabs__item:first-child { margin-left: 0; }
+.tabs--padding-null > .tabs__item:last-child { margin-right: 0; }
+
+/* ---------- Стиль выбранной вкладки (selectedStyle) ---------- */
+.tabs--style-secondary {
+  --tabs-sel-fg: var(--text-secondary_text-color);
+  --tabs-sel-mk: var(--text-link_text-color);
+}
+.tabs--style-unaccented {
+  --tabs-sel-fg: var(--text-text-color);
+  --tabs-sel-fw: var(--font-font-weight-regular);
+  --tabs-sel-mk: var(--extra-item_selected_color);
+}
+
+/* ---------- Наведение на невыбранную вкладку: бледный маркер ---------- */
+.tabs__item:is(:hover, .is-hover)::after { background: var(--extra-marker_hover_color); }
+
+/* ---------- Выбранная вкладка ---------- */
+.tabs__item:is(.is-selected, [aria-selected="true"], :has(> .tabs__input:checked)) {
+  font-weight: var(--tabs-sel-fw);
+  color: var(--tabs-sel-fg);
+}
+.tabs__item:is(.is-selected, [aria-selected="true"], :has(> .tabs__input:checked))::after { background: var(--tabs-sel-mk); }
+.tabs__item:is(.is-selected, [aria-selected="true"], :has(> .tabs__input:checked)) .tabs__counter { color: var(--text-primary_text-color); }
+/* Главная вкладка остаётся цвета текста и жирной в любом стиле */
+.tabs__item--main:is(.is-selected, [aria-selected="true"], :has(> .tabs__input:checked)) {
+  font-weight: var(--font-font-weight-bold);
+  color: var(--text-text-color);
+}

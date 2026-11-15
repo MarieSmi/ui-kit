@@ -1,0 +1,186 @@
+/*!
+ * shop — магазин виджетов конструктора (Figma rHabzni5OI5D4fxBLQdj2m, секция «Правый сайдбар» 5:28436).
+ * Наборы: «Магазин» 1517:69549 → .shop, «Виджет магазина» 1517:29714 → .shop__widget,
+ * «Контент сайдбара» Тип=Магазин 5:28570 → .shop__list.
+ * Открытие расширенного=on → .shop.is-expanded: слева дерево категорий, магазин шире и с тенью.
+ * Размер виджета → .shop__widget--small / --medium / --big, ⛔ Hover → .is-hover (и :hover).
+ * Шапка и дерево категорий — слоты: .shop__head (шапка right-sidebar) и .shop__master (master-list кита).
+ * Цвета и размеры — токены ui-kit (tokens.css подключается раньше). Поведение — shop.js.
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/shop
+ */
+
+.shop {
+  /* рамка наведения: в макете #7B62F8 40 % без переменной; цвет совпадает с border-info — 40 % нет токена */
+  --shop-hover-bd: color-mix(in srgb, var(--border-info_border-color) 40%, transparent);
+  --shop-width: 350px;        /* нет токена */
+  --shop-master-width: 220px; /* нет токена */
+
+  position: relative; box-sizing: border-box;
+  display: flex; flex-direction: column;
+  width: var(--shop-width); min-width: var(--shop-width); /* во flex-строке магазин не сжимается */
+  border-radius: var(--border-radius-border-radius_s);
+  background: var(--background-unaccented_background-color);
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--font-font-size-font-size_m); font-weight: var(--font-font-weight-regular);
+  color: var(--text-text-color);
+}
+/* Сброс только своих кнопок: кнопки в слотах не трогаем */
+.shop :is(.shop__widget, .shop__expand, .shop__filter) {
+  margin: 0; padding: 0; border: 0; background: none;
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Открытие расширенного=on: магазин раздвигается влево поверх страницы, место в потоке остаётся прежним */
+.shop.is-expanded {
+  z-index: 1;
+  width: calc(var(--shop-width) + var(--shop-master-width) + var(--offset-offset_2xs) * 2);
+  min-width: calc(var(--shop-width) + var(--shop-master-width) + var(--offset-offset_2xs) * 2);
+  margin-left: calc(-1 * (var(--shop-master-width) + var(--offset-offset_2xs) * 2));
+  /* стиль shadow_a из макета; смещение 0 0 — нет токена */
+  box-shadow: 0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a), 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a);
+}
+
+/* ---------- Шапка (слот) и её кнопки ---------- */
+.shop__head { flex: none; }
+/* Кнопка рядом с названием: раскрывает и сворачивает расширенный магазин */
+.shop .shop__expand, .shop .shop__filter {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--components-button-border-radius_button);
+  font-weight: normal; font-style: normal; line-height: 1;
+}
+.shop .shop__expand {
+  width: var(--inline_height-inline_height_m); height: var(--inline_height-inline_height_m);
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+  color: var(--icon-label_icon-color);
+}
+.shop__expand::before { content: "\e995"; }
+.shop.is-expanded .shop__expand::before { content: "\ebfb"; }
+.shop .shop__expand:is(:hover, .is-hover) { color: var(--icon-label_hover_icon-color); } /* наведения в макете нет — допущение */
+/* Кнопка фильтра: только в расширенном магазине. Выше строки шапки, поэтому отрицательные поля */
+.shop .shop__filter {
+  display: none;
+  width: var(--inline_height-inline_height_xl); height: var(--inline_height-inline_height_xl);
+  margin: calc(-1 * var(--offset-offset_2xs)) 0;
+  font-family: var(--icon-font-family-m_icon_font-family); font-size: var(--icon-icon_size-icon-size_m);
+  color: var(--icon-secondary_icon-color);
+}
+.shop__filter::before { content: "\e94c"; }
+.shop.is-expanded .shop__filter { display: flex; }
+
+/* ---------- Тело: дерево категорий и список виджетов ---------- */
+.shop__body {
+  flex: 1 1 auto; min-height: 0;
+  display: flex; gap: var(--offset-offset_2xs);
+}
+.shop.is-expanded > .shop__body { padding-left: var(--offset-offset_2xs); }
+/* Слот дерева категорий: виден только в расширенном магазине */
+.shop__master {
+  display: none; box-sizing: border-box; flex: none;
+  width: var(--shop-master-width);
+  padding-top: var(--offset-offset_s);
+  overflow: auto; scrollbar-width: none; /* полосы прокрутки в макете нет: прокрутка колесом и жестом */
+}
+.shop.is-expanded .shop__master { display: block; }
+
+.shop__list {
+  box-sizing: border-box; flex: 1 1 auto; min-width: 0; overflow: auto; scrollbar-width: none; /* полосы прокрутки в макете нет */
+  padding: var(--offset-none) var(--offset-offset_m) var(--offset-offset_2xs);
+}
+
+/* Сетки: small — четыре в ряд, medium — две колонки */
+.shop__grid { display: grid; gap: var(--offset-offset_s); }
+.shop__grid--small { grid-template-columns: repeat(4, minmax(0, 1fr)); padding-bottom: var(--offset-offset_s); }
+.shop__grid--medium { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* Раздел с крупными виджетами */
+.shop__section { padding-top: var(--offset-offset_s); }
+.shop .shop__section-title {
+  margin: 0; padding: var(--offset-offset_s) var(--offset-none);
+  font-size: var(--font-font-size-font-size_xl); font-weight: var(--font-font-weight-bold); line-height: normal;
+  color: var(--text-text-color);
+}
+.shop__cards { display: flex; flex-direction: column; gap: var(--offset-offset_l); }
+
+/* ---------- Виджет магазина ---------- */
+.shop .shop__widget {
+  position: relative; box-sizing: border-box; min-width: 0;
+  display: flex; align-items: center;
+  border-radius: var(--border-radius-border-radius_s);
+}
+.shop__widget-icon {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: normal; font-style: normal; line-height: 1;
+}
+.shop__widget-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: normal; }
+
+/* Размер=small: плитка с иконкой */
+.shop .shop__widget--small {
+  justify-content: center;
+  padding: var(--offset-offset_s) var(--offset-none);
+  background: var(--background-background-color);
+}
+.shop__widget--small .shop__widget-icon {
+  width: var(--icon-icon_size-icon-size_m); height: var(--icon-icon_size-icon-size_m);
+  font-family: var(--icon-font-family-m_icon_font-family);
+  font-size: var(--icon-icon_size-icon-size_m);
+  color: var(--icon-secondary_icon-color);
+}
+.shop__widget--small .shop__widget-name { display: none; }
+
+/* Размер=medium: строка с иконкой и названием */
+.shop .shop__widget--medium {
+  gap: var(--offset-offset_xs);
+  min-height: 32px; /* нет токена */
+  padding: var(--offset-offset_3xs) var(--offset-offset_s);
+  background: var(--background-background-color);
+}
+.shop__widget--medium .shop__widget-icon {
+  width: var(--icon-icon_size-icon-size_s); height: var(--icon-icon_size-icon-size_s);
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+  color: var(--icon-label_icon-color);
+}
+.shop__widget--medium .shop__widget-name { flex: 1 1 auto; }
+
+.shop :is(.shop__widget--small, .shop__widget--medium):is(:hover, .is-hover) { box-shadow: inset 0 0 0 1px var(--shop-hover-bd); } /* 1px — нет токена */
+
+/* Размер=big: название, описание и превью */
+.shop .shop__widget--big {
+  flex-direction: column; align-items: stretch;
+  gap: var(--offset-offset_s);
+  border-radius: 0; cursor: pointer;
+}
+.shop__widget-text { display: flex; flex-direction: column; gap: var(--offset-offset_2xs); }
+.shop__widget-desc {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+  font-size: var(--font-font-size-font-size_xs); line-height: normal;
+  color: var(--text-unaccented_text-color);
+}
+/* Превью — слот: любая разметка или картинка */
+.shop__preview {
+  position: relative; overflow: clip;
+  display: flex; flex-direction: column;
+  border-radius: var(--border-radius-border-radius_s);
+}
+.shop__preview > img { display: block; width: 100%; height: auto; }
+.shop__preview::after { /* рамка наведения поверх содержимого, как stroke в макете */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  border: 1px solid transparent; /* 1px — нет токена */
+  border-radius: inherit;
+}
+.shop__widget--big:is(:hover, .is-hover) .shop__preview::after { border-color: var(--shop-hover-bd); }
+/* Плюс в центре превью: виден при наведении */
+.shop__plus {
+  position: absolute; z-index: 1; left: calc(50% - 18px); top: calc(50% - 18px); /* половина кнопки — нет токена */
+  display: none; align-items: center; justify-content: center;
+  width: 36px; height: 36px; /* нет токена */
+  border-radius: 50%; /* в макете 18px без переменной */
+  background: var(--background-same-info_same_background-color);
+  font-family: var(--icon-font-family-m_icon_font-family); font-size: var(--icon-icon_size-icon-size_m);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--icon-info_icon-color);
+}
+.shop__plus::before { content: "\eae9"; }
+.shop__widget--big:is(:hover, .is-hover) .shop__plus { display: flex; }

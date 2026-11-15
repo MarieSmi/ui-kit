@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tumbler — пример</title>
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../tumbler.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: var(--font-font-family-default), sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    table { border-collapse: collapse; }
+    th { padding: 4px 16px 4px 0; font-weight: 400; text-align: left; color: var(--text-label_text-color); white-space: nowrap; }
+    td { padding: 8px 32px 8px 0; }
+    .gray { background: var(--background-unaccented_background-color); }
+    .gray th:first-child { padding-left: 8px; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>inlineHeight <select id="size">
+      <option value="xs">xs · 16</option><option value="s">s · 20</option><option value="" selected>default · 24</option>
+      <option value="l">l · 28</option><option value="xl">xl · 32</option><option value="2xl">2xl · 36</option>
+      <option value="3xl">3xl · 40</option><option value="4xl">4xl · 44</option><option value="5xl">5xl · 48</option>
+    </select></label>
+  </div>
+  <div id="out"></div>
+
+  <h2>direction=vertical</h2>
+  <div class="tumbler tumbler--vertical" role="radiogroup" aria-label="Устройство">
+    <label class="tumbler__item" title="Компьютер"><input class="tumbler__input" type="radio" name="vert" checked><span class="tumbler__icon" aria-hidden="true">&#xe731;</span></label>
+    <label class="tumbler__item" title="Телефон"><input class="tumbler__input" type="radio" name="vert"><span class="tumbler__icon" aria-hidden="true">&#xe637;</span></label>
+  </div>
+
+  <script>
+    // Наборы пунктов: подписи, иконки (TFDesktop и PhoneCell из cbuc-icons), подпись со счётчиком.
+    // Пункты — label с радиокнопкой: в столбце «покой» выбор по клику работает без JS
+    const ITEMS = {
+      'Подписи': ['<span class="tumbler__caption">Плитка</span>', '<span class="tumbler__caption">Список</span>', '<span class="tumbler__caption">Таблица</span>'],
+      'Иконки': ['<span class="tumbler__icon" aria-hidden="true">&#xe731;</span>', '<span class="tumbler__icon" aria-hidden="true">&#xe637;</span>'],
+      'Счётчик': ['<span class="tumbler__caption">Новые</span><span class="tumbler__counter">12</span>', '<span class="tumbler__caption">Все</span>'],
+    };
+    const STATES = [['покой', '', ''], ['hover на втором пункте', '', ' is-hover'], ['readOnly', ' is-readonly', '']];
+    let uid = 0;
+
+    function tumbler(items, cls, size, state, hover) {
+      const name = 't' + (uid++);
+      return `<div class="tumbler${cls}${size ? ' tumbler--size-' + size : ''}${state}" role="radiogroup">${items.map((it, i) =>
+        `<label class="tumbler__item${i === 1 ? hover : ''}"><input class="tumbler__input" type="radio" name="${name}"${i === 0 ? ' checked' : ''}${state ? ' disabled' : ''}>${it}</label>`).join('')}</div>`;
+    }
+    function render() {
+      const size = document.getElementById('size').value;
+      document.getElementById('out').innerHTML = [['Подложка в тон', '', ''], ['contrastBackground', ' tumbler--contrast', 'gray']].map(([title, cls, gray]) => `
+        <h2>${title}</h2>
+        <table class="${gray}">
+          <tr><th></th>${STATES.map(([t]) => `<th>${t}</th>`).join('')}</tr>
+          ${Object.entries(ITEMS).map(([t, items]) => `<tr><th>${t}</th>${STATES.map(([, state, hover]) =>
+            `<td>${tumbler(items, cls, size, state, hover)}</td>`).join('')}</tr>`).join('')}
+        </table>`).join('');
+    }
+    document.getElementById('size').onchange = render;
+    render();
+  </script>
+</body>
+</html>

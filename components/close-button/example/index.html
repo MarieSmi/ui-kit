@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>close-button — пример</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../close-button.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    table { border-collapse: collapse; }
+    th { padding: 4px 16px 4px 0; font-weight: 400; text-align: left; color: var(--text-label_text-color); white-space: nowrap; }
+    td { padding: 6px 24px 6px 0; }
+    .gray { background: var(--background-unaccented_background-color); }
+    .gray th:first-child { padding-left: 8px; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>size <select id="size">
+      <option value="s">s · 24</option><option value="m" selected>m · 28</option><option value="l">l · 32</option>
+    </select></label>
+  </div>
+  <div id="out"></div>
+
+  <script>
+    // Виды — viewMode из Controls/extButtons:CloseButton; external и externalWide показаны на сером, как поверх картинки
+    const SETS = [
+      ['Виды', '', [['toolButton', 'close-button--tool-button'], ['linkButton', 'close-button--link-button'], ['functionalButton', 'close-button--functional-button']]],
+      ['Поверх картинки и снаружи окна', 'gray', [['external', 'close-button--external'], ['externalWide', 'close-button--external-wide']]],
+    ];
+    const STATES = [['покой', ''], ['hover', ' is-hover'], ['press', ' is-active']];
+
+    function render() {
+      const size = document.getElementById('size').value;
+      document.getElementById('out').innerHTML = SETS.map(([title, cls, views]) => `
+        <h2>${title}</h2>
+        <table class="${cls}">
+          <tr><th></th>${STATES.map(([t]) => `<th>${t}</th>`).join('')}</tr>
+          ${views.map(([t, v]) => `<tr><th>${t}</th>${STATES.map(([, s]) =>
+            `<td><button type="button" class="close-button ${v} close-button--size-${size}${s}" aria-label="Закрыть"></button></td>`).join('')}</tr>`).join('')}
+        </table>`).join('');
+    }
+    document.getElementById('size').onchange = render;
+    render();
+  </script>
+</body>
+</html>

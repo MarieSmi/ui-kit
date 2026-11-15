@@ -1,0 +1,138 @@
+/*!
+ * tumbler — переключатель из 2–4 вариантов на общей подложке: вид списка, «ПК / Моб».
+ * Перенесён из кода Saby: Controls/Tumbler:Control (Tumbler.tsx, _Tumbler.less). Figma: component set
+ * «tumblerHorizontal» библиотеки «⚙️ Default components» (nuC4KFMiS36uDWDUp9wKGl). Свойства и состояния взяты
+ * из кода и живого примера, с макетом не сверялись.
+ * contrastBackground → .tumbler--contrast; inlineHeight → .tumbler--size-xs … -5xl (без класса — default);
+ * direction=vertical → .tumbler--vertical; readOnly → .is-readonly на .tumbler;
+ * выбранный пункт → .is-selected, aria-checked="true" или :checked у .tumbler__input; наведение → .is-hover (и :hover).
+ * Только CSS. Пункт — <label> с радиокнопкой (выбор по клику работает без JS) или <button> с классом .is-selected.
+ * Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/tumbler
+ *
+ * Устройство: .tumbler — подложка, .tumbler__item — пункт. Вид задаёт цвета пункта: --tb-fg / --tb-fg-h — текст
+ * в покое и при наведении, --tb-bg-h — фон при наведении, --tb-sel-bg / -fg / -sh — фон, текст и тень выбранного.
+ */
+
+/* ---------- Основа: подложка в тон (same), размер default ---------- */
+.tumbler {
+  --tb-h: var(--inline_height-inline_height_default);
+  --tb-pad: var(--offset-offset_m);
+  --tb-fs: var(--font-font-size-font-size_m);
+  --tb-sh-d: 0 0 var(--blur-shadow-blur_d) var(--color-shadow-color_d); /* shadow_d; смещение 0 0 — нет токена */
+  --tb-sh-b: 0 4px var(--blur-shadow-blur_b) var(--color-shadow-color_b); /* тень больших размеров; смещение 0 4px — нет токена */
+  --tb-sh: var(--tb-sh-d);
+
+  --tb-fg: var(--text-label_contrast_text-color);
+  --tb-fg-h: var(--text-text-color);
+  --tb-bg-h: var(--background-contrast-pale_color);
+  --tb-sel-bg: var(--background-background-color);
+  --tb-sel-fg: var(--text-text-color);
+  --tb-sel-sh: var(--tb-sh);
+
+  position: relative; box-sizing: border-box;
+  display: inline-flex; align-items: center; vertical-align: top;
+  max-width: 100%; height: var(--tb-h);
+  padding: 0 1px; gap: 1px; /* зазор 1px между пунктами и до края подложки — нет токена */
+  border-radius: var(--components-button-border-radius_button);
+  background: var(--background-contrast-pale_color);
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--tb-fs); font-weight: var(--font-font-weight-regular); line-height: normal;
+  user-select: none;
+}
+
+/* ---------- Пункт ---------- */
+.tumbler__item {
+  position: relative; box-sizing: border-box; z-index: 1;
+  display: flex; align-items: center; justify-content: center; flex: 1 1 auto; min-width: 0;
+  height: calc(var(--tb-h) - 2px); /* высота подложки минус зазор 1px сверху и снизу — нет токена */
+  margin: 0; padding: 0 var(--tb-pad); border: 0;
+  border-radius: var(--components-button-border-radius_button);
+  font: inherit; white-space: nowrap;
+  color: var(--tb-fg);
+  background: transparent;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+
+/* Радиокнопка пункта: невидима, но остаётся в фокусе и в форме */
+.tumbler__input {
+  position: absolute; left: 0; top: 0; width: 1px; height: 1px; margin: 0; padding: 0;
+  opacity: 0; pointer-events: none;
+}
+
+.tumbler__caption { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+/* Иконка — глиф шрифта иконок (cbuc-icons) или svg, размер s */
+.tumbler__icon {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: var(--icon-icon_size-icon-size_s); height: var(--icon-icon_size-icon-size_s);
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: inherit;
+}
+.tumbler__icon svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+.tumbler__caption + .tumbler__icon { margin-left: var(--offset-offset_s); }
+
+/* Счётчик: размер и цвет не зависят от размера и состояния пункта */
+.tumbler__counter {
+  flex: none; margin-left: var(--offset-offset_2xs);
+  font-size: var(--font-font-size-font-size_m);
+  color: var(--text-primary_text-color);
+}
+
+/* Фокус: в коде Saby — общий класс платформы, в кит не перенесён: обводка браузера вокруг пункта */
+.tumbler__item:has(> .tumbler__input:focus-visible) { outline: auto; outline-offset: 1px; } /* 1px — нет токена */
+
+/* ---------- Размер (inlineHeight): высота, поля пункта, размер шрифта ---------- */
+.tumbler--size-xs { --tb-h: var(--inline_height-inline_height_xs); --tb-pad: var(--offset-offset_xs); --tb-fs: var(--font-font-size-font-size_xs); }
+.tumbler--size-s { --tb-h: var(--inline_height-inline_height_s); --tb-pad: var(--offset-offset_st); --tb-fs: var(--font-font-size-font-size_s); }
+.tumbler--size-m { --tb-h: var(--inline_height-inline_height_m); }
+.tumbler--size-l { --tb-h: var(--inline_height-inline_height_l); --tb-fs: var(--font-font-size-font-size_l); }
+.tumbler--size-xl { --tb-h: var(--inline_height-inline_height_xl); --tb-pad: var(--offset-offset_l); --tb-fs: var(--font-font-size-font-size_xl); }
+.tumbler--size-2xl { --tb-h: var(--inline_height-inline_height_2xl); --tb-pad: var(--offset-offset_l); --tb-fs: var(--font-font-size-font-size_2xl); --tb-sh: var(--tb-sh-b); }
+.tumbler--size-3xl { --tb-h: var(--inline_height-inline_height_3xl); --tb-pad: var(--offset-offset_xl); --tb-fs: var(--font-font-size-font-size_3xl); --tb-sh: var(--tb-sh-b); }
+.tumbler--size-4xl { --tb-h: var(--inline_height-inline_height_4xl); --tb-pad: var(--offset-offset_xl); --tb-fs: var(--font-font-size-font-size_4xl); --tb-sh: var(--tb-sh-b); }
+.tumbler--size-5xl { --tb-h: var(--inline_height-inline_height_5xl); --tb-pad: var(--offset-offset_2xl); --tb-fs: var(--font-font-size-font-size_5xl); --tb-sh: var(--tb-sh-b); }
+
+/* ---------- contrastBackground: белая подложка с тенью и тёмный выбранный пункт — для серых областей ---------- */
+.tumbler--contrast {
+  --tb-fg: var(--text-text-color);
+  --tb-bg-h: var(--background-hover_background-color);
+  --tb-sel-bg: var(--extra-item_selected_color);
+  --tb-sel-fg: var(--extra-item_selected_text-color);
+  --tb-sel-sh: none;
+  background: var(--background-background-color);
+  box-shadow: var(--tb-sh);
+}
+
+/* ---------- direction=vertical: пункты столбцом, высота по содержимому ---------- */
+.tumbler--vertical {
+  flex-direction: column; height: auto; gap: 0;
+  padding: var(--offset-offset_3xs) var(--offset-offset_3xs) 0;
+}
+.tumbler--vertical .tumbler__item {
+  flex: none; height: auto;
+  margin-bottom: var(--offset-offset_3xs); padding: var(--offset-offset_m) var(--offset-offset_2xs);
+}
+
+/* ---------- Наведение на невыбранный пункт ---------- */
+.tumbler__item:is(:hover, .is-hover) { color: var(--tb-fg-h); background: var(--tb-bg-h); }
+
+/* ---------- Выбранный пункт ---------- */
+.tumbler__item:is(.is-selected, [aria-checked="true"], :has(> .tumbler__input:checked)) {
+  color: var(--tb-sel-fg);
+  background: var(--tb-sel-bg);
+  box-shadow: var(--tb-sel-sh);
+}
+
+/* ---------- readOnly: рамка вместо подложки, пункты не нажимаются ---------- */
+.tumbler.is-readonly {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--border-pale_border-color); /* толщина рамки 1px — нет токена */
+}
+.tumbler.is-readonly .tumbler__item { color: var(--text-readonly_text-color); background: transparent; cursor: default; pointer-events: none; }
+.tumbler.is-readonly .tumbler__item:is(.is-selected, [aria-checked="true"], :has(> .tumbler__input:checked)) {
+  color: var(--tb-sel-fg);
+  background: var(--tb-sel-bg);
+  outline: 1px solid var(--border-pale_border-color); /* толщина обводки 1px — нет токена */
+}

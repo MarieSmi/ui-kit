@@ -1,0 +1,259 @@
+/*!
+ * accordion — аккордеон и сайдбар: навигация по разделам продукта. Аккордеон — разделы с иконкой, названием и
+ * маркером выбранного; сайдбар добавляет над ним шапку с логотипом, кнопкой сворачивания и названием схемы навигации.
+ * Перенесены из кода Saby: NavigationPanels/accordion:View и NavigationPanels/sidebars:Sidebar (View.tsx,
+ * ItemTemplate.tsx, _Accordion.less, Sidebar.tsx, _Sidebar.less, NavSchemeLink, Logo), светлая тема navigation_theme-default.
+ * Figma: «Аккордеон [30.07.26]». Вид и состояния взяты из кода и живого примера, с макетом не сверялись.
+ * Свёрнутый вид (accordionExpanded=false, expanded=false) → .sidebar--compact, .accordion--compact или отмеченный
+ * флажок .sidebar__toggle-input; выбранный раздел → .is-selected или aria-current="page"; раздел с выбранным
+ * подразделом → .is-active; подраздел → .accordion__item--sub; наведение → .is-hover (и :hover).
+ * Только CSS: сворачивание по клику работает без JS, если кнопка сворачивания — <label> с флажком.
+ * Иконки разделов — шрифт Accordion-Font (набор аккордеона Saby, fonts/Accordion-Font.ttf), его подключает прототип
+ * через fonts/fonts.css. Коды глифов — в README компонента.
+ * Размеры и часть цветов — токены ui-kit (tokens.css подключается раньше). Цвета темы навигации Saby в токены
+ * кита не входят: они заданы переменными --acc-* на .sidebar и .accordion, прототип может их переопределить.
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/accordion
+ *
+ * Устройство: у раздела подложка — ::before, маркер — ::after. Свёрнутый вид описан один раз через :is() с тремя
+ * способами его включить.
+ */
+
+/* ---------- Цвета темы навигации (navigation_theme-default) — нет токенов ---------- */
+.sidebar, .accordion {
+  --acc-bg: #eaeaea;            /* background-color_NavigationPanels-Accordion — нет токена */
+  --acc-item-hover: #f9f9f9;    /* item_hover_background-color_NavigationPanels-Accordion — нет токена */
+  --acc-item-active: #f2f2f2;   /* фон выбранного раздела — нет токена */
+  --acc-fg: #333333;            /* item_text-color_NavigationPanels-Accordion — нет токена */
+  --acc-fg-active: #000000;     /* item_active_text-color_NavigationPanels-Accordion — нет токена */
+  --acc-separator: #d7d7d7;     /* линия между группами — нет токена */
+  --acc-marker: var(--extra-brand_color);          /* marker_color_NavigationPanels-Accordion: значение совпадает с brand */
+  --acc-logo: var(--extra-brand_color);            /* цвет «saby» и птички: значение совпадает с brand */
+  --acc-bird-bg: #f1f2f5;       /* фон кнопки с птичкой — нет токена */
+  --acc-toggle-bg: #e2e2e2;     /* фон кнопки сворачивания при наведении — нет токена */
+  --acc-toggle-fg: #7694b8;     /* стрелки кнопки сворачивания — нет токена */
+}
+
+/* =====================================================================
+   Аккордеон
+   ===================================================================== */
+.accordion {
+  box-sizing: border-box; flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column;
+  width: 200px; /* ширина развёрнутого аккордеона 200px — нет токена */
+  padding: 0 0 var(--offset-offset_2xs);
+  overflow-x: hidden; overflow-y: auto;
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-weight: var(--font-font-weight-regular);
+  background: var(--acc-bg);
+  user-select: none;
+}
+
+/* ---------- Раздел ---------- */
+.accordion__item {
+  position: relative; box-sizing: border-box; flex: none;
+  display: flex; align-items: center;
+  min-height: var(--inline_height-inline_height_3xl);
+  margin: 0; padding: 0 var(--offset-offset_s) 0 var(--offset-offset_2xs); border: 0;
+  font: inherit; text-align: left; text-decoration: none;
+  color: var(--acc-fg);
+  background: transparent;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+/* Подложка: фон при наведении и у выбранного */
+.accordion__item::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: var(--offset-offset_2xs); right: var(--offset-offset_2xs);
+  border-radius: var(--border-radius-border-radius_s);
+  background: transparent;
+}
+/* Маркер выбранного раздела */
+.accordion__item::after {
+  content: ""; position: absolute; left: 0; top: 50%; display: none;
+  width: var(--offset-offset_2xs);
+  height: 30px; margin-top: -15px; /* высота маркера 30px — нет токена */
+  border-radius: var(--border-radius-border-radius_2xs);
+  background: var(--acc-marker);
+}
+
+/* Иконка — глиф шрифта аккордеона Accordion-Font или svg, размер st (20px) */
+.accordion__icon {
+  position: relative; flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: var(--icon-icon_size-icon-size_st); height: var(--icon-icon_size-icon-size_st);
+  margin: 0 14px; /* поля иконки 14px — нет токена */
+  font-family: "Accordion-Font"; /* шрифт иконок аккордеона — нет токена */
+  font-size: var(--icon-icon_size-icon-size_st);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: inherit;
+}
+.accordion__icon svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+
+.accordion__title {
+  position: relative; flex: 1 1 auto; min-width: 0;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  font-size: var(--font-font-size-font-size_xl);
+  line-height: 30px; /* высота строки названия 30px — нет токена */
+}
+/* Короткое название под иконкой — только в свёрнутом виде */
+.accordion__short { display: none; }
+
+/* Подраздел: виден только выбранный, стоит под своим разделом, без иконки */
+.accordion__item--sub { display: none; }
+.accordion__item--sub:is(.is-selected, [aria-current="page"]) { display: flex; }
+.accordion__item--sub .accordion__title { margin-left: 48px; } /* отступ названия подраздела 48px — нет токена */
+
+/* Линия между группами разделов и распорка, прижимающая последнюю группу к низу */
+.accordion__group {
+  flex: none;
+  height: 3px; /* толщина линии 3px — нет токена */
+  margin: var(--offset-offset_s) 0;
+  background: var(--acc-separator);
+}
+.accordion__spacer { flex: 1 1 auto; }
+
+/* ---------- Состояния раздела ---------- */
+.accordion__item:is(:hover, .is-hover)::before { background: var(--acc-item-hover); }
+
+.accordion__item:is(.is-selected, .is-active, [aria-current="page"]) { color: var(--acc-fg-active); }
+.accordion__item:is(.is-selected, .is-active, [aria-current="page"])::before { background: var(--acc-item-active); }
+.accordion__item:is(.is-selected, [aria-current="page"])::after { display: block; }
+/* Раздел и его выбранный подраздел — одна подложка: у раздела скруглён верх, у подраздела — низ */
+.accordion__item.is-active::before { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.accordion__item--sub:is(.is-selected, [aria-current="page"])::before { border-top-left-radius: 0; border-top-right-radius: 0; }
+
+/* Фокус: в коде Saby — общий класс платформы, в кит не перенесён: обводка браузера */
+.accordion__item:focus-visible { outline: auto; outline-offset: -2px; } /* 2px — нет токена */
+
+/* ---------- Свёрнутый вид: ширина 56px, иконка 24px, под ней короткое название ---------- */
+:is(.accordion--compact, .sidebar--compact .accordion, .sidebar:has(.sidebar__toggle-input:checked) .accordion) {
+  width: 56px; /* ширина свёрнутого аккордеона 56px — нет токена */
+}
+:is(.accordion--compact, .sidebar--compact .accordion, .sidebar:has(.sidebar__toggle-input:checked) .accordion) .accordion__item {
+  flex-direction: column; align-items: center;
+  min-height: var(--inline_height-inline_height_5xl);
+  margin-bottom: var(--offset-offset_3xs); padding: 0 var(--offset-offset_2xs);
+}
+:is(.accordion--compact, .sidebar--compact .accordion, .sidebar:has(.sidebar__toggle-input:checked) .accordion) .accordion__item:last-child { margin-bottom: 0; }
+:is(.accordion--compact, .sidebar--compact .accordion, .sidebar:has(.sidebar__toggle-input:checked) .accordion) .accordion__item::after {
+  height: 34px; margin-top: -17px; /* высота маркера 34px — нет токена */
+}
+:is(.accordion--compact, .sidebar--compact .accordion, .sidebar:has(.sidebar__toggle-input:checked) .accordion) .accordion__icon {
+  width: var(--icon-icon_size-icon-size_m); height: var(--icon-icon_size-icon-size_m);
+  margin: var(--offset-offset_s) 10px 0; /* поля иконки 10px — нет токена */
+  font-size: var(--icon-icon_size-icon-size_m);
+}
+/* Подпись под иконкой: короткое название, а если его нет — полное */
+:is(.accordion--compact, .sidebar--compact .accordion, .sidebar:has(.sidebar__toggle-input:checked) .accordion) :is(.accordion__short, .accordion__title) {
+  display: block; flex: none; box-sizing: border-box; width: 100%; margin: -1px 0; /* −1px — нет токена */
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: center;
+  font-size: var(--font-font-size-font-size_3xs);
+  line-height: 13px; /* высота строки короткого названия 13px — нет токена */
+}
+:is(.accordion--compact, .sidebar--compact .accordion, .sidebar:has(.sidebar__toggle-input:checked) .accordion) .accordion__short ~ .accordion__title,
+:is(.accordion--compact, .sidebar--compact .accordion, .sidebar:has(.sidebar__toggle-input:checked) .accordion) .accordion__title:has(~ .accordion__short) { display: none; }
+/* Подразделы скрыты; раздел с выбранным подразделом выглядит выбранным */
+:is(.accordion--compact, .sidebar--compact .accordion, .sidebar:has(.sidebar__toggle-input:checked) .accordion) .accordion__item--sub { display: none; }
+:is(.accordion--compact, .sidebar--compact .accordion, .sidebar:has(.sidebar__toggle-input:checked) .accordion) .accordion__item.is-active::before { border-radius: var(--border-radius-border-radius_s); }
+:is(.accordion--compact, .sidebar--compact .accordion, .sidebar:has(.sidebar__toggle-input:checked) .accordion) .accordion__item.is-active::after { display: block; }
+
+/* =====================================================================
+   Сайдбар: шапка над аккордеоном
+   ===================================================================== */
+.sidebar {
+  position: relative; box-sizing: border-box; flex: none;
+  display: flex; flex-direction: column;
+  width: 200px; height: 100%; /* ширина развёрнутого сайдбара 200px — нет токена */
+  overflow: hidden;
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-weight: var(--font-font-weight-regular);
+  background: var(--acc-bg);
+}
+.sidebar__header { flex: none; }
+
+/* Верхняя строка: птичка и логотип */
+.sidebar__top {
+  display: flex; align-items: center;
+  height: 34px; /* высота строки логотипа 34px — нет токена */
+  margin: var(--offset-offset_xs) 0 1px var(--offset-offset_m); /* 1px снизу — нет токена */
+}
+.sidebar__bird {
+  box-sizing: border-box; flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: var(--inline_height-inline_height_xl); height: var(--inline_height-inline_height_xl);
+  margin: 0 var(--offset-offset_s) 0 0; padding: 0; border: 0;
+  border-radius: var(--components-button-border-radius_button);
+  font-family: var(--icon-font-family-m_icon_font-family); font-size: var(--icon-icon_size-icon-size_m);
+  font-weight: normal; font-style: normal; line-height: 1; text-decoration: none;
+  color: var(--acc-logo);
+  background: var(--acc-bird-bg);
+  cursor: pointer;
+}
+.sidebar__bird svg { display: block; width: var(--icon-icon_size-icon-size_m); height: var(--icon-icon_size-icon-size_m); fill: currentColor; }
+/* Логотип: «saby» и название продукта. В Saby — шрифт Maison Neue Extended, в ките его нет: шрифт кита */
+.sidebar__logo {
+  flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap;
+  font-size: var(--font-font-size-font-size_4xl); line-height: 20px; /* высота строки логотипа 20px — нет токена */
+  text-transform: lowercase; text-decoration: none;
+  color: var(--text-text-color);
+  cursor: pointer;
+}
+.sidebar__logo-name { color: var(--acc-logo); }
+.sidebar__logo-title { font-weight: var(--font-font-weight-bold); }
+
+/* Нижняя строка: кнопка сворачивания и название схемы навигации */
+.sidebar__bottom {
+  display: flex; align-items: center; box-sizing: border-box;
+  height: 37px; padding-top: 5px; /* высота строки 37px, отступ сверху 5px — нет токена */
+}
+/* Кнопка сворачивания: иконка «≡», при наведении — круглая кнопка со стрелками */
+.sidebar__toggle {
+  position: relative; box-sizing: border-box; flex: none; display: block;
+  width: var(--icon-icon_size-icon-size_m); height: var(--icon-icon_size-icon-size_m);
+  margin: 0 0 0 var(--offset-offset_l); padding: 0; border: 0;
+  border-radius: var(--components-button-border-radius_button);
+  color: var(--icon-label_icon-color);
+  background: transparent;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.sidebar__toggle::before {
+  --acc-toggle-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M1.25 5H18.75V6.25H1.25V5ZM1.25 10H18.75V11.25H1.25V10ZM1.25 15H18.75V16.25H1.25V15Z'/%3E%3C/svg%3E");
+  content: ""; position: absolute; inset: 0; background: currentColor;
+  -webkit-mask: var(--acc-toggle-icon) center / var(--icon-icon_size-icon-size_s) no-repeat;
+  mask: var(--acc-toggle-icon) center / var(--icon-icon_size-icon-size_s) no-repeat;
+}
+.sidebar__toggle:is(:hover, .is-hover) {
+  color: var(--acc-toggle-fg);
+  background: var(--acc-toggle-bg);
+  box-shadow: 0 0 0 2px var(--acc-toggle-bg); /* кнопка 28px вокруг иконки 24px: +2px с каждой стороны — нет токена */
+}
+/* Стрелки «свернуть» */
+.sidebar__toggle:is(:hover, .is-hover)::before {
+  --acc-toggle-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6 1.77734L3 7.77734V8.22456L6 14.2246L6.89443 13.7773L4.00623 8.00095L6.89443 2.22456L6 1.77734Z'/%3E%3Cpath d='M11 1.77734L8 7.77734V8.22456L11 14.2246L11.8944 13.7773L9.00623 8.00095L11.8944 2.22456L11 1.77734Z'/%3E%3C/svg%3E");
+}
+/* Флажок кнопки сворачивания: невидим, отмечен — сайдбар свёрнут */
+.sidebar__toggle-input {
+  position: absolute; left: 0; top: 0; width: 1px; height: 1px; margin: 0; padding: 0;
+  opacity: 0; pointer-events: none;
+}
+.sidebar__toggle:has(> .sidebar__toggle-input:focus-visible) { outline: auto; outline-offset: 2px; } /* 2px — нет токена */
+
+.sidebar__scheme {
+  flex: 1 1 auto; min-width: 0; box-sizing: border-box;
+  height: var(--inline_height-inline_height_xl);
+  margin: 0 var(--offset-offset_s); padding: 0 0 0 var(--offset-offset_2xs);
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  font-size: var(--font-font-size-font-size_3xs); line-height: var(--inline_height-inline_height_xl);
+  letter-spacing: .6px; /* разрядка 0.6px — нет токена */
+  text-transform: uppercase;
+  color: var(--text-label_text-color);
+}
+
+/* ---------- Свёрнутый сайдбар: без логотипа и названия схемы, кнопки по центру ---------- */
+:is(.sidebar--compact, .sidebar:has(.sidebar__toggle-input:checked)) { width: 56px; } /* ширина свёрнутого сайдбара 56px — нет токена */
+:is(.sidebar--compact, .sidebar:has(.sidebar__toggle-input:checked)) .sidebar__header { height: 76px; } /* высота свёрнутой шапки 76px — нет токена */
+:is(.sidebar--compact, .sidebar:has(.sidebar__toggle-input:checked)) .sidebar__top { justify-content: center; margin-left: 10px; margin-right: 10px; } /* поля 10px — нет токена */
+:is(.sidebar--compact, .sidebar:has(.sidebar__toggle-input:checked)) .sidebar__bird { margin-right: 0; }
+:is(.sidebar--compact, .sidebar:has(.sidebar__toggle-input:checked)) :is(.sidebar__logo, .sidebar__scheme) { display: none; }
+:is(.sidebar--compact, .sidebar:has(.sidebar__toggle-input:checked)) .sidebar__bottom { justify-content: center; }
+:is(.sidebar--compact, .sidebar:has(.sidebar__toggle-input:checked)) .sidebar__toggle { margin-left: 0; }
+/* Стрелки «развернуть» */
+:is(.sidebar--compact, .sidebar:has(.sidebar__toggle-input:checked)) .sidebar__toggle:is(:hover, .is-hover)::before {
+  --acc-toggle-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M10.0038 1.77734L13.0038 7.77734V8.22456L10.0038 14.2246L9.10938 13.7773L11.9976 8.00095L9.10938 2.22456L10.0038 1.77734Z'/%3E%3Cpath d='M5.0038 1.77734L8.0038 7.77734V8.22456L5.0038 14.2246L4.10938 13.7773L6.99757 8.00095L4.10938 2.22456L5.0038 1.77734Z'/%3E%3C/svg%3E");
+}

@@ -1,0 +1,121 @@
+/*!
+ * back — кнопка «Назад» с заголовком: возврат к предыдущему экрану и одновременно его название.
+ * Перенесена из кода Saby: Controls/heading:Back (Back.tsx, _Back.less, _Heading.less).
+ * Размеры и цвета покоя сняты с живого примера Saby Components.
+ * Figma: «BackButton»; в библиотеке «⚙️ Default components» (nuC4KFMiS36uDWDUp9wKGl) найден component set
+ * «other / backButtonArrow», ключ 9ae5caa5b9998c31f0e5967b76fa58c7a8f24efe. С макетом не сверялось.
+ * fontSize → .back--size-m / -l / -xl / -2xl / -3xl (по умолчанию) / -4xl / -5xl;
+ * fontColorStyle → без класса (primary) / .back--color-default / -secondary / -link / -label;
+ * iconStyle → без класса (secondary) / .back--icon-default / -primary / -link / -label;
+ * iconViewMode=functionalButton → .back--functional-button, buttonStyle=default → .back--style-default;
+ * textOverflow=none → .back--wrap; readOnly, наведение, нажатие → .is-readonly / .is-hover / .is-active
+ * (и :disabled / :hover / :active).
+ * Разметка: <button class="back"><span class="back__icon"></span><span class="back__caption">…</span></button>.
+ * Стрелку рисует сам компонент (маска на ::before у .back__icon). Цвета и размеры — токены ui-kit.
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/back
+ */
+
+/* ---------- Основа: размер 3xl, заголовок primary, стрелка secondary ---------- */
+.back {
+  --bk-fs: var(--font-font-size-font-size_3xl);
+  --bk-ih: calc(var(--bk-fs) * 0.72 + 2px); /* высота стрелки — по высоте прописной буквы; 0.72 и 2px — из Back.tsx, нет токена */
+  --bk-im: -1px;                             /* стрелка на 1px ниже базовой линии — особенность Inter, из _Back.less; нет токена */
+  --bk-btn: var(--inline_height-inline_height_m);  /* круг functionalButton */
+  --bk-gap: var(--offset-offset_xs);               /* отступ круга от заголовка */
+  --bk-fg-r: var(--text-primary_text-color);
+  --bk-fg-h: var(--text-primary_hover_text-color);
+  --bk-ic-r: var(--icon-secondary_icon-color);
+  --bk-ic-h: var(--icon-secondary_hover_icon-color);
+  --bk-bg-r: var(--background-contrast-pale_color);
+  --bk-bg-h: var(--background-contrast-pale_hover_color);
+  --bk-bg-a: var(--background-contrast-pale_active_color);
+  --bk-sh-r: 0 0 transparent;
+  --bk-sh-h: 0 0 transparent;
+
+  box-sizing: border-box;
+  display: inline-flex; align-items: baseline;
+  min-width: 1px; max-width: 100%; margin: 0; padding: 0; border: 0; background: none;
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--bk-fs); font-weight: var(--font-font-weight-bold); line-height: normal;
+  color: var(--bk-fg-r); text-align: left;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+@supports (height: round(up, 10.5px, 1px)) {
+  .back { --bk-ih: round(up, calc(var(--bk-fs) * 0.72 + 2px), 1px); }
+}
+
+/* ---------- Стрелка ---------- */
+/* Место под стрелку — как у кнопки-экспандера: ширина 16 + 4, отступ слева 4 + толщина рамки 1px (нет токена) */
+.back__icon {
+  box-sizing: border-box; flex: none; display: block;
+  width: calc(var(--size_image-size_xs_image) + var(--offset-offset_2xs));
+  padding-left: calc(var(--offset-offset_2xs) + 1px);
+  color: var(--bk-ic-r); font-weight: var(--font-font-weight-regular);
+}
+/* Путь из IconDefault (Back.tsx) в поле 9×17 */
+.back__icon::before {
+  content: ""; display: inline-block; vertical-align: baseline;
+  height: var(--bk-ih); aspect-ratio: 9 / 17; margin-bottom: var(--bk-im); background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 17'%3E%3Cpath d='M6.49615 0L8.5 1.75519L3.34526 8.5L8.5 15.2447L6.49615 17L0 8.5L6.49615 0Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 17'%3E%3Cpath d='M6.49615 0L8.5 1.75519L3.34526 8.5L8.5 15.2447L6.49615 17L0 8.5L6.49615 0Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ---------- Заголовок ---------- */
+.back__caption { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: pre; }
+.back--wrap .back__caption { overflow: visible; white-space: normal; word-break: break-word; }
+
+/* ---------- Размер ---------- */
+.back--size-m { --bk-fs: var(--font-font-size-font-size_m); --bk-btn: var(--inline_height-inline_height_xs); --bk-gap: var(--offset-offset_2xs); }
+.back--size-l { --bk-fs: var(--font-font-size-font-size_l); }
+.back--size-xl { --bk-fs: var(--font-font-size-font-size_xl); }
+.back--size-2xl { --bk-fs: var(--font-font-size-font-size_2xl); }
+.back--size-3xl { --bk-fs: var(--font-font-size-font-size_3xl); }
+.back--size-4xl { --bk-fs: var(--font-font-size-font-size_4xl); --bk-btn: var(--inline_height-inline_height_l); }
+.back--size-5xl { --bk-fs: var(--font-font-size-font-size_5xl); --bk-btn: var(--inline_height-inline_height_xl); --bk-ih: calc(var(--bk-fs) * 0.72); --bk-im: 0px; }
+
+/* ---------- Цвет заголовка ---------- */
+.back--color-default { --bk-fg-r: var(--components-heading-default_text-color_heading); --bk-fg-h: var(--components-heading-default_hover_text-color_heading); }
+.back--color-secondary { --bk-fg-r: var(--text-secondary_text-color); --bk-fg-h: var(--text-secondary_hover_text-color); }
+.back--color-link { --bk-fg-r: var(--text-link_text-color); --bk-fg-h: var(--text-link_hover_text-color); }
+.back--color-label { --bk-fg-r: var(--text-label_text-color); --bk-fg-h: var(--text-label_hover_text-color); }
+
+/* ---------- Цвет стрелки ---------- */
+.back--icon-default { --bk-ic-r: var(--icon-icon-color); --bk-ic-h: var(--icon-hover_icon-color); }
+.back--icon-primary { --bk-ic-r: var(--icon-primary_icon-color); --bk-ic-h: var(--icon-primary_hover_icon-color); }
+.back--icon-link { --bk-ic-r: var(--icon-link_icon-color); --bk-ic-h: var(--icon-link_hover_icon-color); }
+.back--icon-label { --bk-ic-r: var(--icon-label_icon-color); --bk-ic-h: var(--icon-label_hover_icon-color); }
+
+/* ---------- Стрелка в круге (functionalButton) ---------- */
+.back--functional-button .back__icon {
+  align-self: center; display: flex; align-items: center; justify-content: center;
+  width: var(--bk-btn); height: var(--bk-btn); margin-right: var(--bk-gap); padding: 0;
+  border-radius: 50%; background: var(--bk-bg-r); box-shadow: var(--bk-sh-r);
+}
+/* Путь из Icon (Back.tsx) в поле 6×12; высота 60 % круга минус рамка, сдвиг на 2px вверх и влево — из _Back.less */
+.back--functional-button .back__icon::before {
+  display: block; height: calc(60% - 1px); aspect-ratio: 6 / 12;
+  margin: calc(-1 * var(--offset-offset_3xs)) 0 0 calc(-1 * var(--offset-offset_3xs));
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 12'%3E%3Cpath d='M4.93333 2L6 3.17L2.01307 7L6 10.8267L4.93333 12L0 7L4.93333 2Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 12'%3E%3Cpath d='M4.93333 2L6 3.17L2.01307 7L6 10.8267L4.93333 12L0 7L4.93333 2Z'/%3E%3C/svg%3E");
+}
+/* buttonStyle=default: контрастный круг с тенью; смещение тени 0 0 — нет токена */
+.back--functional-button.back--style-default {
+  --bk-bg-r: var(--components-button-default_contrast_background-color_button);
+  --bk-bg-h: var(--bk-bg-r);
+  --bk-bg-a: var(--background-active_background-color); /* default_active_background-color_button — в ките нет, это алиас на active_background-color */
+  --bk-sh-r: 0 0 var(--blur-shadow-blur_d) var(--color-shadow-color_d);
+  --bk-sh-h: 0 0 var(--blur-shadow-blur_b) var(--color-shadow-color_b);
+}
+
+/* ---------- Состояния ---------- */
+/* Наведение: светлеет заголовок; у стрелки без круга меняется цвет, у круга — подложка */
+.back:hover, .back.is-hover, .back:active, .back.is-active { color: var(--bk-fg-h); }
+.back:hover .back__icon, .back.is-hover .back__icon,
+.back:active .back__icon, .back.is-active .back__icon { color: var(--bk-ic-h); }
+.back--functional-button:hover .back__icon, .back--functional-button.is-hover .back__icon { color: var(--bk-ic-r); background: var(--bk-bg-h); box-shadow: var(--bk-sh-h); }
+.back--functional-button:active .back__icon, .back--functional-button.is-active .back__icon { color: var(--bk-ic-r); background: var(--bk-bg-a); box-shadow: none; }
+/* readOnly: вид покоя, не нажимается */
+.back:disabled, .back.is-readonly { color: var(--bk-fg-r); cursor: default; }
+.back:disabled .back__icon, .back.is-readonly .back__icon { color: var(--bk-ic-r); }
+.back--functional-button:disabled .back__icon, .back--functional-button.is-readonly .back__icon { background: var(--bk-bg-r); box-shadow: var(--bk-sh-r); }
+/* Focus в коде Saby — общий класс платформы, в кит не перенесён: остаётся обводка браузера по :focus-visible */

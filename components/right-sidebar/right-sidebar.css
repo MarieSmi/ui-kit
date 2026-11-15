@@ -1,0 +1,345 @@
+/*!
+ * right-sidebar — правый сайдбар конструктора (Figma rHabzni5OI5D4fxBLQdj2m, секция «Правый сайдбар» 5:28436).
+ * Наборы: «Правый сайдбар» 5:28859 → .rsb, «Тулбар» 5:28438 → .rsb__bar, «_Пункт тулбара» 1517:58645 → .rsb__item,
+ * «Шапка панели в сайдбаре» 5:28538 → .rsb__head, «Контент сайдбара» 5:28569 (Поля, Слои) → .rsb__content.
+ * Строки вкладок: «Записи» (другая библиотека) → .rsb__field, «Пункт списка» 5:28133 → .rsb__layer.
+ * Состояние: Вписан — без класса, По ховеру → .rsb--hover, Закреплен → .rsb--pinned. Открытая вкладка —
+ * .is-open у .rsb__panel и .is-active у .rsb__item. Наведение → .is-hover (и :hover).
+ * Цвета и размеры — токены ui-kit (tokens.css подключается раньше). Поведение — right-sidebar.js.
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/right-sidebar
+ *
+ * Устройство: .rsb — строка «панели + тулбар». Вписанная панель стоит в потоке слева от тулбара. При .rsb--hover
+ * и .rsb--pinned сайдбар занимает только ширину тулбара, а панель висит слева от него поверх страницы, с тенью;
+ * её верх — на уровне своего пункта (--rsb-panel-top ставит JS).
+ */
+
+.rsb {
+  --rsb-item-hover: #f9f9f9;  /* Background/navigation_hover_background-color («Accordion Variables») — нет токена */
+  --rsb-item-active: #f2f2f2; /* Background/navigation_active_background-color («Accordion Variables») — нет токена */
+  --rsb-level-step: 20px;     /* шаг вложенности строк — нет токена */
+
+  position: relative; box-sizing: border-box;
+  display: flex; align-items: stretch;
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--font-font-size-font-size_m); font-weight: var(--font-font-weight-regular);
+  color: var(--text-text-color);
+}
+/* Сброс только своих кнопок: кнопки в слотах шапки (.btn кита) не трогаем */
+.rsb :is(.rsb__item, .rsb__help, .rsb__arrow, .rsb__cmd) {
+  margin: 0; padding: 0; border: 0; background: none;
+  font: inherit; color: inherit; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Панели вкладок ---------- */
+.rsb__panels { display: flex; min-height: 0; }
+.rsb__panel {
+  box-sizing: border-box;
+  display: none; flex-direction: column;
+  width: 350px; /* нет токена */
+  margin: 0 0 var(--offset-offset_s) var(--offset-offset_s);
+  overflow: clip;
+  border-radius: var(--border-radius-border-radius_s);
+  background: var(--background-background-color);
+}
+.rsb__panel.is-open { display: flex; }
+
+/* По ховеру и Закреплен: панель поверх страницы слева от тулбара */
+:is(.rsb--hover, .rsb--pinned) > .rsb__panels {
+  position: absolute; z-index: 1; top: 0; bottom: 0; right: 100%;
+  display: block; pointer-events: none;
+}
+:is(.rsb--hover, .rsb--pinned) .rsb__panel {
+  position: absolute; right: 0; top: var(--rsb-panel-top, 0px);
+  max-height: calc(100% - var(--rsb-panel-top, 0px) - var(--offset-offset_s));
+  margin: 0; pointer-events: auto;
+  /* стиль shadow_a из макета; смещение 0 0 — нет токена */
+  box-shadow: 0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a), 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a);
+}
+
+/* Панель-слот: без фона и обрезки, содержимое — готовый блок на всю панель (магазин: он сам задаёт фон и
+   раздвигается влево за пределы панели). Тень висящей панели переходит на содержимое */
+.rsb__panel--bare { overflow: visible; background: none; }
+.rsb__panel--bare > * { flex: 1 1 auto; min-height: 0; }
+:is(.rsb--hover, .rsb--pinned) .rsb__panel--bare { bottom: var(--offset-offset_s); max-height: none; box-shadow: none; }
+:is(.rsb--hover, .rsb--pinned) .rsb__panel--bare > * {
+  box-shadow: 0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a), 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a);
+}
+
+/* ---------- Тулбар ---------- */
+.rsb__bar {
+  box-sizing: border-box; flex: none;
+  display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+  gap: var(--offset-offset_xs);
+  width: 54px; /* нет токена */
+  padding: var(--offset-none) var(--offset-offset_2xs) var(--offset-none) var(--offset-offset_xs);
+}
+.rsb__items { display: flex; flex-direction: column; gap: var(--offset-offset_3xs); }
+
+/* Пункт тулбара (Тип=Раздел) */
+.rsb .rsb__item {
+  position: relative; box-sizing: border-box; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 48px; /* нет токена */
+  padding: var(--offset-offset_m) var(--offset-offset_st);
+  border-radius: var(--border-radius-border-radius_s);
+}
+.rsb__icon {
+  display: flex; align-items: center; justify-content: center; flex: none;
+  width: var(--icon-icon_size-icon-size_m); height: var(--icon-icon_size-icon-size_m);
+  font-family: var(--icon-font-family-m_icon_font-family); font-size: var(--icon-icon_size-icon-size_m);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--icon-icon-color);
+}
+.rsb .rsb__item:not(.rsb__item--round):is(.is-active, [aria-selected="true"]) { background: var(--rsb-item-active); }
+.rsb .rsb__item:not(.rsb__item--round):is(:hover, .is-hover) { background: var(--rsb-item-hover); } /* Hover + Active в макете — фон наведения */
+/* Маркер активного пункта: в макете стоит вплотную справа от пункта */
+.rsb__item:not(.rsb__item--round):is(.is-active, [aria-selected="true"])::after {
+  content: ""; position: absolute; left: 100%; top: 8px; /* нет токена */
+  width: 4px; height: 32px; /* нет токена */
+  border-radius: 3px; /* нет токена */
+  background: var(--extra-marker_color);
+}
+
+/* Тип=Магазин: иконка акцентная */
+.rsb__item--shop .rsb__icon { color: var(--icon-primary_hover_icon-color); }
+
+/* Тип=МагазинRound: иконка в круглой кнопке; фона и маркера у пункта нет */
+.rsb .rsb__item--round { padding: var(--offset-offset_s) var(--offset-offset_xs); }
+.rsb__item--round .rsb__icon {
+  width: var(--inline_height-inline_height_xl); height: var(--inline_height-inline_height_xl);
+  border-radius: var(--components-button-border-radius_button);
+  background: var(--background-contrast-primary_color);
+  color: var(--icon-contrast_icon-color);
+}
+.rsb__item--round:is(:hover, .is-hover, .is-active, [aria-selected="true"]) .rsb__icon { background: var(--background-contrast-primary_hover_color); }
+
+/* Кнопка разворота панели (файл «Расширенный конструктор» G3QPR5r3X5ox6DmPwj6rJ7, набор 22358:147715).
+   .rsb__dock — свободное место тулбара между пунктами и «?»: вся область кликабельна. В покое кнопки не видно:
+   она появляется при наведении на тулбар; наведение на саму область — Hover=on (фон темнее).
+   Внутри, вверху, — слот: кнопка-иконка кита button (.btn.btn--filled.btn--style-pale.btn--size-xl.btn--icon),
+   как в макете (набор filled cf2896…). Сайдбар правит у неё только переменные: Hover=on макета — фон
+   pale_hover_color и иконка secondary. Глифы «Развернуть» U+EBFA и «Свернуть» U+EBFB — шрифт и размер m кнопки xl
+   (cbuc-icons24, 24px), как в макете. Глиф ставит JS */
+.rsb__dock {
+  box-sizing: border-box; flex: 1 1 auto; align-self: stretch;
+  display: flex; justify-content: center; align-items: flex-start;
+  min-height: 56px; /* кнопка 32 и отступы 12 сверху и снизу — нет токена */
+  padding: var(--offset-offset_m) 0;
+  /* в макете область стоит вплотную к пунктам и «?» (тулбар SPACE_BETWEEN, промежуток не действует):
+     снимаем gap тулбара, чтобы от последнего пункта до кнопки было ровно 12 */
+  margin: calc(-1 * var(--offset-offset_xs)) 0;
+  cursor: pointer;
+}
+.rsb__dock > .btn {
+  --btn-bd-h: transparent; /* в макете рамки при наведении нет */
+}
+/* В покое кнопки не видно: она появляется при наведении на тулбар (и при фокусе с клавиатуры). Прозрачность,
+   а не visibility, — чтобы невидимая кнопка оставалась доступной с клавиатуры */
+.rsb__dock > .btn { opacity: 0; }
+:is(.rsb__bar:hover, .rsb__bar.is-hover) .rsb__dock > .btn, .rsb__dock.is-hover > .btn,
+.rsb__dock > .btn:focus-visible { opacity: 1; } /* :focus-visible, а не :focus-within: после клика мышью кнопка не остаётся видна */
+.rsb__dock:is(:hover, .is-hover) > .btn {
+  --btn-bg-r: var(--background-contrast-pale_hover_color);
+  --btn-ic-r: var(--icon-secondary_icon-color);
+}
+
+/* Низ тулбара: информеры и кнопка помощи (helpButton) */
+.rsb__informers {
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--offset-offset_l);
+  padding-bottom: var(--offset-offset_s);
+}
+.rsb .rsb__help {
+  box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  width: var(--inline_height-inline_height_xl); height: var(--inline_height-inline_height_xl);
+  border: 1px solid var(--background-same-info_active_same_background-color); /* 1px — нет токена */
+  border-radius: 50%; /* в макете 16px без переменной */
+  background: var(--background-same-info_same_background-color);
+  color: var(--icon-info_icon-color);
+  font-size: var(--font-font-size-font-size_xl); font-weight: var(--font-font-weight-bold); line-height: 1;
+}
+.rsb .rsb__help:is(:hover, .is-hover) { background: var(--background-same-info_hover_same_background-color); }
+
+/* ---------- Шапка панели (⛔ Тип=Панель) ---------- */
+.rsb__head {
+  box-sizing: border-box; flex: none;
+  display: flex; align-items: center;
+  gap: var(--offset-offset_m);
+  padding: var(--offset-offset_m) var(--offset-offset_m) var(--offset-offset_s) var(--offset-none);
+}
+.rsb__title {
+  flex: none; min-width: 0;
+  display: flex; align-items: center;
+  gap: var(--offset-offset_xs);
+  min-height: var(--inline_height-inline_height_m);
+  padding-left: var(--offset-offset_m);
+}
+.rsb__name {
+  margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 18px; /* в макете без переменной */
+  font-weight: var(--font-font-weight-bold); line-height: normal;
+  color: var(--text-text-color);
+}
+.rsb__tools {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: var(--offset-offset_2xs);
+}
+
+/* Поиск (search: style=contrast, inlineHeight=m) */
+.rsb__search {
+  box-sizing: border-box; flex: 0 1 163px; /* ширина из макета — нет токена */
+  min-width: 0;
+  display: flex; align-items: center;
+  height: var(--inline_height-inline_height_m);
+  padding: 0 var(--offset-offset_2xs) 0 var(--offset-offset_m);
+  border: 1px solid var(--border-pale_border-color); /* 1px — нет токена */
+  border-radius: var(--border-radius-border-radius_m);
+  background: var(--background-background-color);
+}
+/* Поле без своего оформления: рамку рисует .rsb__search. Двойной класс и appearance — чтобы общие стили
+   страницы для input[type=search] и вид браузера не добавляли вторую рамку */
+.rsb__search .rsb__search-input { /* не .rsb: шапка ставится и без сайдбара, например в магазин */
+  -webkit-appearance: none; appearance: none;
+  flex: 1 1 auto; min-width: 0; width: 100%; max-width: none; height: auto;
+  margin: 0; padding: 0; border: 0; border-radius: 0; outline: 0; box-shadow: none; background: none;
+  font: inherit; font-size: var(--font-font-size-font-size_m); line-height: var(--font-line-height-line-height_m);
+  color: var(--text-text-color);
+}
+.rsb__search-input::placeholder { color: var(--components-input-placeholder-color_inputtext); opacity: 1; }
+
+/* ⛔ Тип=Виджет: название с командами, под ним путь */
+.rsb__head--widget {
+  flex-direction: column; align-items: stretch; gap: 0;
+  padding: 11px var(--offset-none) var(--offset-offset_s); /* 11px — нет токена */
+}
+.rsb__head-row {
+  display: flex; align-items: center;
+  gap: var(--offset-offset_2xs);
+  padding-right: var(--offset-offset_s);
+}
+.rsb__head-row > .rsb__title { flex: 1 1 auto; }
+.rsb__head-cmds { flex: none; display: flex; align-items: center; gap: var(--offset-offset_xs); }
+.rsb__path {
+  display: flex; align-items: center;
+  min-height: var(--inline_height-inline_height_m);
+  padding-left: var(--offset-offset_m);
+}
+
+/* ---------- Контент панели ---------- */
+.rsb__content {
+  flex: 1 1 auto; min-height: 0; overflow: auto;
+  scrollbar-width: none; /* полосы прокрутки в макете нет: прокрутка колесом и жестом */
+  display: flex; flex-direction: column;
+  gap: var(--offset-offset_3xs);
+  padding: var(--offset-none) var(--offset-offset_2xs) var(--offset-offset_2xs);
+}
+
+/* Вложенность строк: уровень 1 — без класса */
+.rsb__row--level-2 { --rsb-indent: calc(var(--rsb-level-step) * 1); }
+.rsb__row--level-3 { --rsb-indent: calc(var(--rsb-level-step) * 2); }
+.rsb__row--level-4 { --rsb-indent: calc(var(--rsb-level-step) * 3); }
+.rsb__row--level-5 { --rsb-indent: calc(var(--rsb-level-step) * 4); }
+:is(.rsb__field, .rsb__layer)[hidden] { display: none; }
+
+/* Стрелка раскрытия: глиф по aria-expanded строки */
+.rsb .rsb__arrow {
+  box-sizing: border-box; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--icon-font-family-2xs_icon_font-family); font-size: var(--icon-icon_size-icon-size_2xs);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--icon-label_icon-color);
+}
+.rsb__arrow::before { content: "\eb89"; } /* свёрнуто */
+[aria-expanded="true"] > .rsb__arrow::before { content: "\eb8a"; } /* раскрыто */
+.rsb__arrow--empty { visibility: hidden; }
+.rsb__row-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- Вкладка «Поля»: строка «Записи» (Иерархия=Поле) ---------- */
+.rsb__field {
+  box-sizing: border-box; flex: none;
+  display: flex; align-items: center;
+  gap: var(--offset-offset_3xs);
+  height: 30px; /* нет токена */
+  padding: var(--components-list-item_padding-top_s_list) var(--offset-offset_s) var(--components-list-item_padding-bottom_s_list);
+  padding-left: calc(var(--offset-offset_s) + var(--rsb-indent, 0px));
+  border-radius: var(--border-radius-border-radius_xs);
+  font-size: var(--font-font-size-font-size_m); line-height: normal;
+  cursor: default;
+}
+.rsb__field:is(:hover, .is-hover) { background: var(--background-unaccented_hover_background-color); }
+/* Иерархия=Узел и Объект: крупнее, со стрелкой после названия; Объект — жирный */
+.rsb__field--node, .rsb__field--object { font-size: var(--font-font-size-font-size_xl); }
+.rsb__field--object { font-weight: var(--font-font-weight-bold); }
+.rsb__field > .rsb__arrow {
+  width: 16px; height: 16px; /* нет токена */
+  padding: var(--offset-offset_3xs);
+}
+/* Тип поля справа */
+.rsb__type {
+  flex: none; margin-left: auto;
+  padding-left: var(--offset-offset_m);
+  font-size: var(--font-font-size-font-size_xs); font-weight: var(--font-font-weight-regular);
+  color: var(--text-label_text-color); white-space: nowrap;
+}
+
+/* ---------- Вкладка «Слои»: «Пункт списка» ---------- */
+.rsb__layer {
+  position: relative; box-sizing: border-box; flex: none;
+  display: flex; align-items: center;
+  height: 31px; /* нет токена */
+  padding: 0 var(--offset-offset_s) 0 calc(8px + var(--rsb-indent, 0px)); /* 8px: маркер 3 и зазор 5 — нет токена */
+  border-radius: var(--border-radius-border-radius_2xs);
+  font-size: var(--font-font-size-font-size_l); line-height: normal;
+  cursor: default;
+}
+.rsb__layer:is(:hover, .is-hover) { background: var(--components-list-master_item_hover_background-color_list); }
+.rsb__layer:is(.is-active, [aria-selected="true"]) {
+  background: var(--components-list-master_item_selected_background-color_list);
+  font-weight: var(--font-font-weight-bold);
+}
+.rsb__layer:is(.is-active, [aria-selected="true"]):is(:hover, .is-hover) { background: var(--components-list-master_item_hover_background-color_list); }
+/* Маркер выбранной строки (marker/Marker, content-xs) */
+.rsb__layer:is(.is-active, [aria-selected="true"])::before {
+  content: ""; position: absolute; left: 0; top: calc(50% - var(--inline_height-inline_height_xs) / 2);
+  width: 3px; /* нет токена */
+  height: var(--inline_height-inline_height_xs);
+  border-radius: var(--border-radius-border-radius_2xs);
+  background: var(--extra-marker_color);
+}
+.rsb__layer > .rsb__arrow {
+  width: 20px; height: 18px; /* нет токена */
+  padding: 0 var(--offset-offset_xs) 0 var(--offset-offset_3xs);
+}
+/* Иконка виджета */
+.rsb__row-icon {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  width: var(--icon-icon_size-icon-size_s); height: var(--icon-icon_size-icon-size_s);
+  margin-right: var(--offset-offset_2xs);
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--icon-info_icon-color);
+}
+/* Команды строки: видны при наведении, лежат поверх названия на фоне строки */
+.rsb__cmds {
+  position: absolute; right: var(--offset-offset_s); top: 50%; transform: translateY(-50%);
+  display: none; align-items: center;
+  gap: var(--offset-offset_xs);
+  padding-left: var(--offset-offset_2xs);
+  background: var(--components-list-master_item_hover_background-color_list);
+}
+.rsb__layer:is(:hover, .is-hover) > .rsb__cmds { display: flex; }
+.rsb .rsb__cmd {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  width: var(--inline_height-inline_height_m); height: var(--inline_height-inline_height_m);
+  border-radius: var(--components-button-border-radius_button);
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--icon-label_icon-color);
+}
+.rsb .rsb__cmd--m { font-family: var(--icon-font-family-m_icon_font-family); font-size: var(--icon-icon_size-icon-size_m); }
+.rsb .rsb__cmd--danger { color: var(--icon-danger_icon-color); }

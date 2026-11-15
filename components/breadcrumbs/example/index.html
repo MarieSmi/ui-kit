@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>breadcrumbs — пример</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../../back/back.css">
+  <link rel="stylesheet" href="../breadcrumbs.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    .stack { display: grid; justify-items: start; gap: 12px; }
+    .box { max-width: 100%; padding: 8px; border: 1px dashed var(--border-readonly_border-color); }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>fontSize <select id="size">
+      <option value="xs" selected>xs · 12</option><option value="s">s · 13</option><option value="m">m · 14</option><option value="l">l · 15</option>
+    </select></label>
+    <label>fontColorStyle <select id="color">
+      <option value="">label</option><option value="link">link</option>
+    </select></label>
+  </div>
+  <div id="out"></div>
+
+  <script>
+    const SHORT = ['Диск', 'Сайты', 'Шеф-Экспресс', 'Изображения'];
+    const LONG = ['Документы организации', 'Договоры с поставщиками и подрядчиками', '2026 год', 'Поставка оборудования для кухни ресторана', 'Сканы подписанных документов'];
+
+    // Все крошки, кроме последней, — в .breadcrumbs__middle, после них «…»; последняя — снаружи
+    const path = (items, cls) => `<nav class="breadcrumbs${cls}" aria-label="Путь">` +
+      (items.length > 1 ? `<span class="breadcrumbs__middle">${items.slice(0, -1).map((t) => `<a class="breadcrumbs__crumb" href="#" title="${t}">${t}</a>`).join('')}` +
+        `<span class="breadcrumbs__dots" title="${items.join(' / ')}">...</span></span>` : '') +
+      `<a class="breadcrumbs__crumb breadcrumbs__crumb--last" href="#" title="${items.at(-1)}">${items.at(-1)}</a></nav>`;
+    const heading = (title, items, cls) => `<div class="breadcrumbs-path${cls}"><div class="breadcrumbs-path__back">` +
+      `<button type="button" class="back back--color-default back--icon-primary"><span class="back__icon"></span><span class="back__caption">${title}</span></button></div>` +
+      `<div class="breadcrumbs-path__crumbs"><button type="button" class="breadcrumbs-path__home" aria-label="В корень">&#xe920;</button>${path(items, ' breadcrumbs--size-m')}</div></div>`;
+    const box = (w, inner) => `<div class="box" style="width: ${w}px">${inner}</div>`;
+
+    function render() {
+      const color = document.getElementById('color').value;
+      const cls = ` breadcrumbs--size-${document.getElementById('size').value}${color ? ' breadcrumbs--color-' + color : ''}`;
+      document.getElementById('out').innerHTML = `
+        <h2>Только крошки</h2>
+        <div class="stack">${path(SHORT, cls)}${path(SHORT, cls + ' is-readonly')}</div>
+        <h2>Длинный путь: ширина 360 и 640</h2>
+        <div class="stack">${box(360, path(LONG, cls))}${box(640, path(LONG, cls))}</div>
+        <h2>С кнопкой «Назад»</h2>
+        <div class="stack">${box(520, heading('Авторская кухня', ['Ресторан', 'Кафе/Рестораны'], ''))}
+          ${box(420, heading('Пекарни/Кондитерские', ['Все шаблоны', 'Ресторан'], ' breadcrumbs-path--multiline'))}
+          ${box(520, heading(LONG[4], LONG.slice(0, 4), ''))}</div>`;
+    }
+    document.getElementById('size').onchange = render;
+    document.getElementById('color').onchange = render;
+    render();
+  </script>
+</body>
+</html>

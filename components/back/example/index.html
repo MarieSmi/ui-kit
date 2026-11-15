@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>back — пример</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../back.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    table { border-collapse: collapse; }
+    th { padding: 4px 16px 4px 0; font-weight: 400; text-align: left; color: var(--text-label_text-color); white-space: nowrap; }
+    td { padding: 6px 24px 6px 0; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>fontSize <select id="size">
+      <option value="m">m · 14</option><option value="l">l · 15</option><option value="xl">xl · 16</option><option value="2xl">2xl · 17</option>
+      <option value="3xl" selected>3xl · 18</option><option value="4xl">4xl · 20</option><option value="5xl">5xl · 24</option>
+    </select></label>
+  </div>
+  <div id="out"></div>
+
+  <script>
+    // Варианты — параметры Controls/heading:Back: iconViewMode, buttonStyle, fontColorStyle, iconStyle
+    const SETS = [
+      ['Стрелка', [['primary', ''], ['default', 'back--color-default'], ['secondary', 'back--color-secondary'], ['link · стрелка link', 'back--color-link back--icon-link'], ['label · стрелка label', 'back--color-label back--icon-label']]],
+      ['Стрелка в круге', [['pale', 'back--functional-button back--color-default'], ['default', 'back--functional-button back--style-default back--color-default']]],
+    ];
+    const STATES = [['покой', ''], ['hover', ' is-hover'], ['press', ' is-active'], ['readOnly', ' is-readonly']];
+
+    function render() {
+      const size = document.getElementById('size').value;
+      document.getElementById('out').innerHTML = SETS.map(([title, views]) => `
+        <h2>${title}</h2>
+        <table>
+          <tr><th></th>${STATES.map(([t]) => `<th>${t}</th>`).join('')}</tr>
+          ${views.map(([t, v]) => `<tr><th>${t}</th>${STATES.map(([, s]) =>
+            `<td><button type="button" class="back ${v} back--size-${size}${s}"><span class="back__icon"></span><span class="back__caption">Параметры страницы</span></button></td>`).join('')}</tr>`).join('')}
+        </table>`).join('');
+    }
+    document.getElementById('size').onchange = render;
+    render();
+  </script>
+</body>
+</html>

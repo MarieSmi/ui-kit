@@ -1,0 +1,89 @@
+/*!
+ * close-button — кнопка закрытия окна или панели (крестик).
+ * Перенесена из кода Saby: Controls/extButtons:CloseButton (_CloseButton.less, CloseButton.tsx).
+ * Figma: component set «close/closeButton» библиотеки «⚙️ Default components» (nuC4KFMiS36uDWDUp9wKGl),
+ * ключ 8514357ba189f7dc239ccd8cce495173b10c8c99. Свойства и состояния взяты из кода, с макетом не сверялись.
+ * viewMode → .close-button--tool-button (по умолчанию) / --link-button / --functional-button / --external /
+ * --external-wide; size → .close-button--size-s / -m (по умолчанию) / -l; отступ справа → .close-button--offset;
+ * наведение и нажатие → .is-hover / .is-active (и :hover / :active).
+ * Крестик рисует сам компонент (маска на ::before), разметка — пустая кнопка с aria-label.
+ * Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/close-button
+ *
+ * Устройство: вид задаёт фон покоя, наведения и нажатия (--clb-bg-r / -h / -a) и цвет крестика (--clb-ic-r / -h),
+ * правила состояний внизу выбирают нужные.
+ */
+
+/* ---------- Основа: toolButton, размер m ---------- */
+.close-button {
+  --clb-size: var(--inline_height-inline_height_l);
+  --clb-icon: var(--components-button-closebutton-icon_size-closebutton);
+  --clb-bg-r: transparent;
+  --clb-bg-h: var(--background-contrast-pale_color);
+  --clb-bg-a: var(--background-contrast-pale_hover_color);
+  --clb-ic-r: var(--icon-secondary_icon-color);
+  --clb-ic-h: var(--icon-secondary_hover_icon-color);
+
+  box-sizing: border-box; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--clb-size); height: var(--clb-size); margin: 0; padding: 0; border: 0;
+  border-radius: var(--components-button-border-radius_button);
+  color: var(--clb-ic-r);
+  background: var(--clb-bg-r);
+  cursor: pointer; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Крестик — путь из CloseButton.tsx в квадрате 12×12, растянут на размер из токена */
+.close-button::before {
+  content: ""; flex: none; width: var(--clb-icon); height: var(--clb-icon); background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M11.7917 10.875C11.9306 10.9861 12 11.1389 12 11.3333C12 11.5278 11.9306 11.6806 11.7917 11.7917C11.7361 11.875 11.6667 11.9306 11.5833 11.9583C11.5 11.9861 11.4167 12 11.3333 12C11.25 12 11.1667 11.9861 11.0833 11.9583C11 11.9306 10.9306 11.875 10.875 11.7917L6 6.95833L1.125 11.7917C1.06944 11.875 1 11.9306 0.916667 11.9583C0.833333 11.9861 0.75 12 0.666667 12C0.583333 12 0.5 11.9861 0.416667 11.9583C0.333333 11.9306 0.263889 11.875 0.208333 11.7917C0.0694444 11.6806 0 11.5278 0 11.3333C0 11.1389 0.0694444 10.9861 0.208333 10.875L5.04167 6L0.208333 1.125C0.0694444 1.01389 0 0.861111 0 0.666667C0 0.472222 0.0694444 0.319444 0.208333 0.208333C0.319444 0.0694444 0.472222 0 0.666667 0C0.861111 0 1.01389 0.0694444 1.125 0.208333L6 5.04167L10.875 0.208333C10.9861 0.0694444 11.1389 0 11.3333 0C11.5278 0 11.6806 0.0694444 11.7917 0.208333C11.9306 0.319444 12 0.472222 12 0.666667C12 0.861111 11.9306 1.01389 11.7917 1.125L6.95833 6L11.7917 10.875Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M11.7917 10.875C11.9306 10.9861 12 11.1389 12 11.3333C12 11.5278 11.9306 11.6806 11.7917 11.7917C11.7361 11.875 11.6667 11.9306 11.5833 11.9583C11.5 11.9861 11.4167 12 11.3333 12C11.25 12 11.1667 11.9861 11.0833 11.9583C11 11.9306 10.9306 11.875 10.875 11.7917L6 6.95833L1.125 11.7917C1.06944 11.875 1 11.9306 0.916667 11.9583C0.833333 11.9861 0.75 12 0.666667 12C0.583333 12 0.5 11.9861 0.416667 11.9583C0.333333 11.9306 0.263889 11.875 0.208333 11.7917C0.0694444 11.6806 0 11.5278 0 11.3333C0 11.1389 0.0694444 10.9861 0.208333 10.875L5.04167 6L0.208333 1.125C0.0694444 1.01389 0 0.861111 0 0.666667C0 0.472222 0.0694444 0.319444 0.208333 0.208333C0.319444 0.0694444 0.472222 0 0.666667 0C0.861111 0 1.01389 0.0694444 1.125 0.208333L6 5.04167L10.875 0.208333C10.9861 0.0694444 11.1389 0 11.3333 0C11.5278 0 11.6806 0.0694444 11.7917 0.208333C11.9306 0.319444 12 0.472222 12 0.666667C12 0.861111 11.9306 1.01389 11.7917 1.125L6.95833 6L11.7917 10.875Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ---------- Размер: площадь нажатия, крестик не меняется ---------- */
+.close-button--size-s { --clb-size: var(--inline_height-inline_height_m); }
+.close-button--size-m { --clb-size: var(--inline_height-inline_height_l); }
+.close-button--size-l { --clb-size: var(--inline_height-inline_height_xl); }
+
+/* ---------- Вид ---------- */
+/* linkButton (и link): без подложки, размер всегда s */
+.close-button.close-button--link-button {
+  --clb-size: var(--components-popup-inline_height_closebutton);
+  --clb-bg-h: transparent;
+  --clb-bg-a: transparent;
+}
+/* functionalButton: бледная подложка */
+.close-button--functional-button {
+  --clb-bg-r: var(--background-contrast-pale_color);
+  --clb-bg-h: var(--background-contrast-pale_hover_color);
+  --clb-bg-a: var(--background-contrast-pale_active_color);
+}
+/* external и externalWide: полупрозрачная подложка поверх картинки или снаружи окна, крестик белый */
+.close-button--external,
+.close-button--external-wide {
+  --clb-bg-r: var(--background-opacity-translucent_background-color);
+  --clb-bg-h: var(--background-opacity-translucent_hover_background-color);
+  --clb-bg-a: var(--background-opacity-translucent_active_background-color);
+  --clb-ic-r: var(--icon-contrast_icon-color);
+  --clb-ic-h: var(--icon-contrast_icon-color);
+}
+.close-button--external { border-radius: 50%; }
+/* externalWide: крестик прижат вправо, слева место под содержимое. В Saby ширина 100 % родителя, здесь её задаёт прототип */
+.close-button--external-wide {
+  justify-content: flex-end;
+  width: auto; min-width: calc(var(--inline_height-inline_height_l) * 2);
+  padding-right: calc((var(--inline_height-inline_height_l) - var(--clb-icon)) / 2);
+}
+
+/* ---------- Отступ справа (в Saby включён по умолчанию, здесь — классом) ---------- */
+.close-button--offset { margin-right: var(--offset-offset_s); }
+.close-button--functional-button.close-button--offset { margin-right: var(--air-air_m); }
+.close-button--external.close-button--offset,
+.close-button--external-wide.close-button--offset { margin-right: 0; }
+
+/* ---------- Состояния ---------- */
+.close-button:hover,
+.close-button.is-hover { color: var(--clb-ic-h); background: var(--clb-bg-h); }
+.close-button:active,
+.close-button.is-active { color: var(--clb-ic-h); background: var(--clb-bg-a); }
+/* Focus в коде Saby — общий класс платформы, в кит не перенесён: остаётся обводка браузера по :focus-visible */

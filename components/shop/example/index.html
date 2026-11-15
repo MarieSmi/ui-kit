@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>shop — пример</title>
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <!-- слоты: шапка из right-sidebar, дерево категорий из master-list -->
+  <link rel="stylesheet" href="../../right-sidebar/right-sidebar.css">
+  <link rel="stylesheet" href="../../master-list/master-list.css">
+  <link rel="stylesheet" href="../shop.css">
+  <style>
+    html, body { height: 100%; }
+    body { margin: 0; display: flex; font-family: var(--font-font-family-default), sans-serif; font-size: 14px;
+      background: var(--components-constructor-constructor_background-color); color: var(--text-text-color); } /* фон конструктора */
+    main { flex: 1 1 auto; padding: 24px; }
+    main p { margin: 0 0 12px; max-width: 420px; color: var(--text-label_text-color); }
+    .shop { margin: 8px; }
+    .ph { display: block; width: 100%; object-fit: cover; } /* превью — картинка виджета */
+  </style>
+</head>
+<body>
+  <main>
+    <p>Кнопка рядом с названием раскрывает дерево категорий: магазин раздвигается влево поверх страницы.</p>
+    <p id="log" aria-live="polite">Нажмите на виджет или категорию.</p>
+  </main>
+
+  <section class="shop" id="shop" aria-label="Магазин виджетов">
+    <div class="shop__head">
+      <header class="rsb__head">
+        <div class="rsb__title">
+          <h3 class="rsb__name">Виджеты</h3>
+          <button type="button" class="shop__expand" title="Категории" aria-label="Категории"></button>
+        </div>
+        <div class="rsb__tools">
+          <button type="button" class="shop__filter" title="Фильтр" aria-label="Фильтр"></button>
+          <label class="rsb__search"><input class="rsb__search-input" type="search" placeholder="Найти" aria-label="Найти"></label>
+        </div>
+      </header>
+    </div>
+
+    <div class="shop__body">
+      <nav class="shop__master" aria-label="Категории">
+        <ul class="ml ml--nav">
+          <li class="ml__item is-selected" data-shop-category="all">
+            <span class="ml__arrow ml__arrow--empty" aria-hidden="true"></span><span class="ml__caption">Все</span>
+            <span class="ml__counter"><span class="ml__count ml__count--secondary">168</span></span>
+          </li>
+          <li class="ml__item" data-shop-category="blocks">
+            <span class="ml__arrow ml__arrow--empty" aria-hidden="true"></span><span class="ml__caption">Блоки</span>
+            <span class="ml__counter"><span class="ml__count ml__count--secondary">4</span></span>
+          </li>
+          <li class="ml__item" aria-expanded="true" data-shop-category="sales">
+            <span class="ml__arrow" aria-hidden="true"></span><span class="ml__caption">Продажи</span>
+            <span class="ml__counter"><span class="ml__count ml__count--secondary">32</span></span>
+          </li>
+          <li class="ml__item ml__item--level-1" data-shop-category="catalog">
+            <span class="ml__arrow ml__arrow--empty" aria-hidden="true"></span><span class="ml__caption">Каталог и цены</span>
+            <span class="ml__counter"><span class="ml__count ml__count--secondary">7</span></span>
+          </li>
+          <li class="ml__item ml__item--level-1" data-shop-category="retail">
+            <span class="ml__arrow ml__arrow--empty" aria-hidden="true"></span><span class="ml__caption">Розница</span>
+            <span class="ml__counter"><span class="ml__count ml__count--secondary">10</span></span>
+          </li>
+          <li class="ml__item" data-shop-category="money">
+            <span class="ml__arrow ml__arrow--empty" aria-hidden="true"></span><span class="ml__caption">Деньги</span>
+            <span class="ml__counter"><span class="ml__count ml__count--secondary">5</span></span>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="shop__list">
+        <div class="shop__grid shop__grid--small">
+          <button type="button" class="shop__widget shop__widget--small" data-shop-widget="cell" title="Ячейка"><span class="shop__widget-icon" aria-hidden="true">&#xe6d3;</span><span class="shop__widget-name">Ячейка</span></button>
+          <button type="button" class="shop__widget shop__widget--small" data-shop-widget="columns-2" title="2 колонки"><span class="shop__widget-icon" aria-hidden="true">&#xeac3;</span><span class="shop__widget-name">2 колонки</span></button>
+          <button type="button" class="shop__widget shop__widget--small" data-shop-widget="columns-3" title="3 колонки"><span class="shop__widget-icon" aria-hidden="true">&#xeaee;</span><span class="shop__widget-name">3 колонки</span></button>
+          <button type="button" class="shop__widget shop__widget--small" data-shop-widget="grid" title="Сетка"><span class="shop__widget-icon" aria-hidden="true">&#xea80;</span><span class="shop__widget-name">Сетка</span></button>
+        </div>
+
+        <div class="shop__grid shop__grid--medium">
+          <button type="button" class="shop__widget shop__widget--medium" data-shop-widget="text"><span class="shop__widget-icon" aria-hidden="true">&#xeac9;</span><span class="shop__widget-name">Текст</span></button>
+          <button type="button" class="shop__widget shop__widget--medium" data-shop-widget="heading"><span class="shop__widget-icon" aria-hidden="true">&#xebd3;</span><span class="shop__widget-name">Заголовок</span></button>
+          <button type="button" class="shop__widget shop__widget--medium" data-shop-widget="image"><span class="shop__widget-icon" aria-hidden="true">&#xe9a3;</span><span class="shop__widget-name">Изображение</span></button>
+          <button type="button" class="shop__widget shop__widget--medium" data-shop-widget="video"><span class="shop__widget-icon" aria-hidden="true">&#xe929;</span><span class="shop__widget-name">Видео</span></button>
+        </div>
+
+        <section class="shop__section">
+          <h4 class="shop__section-title">Основные возможности</h4>
+          <div class="shop__cards">
+            <div class="shop__widget shop__widget--big" role="button" tabindex="0" data-shop-widget="easy">
+              <span class="shop__widget-text">
+                <span class="shop__widget-name">Как просто</span>
+                <span class="shop__widget-desc">Виджет позволит вам получить быстрый доступ к следующему функционалу (в соответствии с вашими правами)</span>
+              </span>
+              <span class="shop__preview"><img class="ph" src="../../widget/example/content.png" alt="" style="height: 111px"><span class="shop__plus" aria-hidden="true"></span></span>
+            </div>
+            <div class="shop__widget shop__widget--big" role="button" tabindex="0" data-shop-widget="contacts">
+              <span class="shop__widget-text">
+                <span class="shop__widget-name">Мои контакты</span>
+                <span class="shop__widget-desc">Закрепите контакты для быстрого доступа, звоните и пишите коллегам в один клик</span>
+              </span>
+              <span class="shop__preview"><img class="ph" src="../../widget/example/content.png" alt="" style="height: 208px"><span class="shop__plus" aria-hidden="true"></span></span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <script src="../shop.js"></script>
+  <script>
+    var log = document.getElementById('log');
+    Shop.mount(document.getElementById('shop'), {
+      onAdd: function (key) { log.textContent = 'Добавить виджет: ' + key; },
+      onCategory: function (key) { log.textContent = 'Категория: ' + key; },
+      onExpand: function (on) { log.textContent = on ? 'Расширенный магазин открыт' : 'Расширенный магазин закрыт'; }
+    });
+  </script>
+</body>
+</html>

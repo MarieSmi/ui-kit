@@ -1,0 +1,166 @@
+/*!
+ * switch — переключатель: включает и выключает настройку, изменение применяется сразу.
+ * Перенесён из кода Saby: Controls/toggle:Switch (Switch.tsx, SwitchButton.tsx, CaptionTemplate.tsx,
+ * _Switch.less, _SwitchButton.less). Figma: component set «switch» библиотеки «⚙️ Default components»
+ * (nuC4KFMiS36uDWDUp9wKGl). Свойства и состояния взяты из кода и живого примера, с макетом не сверялись.
+ * viewMode → без класса (filled) / .switch--outlined; size → .switch--size-s / -m (по умолчанию) / -l;
+ * captionPosition=start → .switch--caption-start; multiline → .switch--multiline; value → :checked;
+ * наведение → .is-hover (и :hover); readOnly → .is-readonly (и :disabled).
+ * Только CSS: значение хранит настоящий input, переключение по клику работает без JS.
+ * Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/switch
+ *
+ * Устройство: .switch__button — дорожка, её ::after — кружок. Цвета задают переменные: --sw-bg и --sw-bd —
+ * фон и рамка дорожки, --sw-mk и --sw-mkbd — фон и рамка кружка, --sw-fg — подпись. У каждой есть значение
+ * покоя (-r) и наведения (-h); правила значения и вида меняют их, правило наведения выбирает нужное.
+ */
+
+/* ---------- Основа: filled, размер m, выключен ---------- */
+.switch {
+  --sw-w: var(--components-toggle-switcher-width_switcher);
+  --sw-h: var(--components-toggle-switcher-height_horizontal_switcher);
+  --sw-m: var(--components-toggle-switcher-marker_size_switcher);
+  --sw-gap: calc((var(--sw-h) - var(--sw-m)) / 2); /* отступ кружка от края дорожки */
+
+  --sw-bg-r: var(--background-contrast-unaccented_contrast_background-color);
+  --sw-bg-h: var(--background-contrast-unaccented_hover_contrast_background-color);
+  --sw-bd-r: var(--sw-bg-r);
+  --sw-bd-h: var(--sw-bg-h);
+  --sw-mk-r: var(--components-toggle-marker_contrast-color_switcher);
+  --sw-mk-h: var(--sw-mk-r);
+  --sw-mkbd-r: transparent;
+  --sw-mkbd-h: transparent;
+  --sw-fg: var(--components-toggle-text-color_switcher);
+
+  --sw-bg: var(--sw-bg-r);
+  --sw-bd: var(--sw-bd-r);
+  --sw-mk: var(--sw-mk-r);
+  --sw-mkbd: var(--sw-mkbd-r);
+
+  position: relative; box-sizing: border-box;
+  display: inline-flex; align-items: center; vertical-align: top;
+  min-height: var(--components-toggle-switcher-caption_height_switcher); max-width: 100%;
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--font-font-size-font-size_m); font-weight: var(--font-font-weight-regular); line-height: normal;
+  color: var(--sw-fg);
+  cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.switch--caption-start { flex-direction: row-reverse; }
+
+/* Настоящий input: невидим, но остаётся в фокусе и в форме */
+.switch__input {
+  position: absolute; left: 0; top: 0; width: 1px; height: 1px; margin: 0; padding: 0;
+  opacity: 0; pointer-events: none;
+}
+
+/* Дорожка. Рамка — внутренняя тень, чтобы не сдвигать кружок */
+.switch__button {
+  position: relative; flex: none; box-sizing: border-box;
+  width: var(--sw-w); height: var(--sw-h);
+  border-radius: var(--components-toggle-switcher-border-radius_switcher);
+  background: var(--sw-bg);
+  box-shadow: inset 0 0 0 1px var(--sw-bd); /* толщина рамки 1px — нет токена */
+}
+/* Кружок */
+.switch__button::after {
+  content: ""; position: absolute; box-sizing: border-box;
+  left: var(--sw-gap); top: calc((var(--sw-h) - var(--sw-m)) / 2);
+  width: var(--sw-m); height: var(--sw-m);
+  border-radius: 50%;
+  background: var(--sw-mk);
+  box-shadow: inset 0 0 0 1px var(--sw-mkbd); /* толщина рамки 1px — нет токена */
+}
+
+.switch__caption {
+  min-width: 0; margin-left: var(--offset-offset_xs);
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+.switch--caption-start .switch__caption { margin-left: 0; margin-right: var(--offset-offset_xs); }
+
+/* multiline: подпись переносится, дорожка остаётся у первой строки */
+.switch--multiline { align-items: flex-start; }
+.switch--multiline .switch__button {
+  margin-top: max(0px, calc((var(--components-toggle-switcher-caption_height_switcher) - var(--sw-h)) / 2));
+}
+.switch--multiline .switch__caption {
+  padding: var(--offset-offset_3xs) 0;
+  overflow: visible; white-space: normal;
+}
+
+/* Фокус: в коде Saby — общий класс платформы, в кит не перенесён: обводка браузера вокруг дорожки */
+.switch__input:focus-visible + .switch__button { outline: auto; outline-offset: 1px; } /* 1px — нет токена */
+
+/* ---------- Размер (size) ---------- */
+/* s: дорожка ниже кружка, кружок с рамкой цвета дорожки стоит вплотную к краю */
+.switch--size-s {
+  --sw-w: var(--components-toggle-switcher-width_switcher-small);
+  --sw-h: var(--components-toggle-switcher-height_horizontal_switcher-small);
+  --sw-gap: 0px;
+  --sw-mkbd-r: var(--sw-bg-r);
+  --sw-mkbd-h: var(--sw-bg-h);
+}
+.switch--size-l {
+  --sw-w: var(--components-toggle-switcher-width_switcher-big);
+  --sw-h: var(--components-toggle-switcher-height_horizontal_-switcher-big);
+  --sw-m: var(--components-toggle-switcher-marker_big-size_switcher);
+}
+
+/* ---------- Вид: viewMode=outlined — дорожка с рамкой, цветной кружок ---------- */
+.switch--outlined {
+  --sw-bg-r: transparent;
+  --sw-bg-h: transparent;
+  --sw-bd-r: var(--border-unaccented_border-color);
+  --sw-bd-h: var(--border-unaccented_border-color);
+  --sw-mk-r: var(--icon-unaccented_icon-color);
+  --sw-mk-h: var(--icon-unaccented_hover_icon-color);
+  --sw-mkbd-r: var(--sw-mk-r);
+  --sw-mkbd-h: var(--sw-mk-h);
+}
+
+/* ---------- Значение: value=true ---------- */
+.switch:has(> .switch__input:checked) {
+  --sw-bg-r: var(--background-contrast-primary_color);
+  --sw-bg-h: var(--background-contrast-primary_hover_color);
+  --sw-fg: var(--components-toggle-selected_text-color_switcher);
+}
+.switch:has(> .switch__input:checked) .switch__button::after { left: calc(100% - var(--sw-m) - var(--sw-gap)); }
+.switch--outlined:has(> .switch__input:checked) {
+  --sw-bg-r: transparent;
+  --sw-bg-h: transparent;
+  --sw-mk-r: var(--background-contrast-primary_color);
+  --sw-mk-h: var(--background-contrast-primary_hover_color);
+}
+
+/* ---------- Наведение ---------- */
+.switch:is(:hover, .is-hover) {
+  --sw-bg: var(--sw-bg-h);
+  --sw-bd: var(--sw-bd-h);
+  --sw-mk: var(--sw-mk-h);
+  --sw-mkbd: var(--sw-mkbd-h);
+}
+.switch:is(:hover, .is-hover) .switch__caption { text-decoration: underline; }
+
+/* ---------- readOnly=true: дорожка бледнеет, наведение не действует ---------- */
+.switch:is(:has(> .switch__input:disabled), .is-readonly) {
+  --sw-bg: var(--background-background-color);
+  --sw-bd: var(--extra-unaccented_color);
+  --sw-mk: var(--background-background-color);
+  --sw-mkbd: var(--extra-unaccented_color);
+  --sw-fg: var(--text-readonly_text-color);
+  cursor: default;
+}
+.switch:is(:has(> .switch__input:disabled), .is-readonly) .switch__button { opacity: .3; } /* 30 % из кода Saby — нет токена */
+.switch:is(:has(> .switch__input:disabled), .is-readonly) .switch__caption { text-decoration: none; }
+/* Включённый и недоступный: дорожка остаётся акцентной, подпись — обычного цвета */
+.switch:is(:has(> .switch__input:disabled), .is-readonly):has(> .switch__input:checked) {
+  --sw-bg: var(--background-contrast-primary_color);
+  --sw-bd: var(--background-contrast-primary_color);
+  --sw-mkbd: transparent;
+  --sw-fg: var(--components-toggle-selected_text-color_switcher);
+}
+.switch--outlined:is(:has(> .switch__input:disabled), .is-readonly):has(> .switch__input:checked) {
+  --sw-mk: var(--background-readonly_background-color);
+}
+.switch--size-s:is(:has(> .switch__input:disabled), .is-readonly):has(> .switch__input:checked) {
+  --sw-mkbd: var(--extra-unaccented_color);
+}

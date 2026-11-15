@@ -13,9 +13,22 @@
 <link rel="stylesheet" href="../components/button/button.css" data-kit="button">
 <link rel="stylesheet" href="../components/checkbox/checkbox.css" data-kit="checkbox">
 <link rel="stylesheet" href="../components/chips/chips.css" data-kit="chips">
+<link rel="stylesheet" href="../components/close-button/close-button.css" data-kit="close-button">
+<link rel="stylesheet" href="../components/arrow-button/arrow-button.css" data-kit="arrow-button">
+<link rel="stylesheet" href="../components/back/back.css" data-kit="back">
+<link rel="stylesheet" href="../components/breadcrumbs/breadcrumbs.css" data-kit="breadcrumbs">
+<link rel="stylesheet" href="../components/combobox/combobox.css" data-kit="combobox">
+<link rel="stylesheet" href="../components/switch/switch.css" data-kit="switch">
+<link rel="stylesheet" href="../components/tumbler/tumbler.css" data-kit="tumbler">
+<link rel="stylesheet" href="../components/tabs/tabs.css" data-kit="tabs">
+<link rel="stylesheet" href="../components/accordion/accordion.css" data-kit="accordion">
 <link rel="stylesheet" href="../components/input/input.css" data-kit="input">
 <link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">
 <link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">
+<link rel="stylesheet" href="../components/right-sidebar/right-sidebar.css" data-kit="right-sidebar">
+<script src="../components/right-sidebar/right-sidebar.js" data-kit="right-sidebar"></script>
+<link rel="stylesheet" href="../components/shop/shop.css" data-kit="shop">
+<script src="../components/shop/shop.js" data-kit="shop"></script>
 <link rel="stylesheet" href="../components/property-editor/property-editor.css" data-kit="property-editor">
 <script src="../components/property-editor/property-editor.js" data-kit="property-editor"></script>
 <link rel="stylesheet" href="../components/master-list/master-list.css" data-kit="master-list">
@@ -53,12 +66,21 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .lib-nav { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: calc(16px + env(safe-area-inset-top, 0px)) 8px 0 max(8px, env(safe-area-inset-left, 0px)); background: var(--bg); border-right: 1px solid var(--line); }
 .lib-nav { display: flex; flex-direction: column; }
 .lib-nav > * { flex: none; }
+/* Полоса прокрутки навигации — тонкая, без стрелок, видна только при наведении на меню (как у Saby).
+   Токена цвета полосы в Figma нет: берём цвет неакцентных рамок */
+.lib-nav { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+.lib-nav:hover, .lib-nav:focus-within { scrollbar-color: var(--border-unaccented_hover_border-color) transparent; }
+@supports not (scrollbar-color: auto) { /* Safari: ширина и скругление полосы — нет токена */
+  .lib-nav::-webkit-scrollbar { width: 6px; }
+  .lib-nav::-webkit-scrollbar-thumb { border-radius: 3px; background: transparent; }
+  .lib-nav:hover::-webkit-scrollbar-thumb { background: var(--border-unaccented_hover_border-color); }
+}
 .lib-head { display: flex; align-items: center; gap: 8px; padding: 0 8px 16px; }
 .lib-logo { display: flex; align-items: center; gap: 8px; margin-right: auto; color: var(--fg); text-decoration: none; font-size: 16px; font-weight: 600; line-height: 1.2; }
 .lib-logo-mark { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px; border-radius: 6px; background: var(--accent); color: var(--text-contrast_text-color); font-size: 13px; }
 .lib-logo-sub { display: block; font: 400 11px var(--mono); color: var(--muted); }
 .lib-menu-btn { display: none; font: 500 13px var(--sans); color: var(--fg); background: var(--surface); border: 1px solid var(--border-unaccented_border-color); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
-.controls { display: grid; gap: 8px; position: sticky; bottom: 0; margin-top: auto; padding: 12px 8px calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--bg); } /* тема — редкая настройка: закреплена внизу навигации */
+.controls { display: grid; gap: 8px; margin-top: auto; padding: 24px 8px calc(16px + env(safe-area-inset-bottom, 0px)); } /* тема — редкая настройка: в самом конце навигации, прокручивается вместе с ней */
 .controls label[hidden] { display: none; }
 .controls label { position: relative; display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
 select, input[type=search] { font: 400 14px var(--sans); color: var(--fg); background: var(--surface); border: 1px solid var(--border-unaccented_border-color); border-radius: 6px; padding: 5px 8px; }
@@ -117,7 +139,7 @@ label:has(> select:disabled)::after { opacity: .5; }
 .ico-more[hidden] { display: none; }
 .lib-main { min-width: 0; background: var(--surface); }
 .wrap { max-width: 1200px; padding: 32px max(48px, env(safe-area-inset-right, 0px)) 80px 48px; }
-.lib-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-bottom: 20px; }
+.lib-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-bottom: 16px; } /* как .ico-toolbar */
 .lib-toolbar label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
 .lib-back { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 16px -10px; padding: 5px 12px 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 13px; }
 .lib-back[hidden] { display: none; }
@@ -129,7 +151,7 @@ label:has(> select:disabled)::after { opacity: .5; }
   .lib-nav { position: static; height: auto; padding-bottom: 12px; border-right: 0; border-bottom: 1px solid var(--line); }
   .lib-head { padding-bottom: 0; }
   .lib-menu-btn { display: block; }
-  .controls { position: static; padding-bottom: 0; }
+  .controls { padding-bottom: 0; }
   .lib-nav:not(.is-open) > :not(.lib-head) { display: none; }
   .lib-nav.is-open .lib-head { padding-bottom: 16px; }
   .wrap { padding: 20px max(16px, env(safe-area-inset-right, 0px)) 64px max(16px, env(safe-area-inset-left, 0px)); }
@@ -193,6 +215,26 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .btn-grid.on-image th, .btn-grid.on-image td:first-child { padding-left: 8px; }
 #checkbox-body { display: grid; gap: 32px; } /* отступ между видами чекбокса */
 #chips-body { display: grid; gap: 32px; }
+#close-button-body { display: grid; gap: 32px; }
+#arrow-button-body { display: grid; gap: 32px; }
+#back-body { display: grid; gap: 32px; }
+#breadcrumbs-body { display: grid; gap: 32px; }
+#combobox-body { display: grid; gap: 32px; }
+#switch-body { display: grid; gap: 32px; }
+#tumbler-body { display: grid; gap: 32px; }
+#accordion-body { display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start; }
+.acc-demo { display: flex; gap: 24px; } /* рамка примера: сайдбар занимает её высоту */
+#tabs-body { display: grid; gap: 32px; }
+.tabs-demo { width: 480px; max-width: 100%; } /* ширина примера вкладок */
+.tabs-demo--wide { width: 640px; }
+.tabs-demo--gray { box-sizing: border-box; padding: 12px; background: var(--background-unaccented_background-color); } /* карточка на сером, поля 12px — нет токена */
+.cmb-grid td > .combobox { width: 180px; }
+.cmb-open { padding: 0 0 200px 24px; } /* место под открытое меню: оно выходит за поле вниз и влево */
+.cmb-open .combobox { width: 180px; }
+.bc-box { box-sizing: content-box; max-width: 100%; padding: 8px; border: 1px dashed var(--border-readonly_border-color); } /* рамка показывает ширину, в которую вписан путь */
+.bc-stack { display: grid; justify-items: start; gap: 12px; }
+.bk-col { display: grid; justify-items: start; gap: 12px; } /* превью плитки: варианты столбиком */
+.cl-row { display: flex; align-items: center; gap: 16px; } /* превью плитки: виды в ряд */
 #input-body { display: grid; gap: 32px; }
 .in-grid td { vertical-align: top; }
 .in-grid tr > th:first-child { vertical-align: top; padding-top: 10px; } /* подпись строки — на уровне поля */
@@ -205,6 +247,17 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .tb.tb-bare { background: none; box-shadow: none; overflow: visible; }
 .tb.tb-bare::after { content: none; }
 #widget-body { display: grid; gap: 32px; }
+#right-sidebar-body { display: grid; gap: 32px; }
+/* сцена сайдбара: фон страницы конструктора, сайдбар прижат вправо и занимает высоту сцены */
+.rsb-stage { display: flex; justify-content: flex-end; height: 420px; padding-right: 8px; background: var(--components-constructor-constructor_background-color); } /* фон конструктора, как у набора в макете */
+.rsb-stage--float { justify-content: space-between; align-items: stretch; }
+.rsb-stage--float > p { align-self: center; margin: 0 0 0 24px; max-width: 240px; font-size: 12px; color: var(--muted); }
+.rsb-box { display: block; flex: none; width: 350px; background: var(--background-background-color); border: 1px dashed var(--line, #d9d9d9); }
+#shop-body { display: grid; gap: 32px; }
+.shop-stage { height: 520px; padding: 0 8px 8px; }
+.shop-cell { display: block; background: none; }
+.shop-ph { display: block; width: 100%; object-fit: cover; } /* превью — картинка виджета (components/widget/example/content.png) */
+.rsb-row { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
 #property-editor-body, #pe-snaps { display: grid; gap: 32px; }
 /* Редакторы PropertyGrid: облачко с редакторами и образец, к которому применяются значения */
 .pg-demo { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px; padding: 72px 24px 24px; border-radius: 8px; background: var(--bg); } /* место сверху под окно цвета */
@@ -253,7 +306,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <div class="lib">
   <aside class="lib-nav" id="lib-nav">
     <div class="lib-head">
-      <a class="lib-logo" href="#all"><span class="lib-logo-mark">UI</span><span>ui-kit<span class="lib-logo-sub ver">1.16.0</span></span></a>
+      <a class="lib-logo" href="#all"><span class="lib-logo-mark">UI</span><span>ui-kit<span class="lib-logo-sub ver">1.18.0</span></span></a>
       <button type="button" class="lib-menu-btn" id="lib-menu" aria-controls="lib-nav" aria-expanded="false">Меню</button>
     </div>
     <a class="lib-item lib-item-all" href="#all">Все компоненты</a>
@@ -268,6 +321,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       <button type="button" class="lib-group-title" aria-expanded="true">Конструктор</button>
       <a class="lib-item" href="#widget">Виджет</a>
       <a class="lib-item" href="#toolbar">Тулбар</a>
+      <a class="lib-item" href="#right-sidebar">Правый сайдбар</a>
+      <a class="lib-item" href="#shop">Магазин</a>
       <a class="lib-item" href="#demo-frame">Вспомогательная область</a>
     </nav>
     <nav class="lib-group" aria-label="Свойства виджета">
@@ -282,6 +337,15 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       <a class="lib-item" href="#chips">Чипсы</a>
       <a class="lib-item" href="#input">Поля ввода</a>
       <a class="lib-item" href="#master-list">Мастер-список</a>
+      <a class="lib-item" href="#close-button">Кнопка закрытия</a>
+      <a class="lib-item" href="#arrow-button">Кнопка-стрелка</a>
+      <a class="lib-item" href="#back">Кнопка «Назад»</a>
+      <a class="lib-item" href="#breadcrumbs">Хлебные крошки</a>
+      <a class="lib-item" href="#combobox">Поле выбора</a>
+      <a class="lib-item" href="#switch">Переключатель</a>
+      <a class="lib-item" href="#tumbler">Тумблер</a>
+      <a class="lib-item" href="#tabs">Вкладки</a>
+      <a class="lib-item" href="#accordion">Аккордеон и сайдбар</a>
     </nav>
     <nav class="lib-group" aria-label="SabyDoc">
       <button type="button" class="lib-group-title" aria-expanded="true">SabyDoc</button>
@@ -306,15 +370,17 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
 <main class="lib-main">
   <div class="wrap">
-    <div class="lib-toolbar" id="lib-toolbar" hidden>
-      <label for="size">Размер
-      <select id="size">
-        <option value="">default</option>
-        <option value="mobile">mobile</option>
-      </select>
-    </label>
-      <input type="search" id="q" placeholder="Найти токен" aria-label="Найти токен"></div>
     <a class="lib-back" id="lib-back" href="#all" hidden>Все компоненты</a>
+    <!-- Поиск и размер переменных: go() переносит блок под заголовок открытой страницы «Основ» -->
+    <div class="lib-toolbar" id="lib-toolbar" hidden>
+      <input type="search" id="q" placeholder="Найти токен" aria-label="Найти токен">
+      <label for="size">Размер
+        <select id="size">
+          <option value="">default</option>
+          <option value="mobile">mobile</option>
+        </select>
+      </label>
+    </div>
     <div class="lib-pages">
     <section id="icons" data-group="icons">
       <h2>Иконки</h2>
@@ -362,6 +428,89 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         </div>
         <div id="chips-body"></div>
       </article>
+      <article class="comp" id="close-button">
+        <div class="comp-head"><h3>Кнопка закрытия</h3><code>components/close-button</code>
+          <label class="comp-tool" for="cl-size">size
+            <select id="cl-size"><option value="s">s · 24</option><option value="m" selected>m · 28</option><option value="l">l · 32</option></select>
+          </label>
+        </div>
+        <div id="close-button-body"></div>
+      </article>
+      <article class="comp" id="arrow-button">
+        <div class="comp-head"><h3>Кнопка-стрелка</h3><code>components/arrow-button</code>
+          <label class="comp-tool" for="ab-size">inlineHeight
+            <select id="ab-size"><option value="s">s · 20</option><option value="m" selected>m · 24</option><option value="mt">mt · 26</option><option value="xl">xl · 32</option><option value="5xl">5xl · 48</option></select>
+          </label>
+          <label class="comp-tool" for="ab-dir">direction
+            <select id="ab-dir"><option value="right" selected>right</option><option value="left">left</option><option value="up">up</option><option value="down">down</option></select>
+          </label>
+        </div>
+        <div id="arrow-button-body"></div>
+      </article>
+      <article class="comp" id="back">
+        <div class="comp-head"><h3>Кнопка «Назад»</h3><code>components/back</code>
+          <label class="comp-tool" for="bk-size">fontSize
+            <select id="bk-size"><option value="m">m · 14</option><option value="l">l · 15</option><option value="xl">xl · 16</option><option value="2xl">2xl · 17</option><option value="3xl" selected>3xl · 18</option><option value="4xl">4xl · 20</option><option value="5xl">5xl · 24</option></select>
+          </label>
+        </div>
+        <div id="back-body"></div>
+      </article>
+      <article class="comp" id="breadcrumbs">
+        <div class="comp-head"><h3>Хлебные крошки</h3><code>components/breadcrumbs</code>
+          <label class="comp-tool" for="bc-size">fontSize
+            <select id="bc-size"><option value="xs" selected>xs · 12</option><option value="s">s · 13</option><option value="m">m · 14</option><option value="l">l · 15</option></select>
+          </label>
+          <label class="comp-tool" for="bc-color">fontColorStyle
+            <select id="bc-color"><option value="" selected>label</option><option value="link">link</option></select>
+          </label>
+        </div>
+        <div id="breadcrumbs-body"></div>
+      </article>
+      <article class="comp" id="combobox">
+        <div class="comp-head"><h3>Поле выбора</h3><code>components/combobox</code>
+          <label class="comp-tool" for="cmb-size">inlineHeight
+            <select id="cmb-size"><option value="m" selected>m · 24</option><option value="l">l · 28</option><option value="xl">xl · 32</option></select>
+          </label>
+          <label class="comp-tool" for="cmb-border">borderVisibility
+            <select id="cmb-border"><option value="" selected>partial</option><option value="visible">visible</option><option value="hidden">hidden</option></select>
+          </label>
+        </div>
+        <div id="combobox-body"></div>
+      </article>
+      <article class="comp" id="switch">
+        <div class="comp-head"><h3>Переключатель</h3><code>components/switch</code>
+          <label class="comp-tool" for="sw-size">size
+            <select id="sw-size"><option value="s">s</option><option value="m" selected>m</option><option value="l">l</option></select>
+          </label>
+          <label class="comp-tool" for="sw-pos">captionPosition
+            <select id="sw-pos"><option value="end" selected>end</option><option value="start">start</option></select>
+          </label>
+        </div>
+        <div id="switch-body"></div>
+      </article>
+      <article class="comp" id="tumbler">
+        <div class="comp-head"><h3>Тумблер</h3><code>components/tumbler</code>
+          <label class="comp-tool" for="tb-size">inlineHeight
+            <select id="tb-size"><option value="xs">xs · 16</option><option value="s">s · 20</option><option value="" selected>default · 24</option><option value="l">l · 28</option><option value="xl">xl · 32</option><option value="2xl">2xl · 36</option><option value="3xl">3xl · 40</option><option value="4xl">4xl · 44</option><option value="5xl">5xl · 48</option></select>
+          </label>
+        </div>
+        <div id="tumbler-body"></div>
+      </article>
+      <article class="comp" id="tabs">
+        <div class="comp-head"><h3>Вкладки</h3><code>components/tabs</code>
+          <label class="comp-tool" for="tabs-style">selectedStyle
+            <select id="tabs-style"><option value="" selected>primary</option><option value="secondary">secondary</option><option value="unaccented">unaccented</option></select>
+          </label>
+          <label class="comp-tool" for="tabs-size">inlineHeight
+            <select id="tabs-size"><option value="" selected>s · 32</option><option value="4xl">4xl · 43</option></select>
+          </label>
+        </div>
+        <div id="tabs-body"></div>
+      </article>
+      <article class="comp" id="accordion">
+        <div class="comp-head"><h3>Аккордеон и сайдбар</h3><code>components/accordion</code></div>
+        <div id="accordion-body"></div>
+      </article>
       <article class="comp" id="input">
         <div class="comp-head"><h3>Поля ввода</h3><code>components/input</code>
           <label class="comp-tool" for="in-kind">Поле
@@ -387,6 +536,14 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
           </label>
         </div>
         <div id="widget-body"></div>
+      </article>
+      <article class="comp" id="right-sidebar">
+        <div class="comp-head"><h3>Правый сайдбар</h3><code>components/right-sidebar</code></div>
+        <div id="right-sidebar-body"></div>
+      </article>
+      <article class="comp" id="shop">
+        <div class="comp-head"><h3>Магазин</h3><code>components/shop</code></div>
+        <div id="shop-body"></div>
       </article>
       <article class="comp" id="property-editor">
         <div class="comp-head"><h3>Окно редактора свойств</h3><code>components/property-editor</code></div>
@@ -703,6 +860,381 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       set('Круглые контрастные', '.chips--round.chips--contrast', '20059:4457', CH_CONTRAST, true) + set('Круглые неконтрастные', '.chips--round', '20059:4457', CH_PALE, true) + add + opt;
   }
 
+  // Кнопка закрытия: таблица «вид × состояние» по viewMode из Saby; external и externalWide — на сером, как поверх картинки.
+  // У linkButton размер всегда s: переключатель size на него не действует
+  var CL_STATES = [['покой', ''], ['hover', ' is-hover'], ['press', ' is-active']];
+  function buildCloseButtons() {
+    var host = document.getElementById('close-button-body'), size = document.getElementById('cl-size').value;
+    function set(title, code, views, gray) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code></h4>' +
+        '<div class="btn-scroll"><table class="btn-grid' + (gray ? ' on-gray' : '') + '"><tr><th></th>' + CL_STATES.map(function (s) { return '<th>' + s[0] + '</th>'; }).join('') + '</tr>' +
+        views.map(function (v) {
+          return '<tr><th>' + v[0] + '</th>' + CL_STATES.map(function (s) {
+            return '<td><button type="button" class="close-button close-button--' + v[1] + ' close-button--size-' + size + s[1] + '" aria-label="Закрыть"></button></td>';
+          }).join('') + '</tr>';
+        }).join('') + '</table></div></div>';
+    }
+    host.innerHTML = set('Виды', '.close-button', [['toolButton', 'tool-button'], ['linkButton', 'link-button'], ['functionalButton', 'functional-button']]) +
+      set('Поверх картинки и снаружи окна', '.close-button--external', [['external', 'external'], ['externalWide', 'external-wide']], true);
+  }
+
+  // Переключатель: по виду — таблица «значение × состояние» по viewMode из Saby; размер и положение подписи — переключатели.
+  // Значение хранит input, поэтому переключатели в таблице живые
+  var SW_STATES = [['покой', ''], ['hover', ' is-hover'], ['readOnly', ' is-readonly']];
+  function buildSwitch() {
+    var host = document.getElementById('switch-body'), size = document.getElementById('sw-size').value;
+    var start = document.getElementById('sw-pos').value === 'start' ? ' switch--caption-start' : '';
+    host.innerHTML = [['filled', '.switch', ''], ['outlined', '.switch--outlined', ' switch--outlined']].map(function (v) {
+      return '<div class="btn-set"><h4>' + v[0] + ' <code>' + v[1] + '</code></h4>' +
+        '<div class="btn-scroll"><table class="btn-grid"><tr><th></th>' + SW_STATES.map(function (s) { return '<th>' + s[0] + '</th>'; }).join('') + '</tr>' +
+        [['value false', ''], ['value true', ' checked']].map(function (c) {
+          return '<tr><th>' + c[0] + '</th>' + SW_STATES.map(function (s) {
+            return '<td><label class="switch' + v[2] + ' switch--size-' + size + start + s[1] + '">' +
+              '<input class="switch__input" type="checkbox" role="switch"' + c[1] + (s[1] === ' is-readonly' ? ' disabled' : '') + '>' +
+              '<span class="switch__button"></span><span class="switch__caption">Поисковая индексация</span></label></td>';
+          }).join('') + '</tr>';
+        }).join('') + '</table></div></div>';
+    }).join('');
+  }
+
+  // Тумблер: по подложке — таблица «набор пунктов × состояние» по Controls/Tumbler из Saby; contrastBackground — на сером.
+  // Пункты — label с радиокнопкой, поэтому в столбце «покой» выбор по клику работает без JS. Иконки — TFDesktop и PhoneCell
+  var TMB_ITEMS = [
+    ['Подписи', ['<span class="tumbler__caption">Плитка</span>', '<span class="tumbler__caption">Список</span>', '<span class="tumbler__caption">Таблица</span>']],
+    ['Иконки', ['<span class="tumbler__icon" aria-hidden="true">&#xe731;</span>', '<span class="tumbler__icon" aria-hidden="true">&#xe637;</span>']],
+    ['Счётчик', ['<span class="tumbler__caption">Новые</span><span class="tumbler__counter">12</span>', '<span class="tumbler__caption">Все</span>']]
+  ];
+  var TMB_STATES = [['покой', '', ''], ['hover на втором пункте', '', ' is-hover'], ['readOnly', ' is-readonly', '']], tbUid = 0;
+  function buildTumbler() {
+    var host = document.getElementById('tumbler-body'), size = document.getElementById('tb-size').value;
+    function tumbler(items, cls, state, hover) {
+      var name = 'tb' + (tbUid++);
+      return '<div class="tumbler' + cls + (size ? ' tumbler--size-' + size : '') + state + '" role="radiogroup">' + items.map(function (it, i) {
+        return '<label class="tumbler__item' + (i === 1 ? hover : '') + '"><input class="tumbler__input" type="radio" name="' + name + '"' +
+          (i === 0 ? ' checked' : '') + (state ? ' disabled' : '') + '>' + it + '</label>';
+      }).join('') + '</div>';
+    }
+    host.innerHTML = [['Подложка в тон', '.tumbler', '', false], ['contrastBackground', '.tumbler--contrast', ' tumbler--contrast', true]].map(function (v) {
+      return '<div class="btn-set"><h4>' + v[0] + ' <code>' + v[1] + '</code></h4>' +
+        '<div class="btn-scroll"><table class="btn-grid' + (v[3] ? ' on-gray' : '') + '"><tr><th></th>' + TMB_STATES.map(function (s) { return '<th>' + s[0] + '</th>'; }).join('') + '</tr>' +
+        TMB_ITEMS.map(function (r) {
+          return '<tr><th>' + r[0] + '</th>' + TMB_STATES.map(function (s) { return '<td>' + tumbler(r[1], v[2], s[1], s[2]) + '</td>'; }).join('') + '</tr>';
+        }).join('') + '</table></div></div>';
+    }).join('');
+  }
+
+  // Вкладки: примеры по Controls/tabs:Buttons из Saby; стиль выбранной и высота — переключатели.
+  // Вкладки — label с радиокнопкой, выбор по клику работает без JS. Иконки — Attach и Settings из cbuc-icons
+  var tabsUid = 0;
+  function buildTabs() {
+    var host = document.getElementById('tabs-body');
+    var mod = (document.getElementById('tabs-style').value ? ' tabs--style-' + document.getElementById('tabs-style').value : '') +
+      (document.getElementById('tabs-size').value ? ' tabs--size-' + document.getElementById('tabs-size').value : '');
+    function cap(t) { return '<span class="tabs__caption" data-caption="' + t + '">' + t + '</span>'; }
+    // items: [содержимое, классы вкладки] или 'space'; sel — номер выбранной
+    function tabs(cls, items, sel) {
+      var name = 'tabs' + (tabsUid++), n = -1;
+      return '<div class="tabs' + mod + cls + '" role="tablist">' + items.map(function (it) {
+        if (it === 'space') return '<span class="tabs__space"></span>';
+        n++;
+        return '<label class="tabs__item' + (it[1] || '') + '"' + (it[2] ? ' title="' + it[2] + '"' : '') + '><input class="tabs__input" type="radio" name="' + name + '"' + (n === sel ? ' checked' : '') + '>' + it[0] + '</label>';
+      }).join('') + '</div>';
+    }
+    function set(title, code, box, html) {
+      return '<div class="btn-set"><h4>' + title + (code ? ' <code>' + code + '</code>' : '') + '</h4><div class="btn-scroll"><div class="tabs-demo' + box + '">' + html + '</div></div></div>';
+    }
+    var three = [[cap('Все')], [cap('Опубликованные')], [cap('Черновики')]];
+    host.innerHTML =
+      set('Вкладки слева', '.tabs', '', tabs('', three, 1)) +
+      set('Наведение на третью вкладку', '.is-hover', '', tabs('', [three[0], three[1], [three[2][0], ' is-hover']], 1)) +
+      set('Иконки и счётчики', '.tabs__counter, .tabs__icon', '', tabs('', [
+        [cap('Заявки') + '<span class="tabs__counter">12</span>'], [cap('Посетители') + '<span class="tabs__counter">1,5к</span>'],
+        [cap('Файлы') + '<span class="tabs__icon" aria-hidden="true">&#xe671;</span>'], ['<span class="tabs__icon" aria-hidden="true">&#xe61b;</span>', '', 'Настройки']], 0)) +
+      set('Главная вкладка слева, остальные справа', '.tabs__item--main, .tabs__space', ' tabs-demo--wide', tabs('', [
+        ['<span class="tabs__caption">Параметры сайта</span>', ' tabs__item--main'], 'space', [cap('SEO')], [cap('Домен')], [cap('Сценарии')]], 1)) +
+      set('Разделы карточки: справа, без линии', '.tabs--no-border', ' tabs-demo--wide tabs-demo--gray', tabs(' tabs--no-border', [
+        'space', [cap('Страница')], [cap('Данные')], [cap('Статистика')], [cap('Посетители')], [cap('Заявки')]], 0)) +
+      set('Без отступа от края', '.tabs--padding-null', '', tabs(' tabs--padding-null', three, 0));
+  }
+
+  // Правый сайдбар конструктора: рабочие сайдбары на right-sidebar.js, дальше состояния частей.
+  // Глифы из макета: магазин U+EADD, данные U+EBBC, слои U+EBF9 (cbuc-icons24)
+  function buildRightSidebar() {
+    var host = document.getElementById('right-sidebar-body');
+    function item(key, glyph, title, cls, live) {
+      return '<button type="button" class="rsb__item' + (cls || '') + '"' + (live ? ' data-rsb-tab="' + key + '"' : '') + ' title="' + title + '" aria-label="' + title + '">' +
+        '<span class="rsb__icon" aria-hidden="true">&#x' + glyph + ';</span></button>';
+    }
+    function bar(active) {
+      return '<div class="rsb__bar"><div class="rsb__items">' +
+        item('shop', 'eadd', 'Магазин', ' rsb__item--shop' + (active === 'shop' ? ' is-active' : ''), true) +
+        item('data', 'ebbc', 'Данные', active === 'data' ? ' is-active' : '', true) +
+        item('layers', 'ebf9', 'Слои', active === 'layers' ? ' is-active' : '', true) +
+        '</div><div class="rsb__dock"><button type="button" class="btn btn--filled btn--style-pale btn--size-xl btn--icon" aria-label="Развернуть панель"><span class="btn__icon" aria-hidden="true">&#xebfa;</span></button></div>' +
+        '<div class="rsb__informers"><button type="button" class="rsb__help" aria-label="Помощь">?</button></div></div>';
+    }
+    function iconBtn(glyph, title, cls) {
+      return '<button type="button" class="btn btn--size-m btn--icon ' + cls + '" title="' + title + '" aria-label="' + title + '"><span class="btn__icon" aria-hidden="true">&#x' + glyph + ';</span></button>';
+    }
+    function head(name, search, extra) {
+      return '<header class="rsb__head"><div class="rsb__title"><h3 class="rsb__name">' + name + '</h3>' + (extra || '') + '</div>' +
+        '<div class="rsb__tools">' + (search ? '<label class="rsb__search"><input class="rsb__search-input" type="search" placeholder="Найти" aria-label="Найти"></label>' : '') + '</div></header>';
+    }
+    function headWidget() {
+      return '<header class="rsb__head rsb__head--widget"><div class="rsb__head-row"><div class="rsb__title"><h3 class="rsb__name">Строка</h3></div>' +
+        '<div class="rsb__head-cmds">' + iconBtn('e60a', 'Сбросить', 'btn--link btn--style-label') + iconBtn('eb72', 'Удалить', 'btn--link btn--style-danger') + '</div></div>' +
+        '<div class="rsb__path"><nav class="breadcrumbs breadcrumbs--size-m" aria-label="Путь"><span class="breadcrumbs__middle"><a class="breadcrumbs__crumb" href="#right-sidebar">Документ</a></span>' +
+        '<a class="breadcrumbs__crumb breadcrumbs__crumb--last" href="#right-sidebar">Строка</a></nav></div></header>';
+    }
+    function field(kind, level, name, type, state) { // kind: object | node | '' (поле)
+      var tree = kind ? ' aria-expanded="' + (state === 'closed' ? 'false' : 'true') + '"' : '';
+      return '<div class="rsb__field' + (kind ? ' rsb__field--' + kind : '') + (level > 1 ? ' rsb__row--level-' + level : '') + (state === 'hover' ? ' is-hover' : '') + '" role="treeitem"' + tree + '>' +
+        '<span class="rsb__row-name">' + name + '</span>' + (kind ? '<button type="button" class="rsb__arrow" aria-label="Свернуть или развернуть"></button>' : '') +
+        '<span class="rsb__type">' + type + '</span></div>';
+    }
+    function layer(level, glyph, name, tree, cls) {
+      return '<div class="rsb__layer' + (level > 1 ? ' rsb__row--level-' + level : '') + (cls || '') + '" role="treeitem"' + (tree ? ' aria-expanded="true"' : '') + '>' +
+        '<button type="button" class="rsb__arrow' + (tree ? '' : ' rsb__arrow--empty') + '"' + (tree ? ' aria-label="Свернуть или развернуть"' : ' tabindex="-1" aria-hidden="true"') + '></button>' +
+        '<span class="rsb__row-icon" aria-hidden="true">&#x' + glyph + ';</span><span class="rsb__row-name">' + name + '</span>' +
+        '<span class="rsb__cmds"><button type="button" class="rsb__cmd rsb__cmd--m" title="Скрыть" aria-label="Скрыть">&#xe651;</button>' +
+        '<button type="button" class="rsb__cmd rsb__cmd--danger" title="Удалить" aria-label="Удалить">&#xeb72;</button></span></div>';
+    }
+    var fields = field('object', 1, 'Аккаунт', 'Аккаунт') + field('node', 2, 'Тип', 'Строка', 'closed') + field('', 2, 'Номер лицевого счета', 'Число') +
+      field('', 2, 'Название аккаунта', 'Строка') + field('node', 2, 'Операторы поддержки', 'Операторы', 'closed') + field('node', 2, 'Чаты', 'Чаты', 'closed') +
+      field('node', 2, 'Звонки', 'Звонки', 'closed') + field('object', 1, 'Пользователь', 'Пользователь', 'closed') +
+      field('object', 1, 'Контрагент', 'Контрагент', 'closed') + field('object', 1, 'Сотрудник', 'Сотрудник', 'closed');
+    var layers = layer(1, 'eaee', 'Строка', true) + layer(2, 'eaee', 'Строка', true) + layer(3, 'e9a3', 'Изображение') + layer(3, 'ebb9', 'Название организации') +
+      layer(2, 'eac3', 'Колонки', true) + layer(3, 'e6d3', 'Ячейка') + layer(2, 'eac3', 'Колонки', true) + layer(3, 'e6d3', 'Ячейка');
+    function panel(key, open, html, cls) { return '<section class="rsb__panel' + (cls || '') + (open ? ' is-open' : '') + '" data-rsb-panel="' + key + '">' + html + '</section>'; }
+    function sidebar(cls, open) {
+      return '<aside class="rsb' + cls + '" aria-label="Правый сайдбар"><div class="rsb__panels">' +
+        panel('shop', open === 'shop', shopBlock(''), ' rsb__panel--bare') +
+        panel('data', open === 'data', head('Данные', true) + '<div class="rsb__content" role="tree">' + fields + '</div>') +
+        panel('layers', open === 'layers', head('Слои', false) + '<div class="rsb__content" role="tree">' + layers + '</div>') +
+        '</div>' + bar(open) + '</aside>';
+    }
+    function set(title, code, node, note, html) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code>' + (node ? ' <span>' + node + '</span>' : '') + '</h4>' +
+        (note ? '<p class="btn-note">' + note + '</p>' : '') + html + '</div>';
+    }
+    var states = [['Default', ''], ['Hover', ' is-hover'], ['Active', ' is-active'], ['Hover + Active', ' is-hover is-active']];
+    var kinds = [['Раздел', '', 'ebbc'], ['Магазин', ' rsb__item--shop', 'eadd'], ['МагазинRound', ' rsb__item--round', 'eadd']];
+    var itemsTable = '<div class="btn-scroll"><table class="btn-grid"><tr><th></th>' + states.map(function (s) { return '<th>' + s[0] + '</th>'; }).join('') + '</tr>' +
+      kinds.map(function (k) {
+        return '<tr><th>' + k[0] + '</th>' + states.map(function (s) { return '<td><div class="rsb">' + item('', k[2], k[0], k[1] + s[1], false) + '</div></td>'; }).join('') + '</tr>';
+      }).join('') + '</table></div>';
+    host.innerHTML =
+      set('Вписан', '.rsb', '5:28859', 'Рабочий сайдбар на right-sidebar.js: пункт тулбара открывает панель, повторный клик сворачивает. Кнопка разворота под пунктами — появляется при наведении на тулбар — переводит сайдбар в режим «По ховеру» и обратно. Стрелки строк сворачивают дерево. Панель «Магазин» — компонент shop в панели-слоте .rsb__panel--bare.',
+        '<div class="rsb-stage">' + sidebar('', 'data') + '</div>') +
+      set('По ховеру и Закреплен', '.rsb--hover, .rsb--pinned', '5:28883', 'Панель висит поверх страницы слева от тулбара. Наведение на пункт открывает её, клик закрепляет, повторный клик открепляет и закрывает. Кнопка разворота делает сайдбар вписанным.',
+        '<div class="rsb-stage rsb-stage--float"><p>Страница под панелью: сайдбар занимает только ширину тулбара.</p>' + sidebar(' rsb--hover', null) + '</div>') +
+      set('Пункт тулбара', '.rsb__item', '1517:58645', '', itemsTable) +
+      set('Шапка панели', '.rsb__head, .rsb__head--widget', '5:28538', 'Кнопки и хлебные крошки — компоненты button и breadcrumbs кита в слотах шапки.',
+        '<div class="rsb-row"><div class="rsb rsb-box">' + head('Виджеты', true, iconBtn('e995', 'Вид', 'btn--ghost btn--style-label')) + '</div>' +
+        '<div class="rsb rsb-box">' + head('Слои', false) + '</div><div class="rsb rsb-box">' + headWidget() + '</div></div>') +
+      set('Строки: поля и слои', '.rsb__field, .rsb__layer', '5:28569', 'Вторая строка — наведение. У слоя при наведении видны команды, третья строка слоёв выбрана.',
+        '<div class="rsb-row"><div class="rsb rsb-box"><div class="rsb__content">' + field('object', 1, 'Аккаунт', 'Аккаунт') + field('node', 2, 'Тип', 'Строка', 'hover') + field('', 2, 'Номер лицевого счета', 'Число') + '</div></div>' +
+        '<div class="rsb rsb-box"><div class="rsb__content">' + layer(1, 'eaee', 'Строка', true) + layer(2, 'eaee', 'Строка', true, ' is-hover') + layer(3, 'e9a3', 'Изображение', false, ' is-active') + '</div></div></div>');
+    [].forEach.call(host.querySelectorAll('.rsb-stage > .rsb'), function (el) { RightSidebar.mount(el); });
+    [].forEach.call(host.querySelectorAll('.rsb-stage .shop'), function (el) { Shop.mount(el); });
+  }
+
+  // Магазин виджетов: разметка общая для страницы магазина и панели «Магазин» правого сайдбара.
+  // Шапка — .rsb__head из right-sidebar, дерево категорий — master-list. Глифы и подписи — из макета
+  var SHOP_SMALL = [['e6d3', 'Ячейка'], ['eac3', '2 колонки'], ['eaee', '3 колонки'], ['ea80', 'Сетка']];
+  var SHOP_MEDIUM = [['eac9', 'Текст'], ['ebd3', 'Заголовок'], ['e9a3', 'Изображение'], ['e929', 'Видео'], ['e739', 'Файл'], ['eb7e', 'Отправить ответ'], ['e6cc', 'Таблица'], ['e63d', 'Наименование']];
+  var SHOP_BIG = [['Как просто', 'Виджет позволит вам получить быстрый доступ к следующему функционалу (в соответствии с вашими правами)', 111],
+    ['Мои контакты', 'Закрепите контакты для быстрого доступа, звоните и пишите коллегам в один клик', 208],
+    ['Список страниц', 'Позволяет редактировать и настраивать страницы', 146]];
+  // [подпись, счётчик, уровень, узел: true раскрыт / false свёрнут]
+  var SHOP_CATS = [['Все', 168, 0], ['Блоки', 4, 0], ['Базовые', 8, 0], ['Основные возможности', 12, 0], ['Продажи', 32, 0, true], ['Каталог и цены', 7, 1], ['Розница', 10, 1],
+    ['Presto', 2, 1], ['Saby Clients', 1, 1], ['Документы продаж', 6, 1], ['Отчетность', 7, 0, false], ['Документооборот', 5, 0, false], ['Управление персоналом', 28, 0, false],
+    ['Бухгалтерия и зарплата', 40, 0, false], ['Деньги', 5, 0], ['Торги', 3, 0]];
+  function shopWidget(size, glyph, name, state) {
+    return '<button type="button" class="shop__widget shop__widget--' + size + (state || '') + '" data-shop-widget="' + name + '" title="' + name + '">' +
+      '<span class="shop__widget-icon" aria-hidden="true">&#x' + glyph + ';</span><span class="shop__widget-name">' + name + '</span></button>';
+  }
+  function shopBig(name, desc, height, state) { // превью — слот: в каталоге нейтральная заглушка, картинок в ките нет
+    return '<div class="shop__widget shop__widget--big' + (state || '') + '" role="button" tabindex="0" data-shop-widget="' + (name || 'Виджет') + '">' +
+      (name ? '<span class="shop__widget-text"><span class="shop__widget-name">' + name + '</span>' + (desc ? '<span class="shop__widget-desc">' + desc + '</span>' : '') + '</span>' : '') +
+      '<span class="shop__preview"><img class="shop-ph" src="' + WG_IMG + '" alt="" style="height: ' + height + 'px"><span class="shop__plus" aria-hidden="true"></span></span></div>';
+  }
+  function shopBlock(cls) {
+    var cats = SHOP_CATS.map(function (c, n) {
+      var node = c[3] !== undefined;
+      return '<li class="ml__item' + (c[2] ? ' ml__item--level-' + c[2] : '') + (n ? '' : ' is-selected') + '"' + (node ? ' aria-expanded="' + c[3] + '"' : '') + ' data-shop-category="' + c[0] + '">' +
+        '<span class="ml__arrow' + (node ? '' : ' ml__arrow--empty') + '" aria-hidden="true"></span><span class="ml__caption">' + c[0] + '</span>' +
+        '<span class="ml__counter"><span class="ml__count ml__count--secondary">' + c[1] + '</span></span></li>';
+    }).join('');
+    return '<section class="shop' + (cls || '') + '" aria-label="Магазин виджетов">' +
+      '<div class="shop__head"><header class="rsb__head"><div class="rsb__title"><h3 class="rsb__name">Виджеты</h3>' +
+      '<button type="button" class="shop__expand" title="Категории" aria-label="Категории"></button></div>' +
+      '<div class="rsb__tools"><button type="button" class="shop__filter" title="Фильтр" aria-label="Фильтр"></button>' +
+      '<label class="rsb__search"><input class="rsb__search-input" type="search" placeholder="Найти" aria-label="Найти"></label></div></header></div>' +
+      '<div class="shop__body"><nav class="shop__master" aria-label="Категории"><ul class="ml ml--nav">' + cats + '</ul></nav>' +
+      '<div class="shop__list"><div class="shop__grid shop__grid--small">' + SHOP_SMALL.map(function (w) { return shopWidget('small', w[0], w[1]); }).join('') + '</div>' +
+      '<div class="shop__grid shop__grid--medium">' + SHOP_MEDIUM.map(function (w) { return shopWidget('medium', w[0], w[1]); }).join('') + '</div>' +
+      '<section class="shop__section"><h4 class="shop__section-title">Основные возможности</h4><div class="shop__cards">' +
+      SHOP_BIG.map(function (w) { return shopBig(w[0], w[1], w[2]); }).join('') + '</div></section></div></div></section>';
+  }
+  function buildShop() {
+    var host = document.getElementById('shop-body');
+    function set(title, code, node, note, html) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code> <span>' + node + '</span></h4>' + (note ? '<p class="btn-note">' + note + '</p>' : '') + html + '</div>';
+    }
+    var states = [['Default', ''], ['Hover', ' is-hover']];
+    function row(title, cell) { return '<tr><th>' + title + '</th>' + states.map(function (s) { return '<td>' + cell(s[1]) + '</td>'; }).join('') + '</tr>'; }
+    var table = '<div class="btn-scroll"><table class="btn-grid"><tr><th></th>' + states.map(function (s) { return '<th>' + s[0] + '</th>'; }).join('') + '</tr>' +
+      row('small', function (s) { return '<div class="shop shop-cell" style="width: 76px">' + shopWidget('small', 'eac9', 'Текст', s) + '</div>'; }) +
+      row('medium', function (s) { return '<div class="shop shop-cell" style="width: 159px">' + shopWidget('medium', 'eac9', 'Текст', s) + '</div>'; }) +
+      row('big', function (s) { return '<div class="shop shop-cell" style="width: 326px">' + shopBig('', '', 173, s) + '</div>'; }) +
+      row('big · заголовок и описание', function (s) { return '<div class="shop shop-cell" style="width: 326px">' + shopBig(SHOP_BIG[0][0], SHOP_BIG[0][1], 111, s) + '</div>'; }) +
+      '</table></div>';
+    host.innerHTML =
+      set('Магазин', '.shop', '1517:69549', 'Рабочий магазин на shop.js: кнопка рядом с названием раскрывает дерево категорий, магазин раздвигается влево поверх страницы. Клик по виджету и по категории передаётся прототипу — здесь он пишется под сценой. Превью крупных виджетов — слот, в каталоге в нём картинка виджета.',
+        '<div class="rsb-stage shop-stage">' + shopBlock('') + '</div><p class="btn-note" id="shop-log" aria-live="polite">Нажмите на виджет или категорию.</p>') +
+      set('Открытие расширенного', '.shop.is-expanded', '1517:69554', 'Дерево категорий — компонент master-list кита в слоте .shop__master; в шапке появляется кнопка фильтра.',
+        '<div class="rsb-stage shop-stage">' + shopBlock(' is-expanded') + '</div>') +
+      set('Виджет магазина', '.shop__widget', '1517:29714', '', table);
+    var log = document.getElementById('shop-log');
+    [].forEach.call(host.querySelectorAll('.shop-stage > .shop'), function (el) {
+      Shop.mount(el, {
+        onAdd: function (name) { log.textContent = 'Добавить виджет: ' + name; },
+        onCategory: function (name) { log.textContent = 'Категория: ' + name; },
+        onExpand: function (on) { log.textContent = on ? 'Расширенный магазин открыт' : 'Расширенный магазин закрыт'; }
+      });
+    });
+  }
+
+  // Аккордеон и сайдбар: примеры по NavigationPanels из Saby. Кнопка «≡» — label с флажком, сворачивает без JS.
+  // Иконки — шрифт Accordion-Font: Home, Screenshots, EditForm, SabyDisk, Statistics, Setting
+  function buildAccordion() {
+    var host = document.getElementById('accordion-body');
+    function item(icon, title, cls, short) {
+      return '<a class="accordion__item' + (cls || '') + '" href="#accordion"' + (/is-selected/.test(cls || '') ? ' aria-current="page"' : '') + '>' +
+        (icon ? '<span class="accordion__icon" aria-hidden="true">&#x' + icon + ';</span>' : '') +
+        (short ? '<span class="accordion__short">' + short + '</span>' : '') + '<span class="accordion__title">' + title + '</span></a>';
+    }
+    function header(live, scheme) {
+      return '<div class="sidebar__header"><div class="sidebar__top"><a class="sidebar__bird" href="#accordion" aria-label="Saby">&#xe9e2;</a>' +
+        '<a class="sidebar__logo" href="#accordion"><span class="sidebar__logo-name">saby</span><span class="sidebar__logo-title">design</span></a></div>' +
+        '<div class="sidebar__bottom">' + (live
+          ? '<label class="sidebar__toggle" title="Свернуть или развернуть"><input class="sidebar__toggle-input" type="checkbox" aria-label="Свернуть меню"></label>'
+          : '<button type="button" class="sidebar__toggle" aria-label="Развернуть"></button>') +
+        (scheme ? '<span class="sidebar__scheme">конструктор сайтов</span>' : '') + '</div></div>';
+    }
+    function set(title, code, height, html) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code></h4><div class="acc-demo" style="height: ' + height + 'px">' + html + '</div></div>';
+    }
+    function four(sel, hover) {
+      return [['e9eb', 'Сайты'], ['e9d5', 'Виджеты'], ['e943', 'Оформление', 'Стиль'], ['e96d', 'Диск']].map(function (it, n) {
+        return item(it[0], it[1], (n === sel ? ' is-selected' : '') + (n === hover ? ' is-hover' : ''), it[2]);
+      }).join('');
+    }
+    host.innerHTML =
+      set('Сайдбар продукта', '.sidebar', 300, '<aside class="sidebar">' + header(true, true) + '<nav class="accordion" aria-label="Разделы">' + four(0, 1) + '</nav></aside>') +
+      set('Свёрнутый', '.sidebar--compact', 330, '<aside class="sidebar sidebar--compact">' + header(false, false) + '<nav class="accordion" aria-label="Разделы">' + four(1, -1) + '</nav></aside>') +
+      set('Подразделы и группы', '.accordion__item--sub, .accordion__group', 360, '<aside class="sidebar">' + header(true, true) + '<nav class="accordion" aria-label="Разделы">' +
+        item('e9eb', 'Сайты', ' is-active') + item('', 'Статистика сайтов', ' accordion__item--sub is-selected') + item('e9d5', 'Виджеты') +
+        '<div class="accordion__group"></div>' + item('e954', 'Аналитика') + '<div class="accordion__spacer"></div>' + item('e92d', 'Настройки') + '</nav></aside>') +
+      set('Аккордеон без шапки', '.accordion, .accordion--compact', 200,
+        '<nav class="accordion" aria-label="Разделы">' + item('e9eb', 'Сайты', ' is-selected') + item('e9d5', 'Виджеты') + '</nav>' +
+        '<nav class="accordion accordion--compact" aria-label="Разделы">' + item('e9eb', 'Сайты', ' is-selected') + item('e9d5', 'Виджеты') + '</nav>');
+  }
+
+  // Кнопка-стрелка: таблица «вид и стиль × состояние» по viewMode и buttonStyle из Saby; размер и направление — переключатели
+  var AB_STATES = [['покой', ''], ['hover', ' is-hover'], ['press', ' is-active'], ['readOnly', ' is-readonly']];
+  function buildArrowButtons() {
+    var host = document.getElementById('arrow-button-body'), size = document.getElementById('ab-size').value, dir = document.getElementById('ab-dir').value;
+    function set(title, code, views) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code></h4>' +
+        '<div class="btn-scroll"><table class="btn-grid"><tr><th></th>' + AB_STATES.map(function (s) { return '<th>' + s[0] + '</th>'; }).join('') + '</tr>' +
+        views.map(function (v) {
+          return '<tr><th>' + v[0] + '</th>' + AB_STATES.map(function (s) {
+            return '<td><button type="button" class="arrow-button' + v[1] + ' arrow-button--' + dir + ' arrow-button--size-' + size + s[1] + '" aria-label="Стрелка"></button></td>';
+          }).join('') + '</tr>';
+        }).join('') + '</table></div></div>';
+    }
+    host.innerHTML = set('Круглая', '.arrow-button', [['filled · pale', ''], ['filled · default', ' arrow-button--style-default'], ['ghost', ' arrow-button--ghost'], ['link', ' arrow-button--link']]) +
+      set('Вытянутая', '.arrow-button--stretched', [['stretched', ' arrow-button--stretched'], ['stretched · pale', ' arrow-button--stretched arrow-button--style-pale'],
+        ['stretched · default', ' arrow-button--stretched arrow-button--style-default'], ['stretched-ghost', ' arrow-button--stretched-ghost']]);
+  }
+
+  // Кнопка «Назад»: таблица «цвет × состояние» для стрелки и для стрелки в круге; fontSize — переключатель
+  var BK_STATES = [['покой', ''], ['hover', ' is-hover'], ['press', ' is-active'], ['readOnly', ' is-readonly']];
+  function buildBack() {
+    var host = document.getElementById('back-body'), size = document.getElementById('bk-size').value;
+    function set(title, code, views) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code></h4>' +
+        '<div class="btn-scroll"><table class="btn-grid"><tr><th></th>' + BK_STATES.map(function (s) { return '<th>' + s[0] + '</th>'; }).join('') + '</tr>' +
+        views.map(function (v) {
+          return '<tr><th>' + v[0] + '</th>' + BK_STATES.map(function (s) {
+            return '<td><button type="button" class="back' + v[1] + ' back--size-' + size + s[1] + '"><span class="back__icon"></span><span class="back__caption">' + v[2] + '</span></button></td>';
+          }).join('') + '</tr>';
+        }).join('') + '</table></div></div>';
+    }
+    host.innerHTML = set('Стрелка', '.back', [['primary', '', 'Ресторан «Ромашка»'], ['default', ' back--color-default', 'Ресторан «Ромашка»'], ['secondary', ' back--color-secondary', 'Ресторан «Ромашка»'],
+        ['link · стрелка link', ' back--color-link back--icon-link', 'Ресторан «Ромашка»'], ['label · стрелка label', ' back--color-label back--icon-label', 'Ресторан «Ромашка»']]) +
+      set('Стрелка в круге', '.back--functional-button', [['pale', ' back--functional-button back--color-default', 'Параметры страницы'], ['default', ' back--functional-button back--style-default back--color-default', 'Параметры страницы']]);
+  }
+
+  // Хлебные крошки: состояния, длинный путь в рамке заданной ширины (сворачивание в «…») и шапка проводника с кнопкой «Назад».
+  // fontSize и fontColorStyle — переключатели; в шапке проводника крошки всегда m, как в Saby при кнопке 3xl
+  var BC_SHORT = ['Диск', 'Сайты', 'Шеф-Экспресс', 'Изображения'];
+  var BC_LONG = ['Документы организации', 'Договоры с поставщиками и подрядчиками', '2026 год', 'Поставка оборудования для кухни ресторана', 'Сканы подписанных документов'];
+  function bcPath(items, cls, hover) {
+    var crumb = function (t, i, last) { return '<a class="breadcrumbs__crumb' + (last ? ' breadcrumbs__crumb--last' : '') + (hover === i ? ' is-hover' : '') + '" href="#" title="' + t + '">' + t + '</a>'; };
+    return '<nav class="breadcrumbs' + cls + '" aria-label="Путь">' + (items.length > 1 ? '<span class="breadcrumbs__middle">' +
+      items.slice(0, -1).map(function (t, i) { return crumb(t, i, false); }).join('') + '<span class="breadcrumbs__dots" title="' + items.join(' / ') + '">...</span></span>' : '') +
+      crumb(items[items.length - 1], items.length - 1, true) + '</nav>';
+  }
+  function bcHeading(title, items, cls) {
+    return '<div class="breadcrumbs-path' + cls + '"><div class="breadcrumbs-path__back"><button type="button" class="back back--color-default back--icon-primary"><span class="back__icon"></span><span class="back__caption">' + title + '</span></button></div>' +
+      '<div class="breadcrumbs-path__crumbs"><button type="button" class="breadcrumbs-path__home" aria-label="В корень">&#xe920;</button>' + bcPath(items, ' breadcrumbs--size-m') + '</div></div>';
+  }
+  function buildBreadcrumbs() {
+    var host = document.getElementById('breadcrumbs-body'), color = document.getElementById('bc-color').value;
+    var cls = ' breadcrumbs--size-' + document.getElementById('bc-size').value + (color ? ' breadcrumbs--color-' + color : '');
+    function box(w, inner) { return '<div class="bc-box" style="width: ' + w + 'px">' + inner + '</div>'; }
+    host.innerHTML = '<div class="btn-set"><h4>Только крошки <code>.breadcrumbs</code></h4><div class="btn-scroll"><table class="btn-grid">' +
+        [['покой', bcPath(BC_SHORT, cls)], ['hover на крошке', bcPath(BC_SHORT, cls, 1)], ['readOnly', bcPath(BC_SHORT, cls + ' is-readonly')]].map(function (r) { return '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>'; }).join('') +
+      '</table></div></div>' +
+      '<div class="btn-set"><h4>Длинный путь <code>.breadcrumbs__dots</code></h4><p class="btn-note">Последняя крошка не шире половины, остальные обрезаются; когда места не хватает, справа от них появляется «…». Рамка — ширина 360 и 640.</p>' +
+        '<div class="bc-stack">' + box(360, bcPath(BC_LONG, cls)) + box(640, bcPath(BC_LONG, cls)) + '</div></div>' +
+      '<div class="btn-set"><h4>С кнопкой «Назад» <code>.breadcrumbs-path</code></h4><p class="btn-note">Текущая папка — на кнопке «Назад» (компонент back), в крошках её нет; «домик» ведёт в корень.</p>' +
+        '<div class="bc-stack">' + box(520, bcHeading('Авторская кухня', ['Ресторан', 'Кафе/Рестораны'], '')) +
+        box(420, bcHeading('Пекарни/Кондитерские', ['Все шаблоны', 'Ресторан'], ' breadcrumbs-path--multiline')) +
+        box(520, bcHeading(BC_LONG[4], BC_LONG.slice(0, 4), '')) + '</div></div>';
+  }
+
+  // Поле выбора: таблица «значение × состояние» на обычном и сером фоне (contrastBackground), ниже — открытое меню.
+  // В каталоге меню открывается и выбирает пункт небольшим обработчиком; в ките компонент — только CSS
+  var CMB_STATES = [['покой', ''], ['hover', ' is-hover'], ['открыто', ' is-open'], ['readOnly', ' is-readonly'], ['invalid', ' is-invalid']];
+  var CMB_ITEMS = ['Российский рубль', 'Доллар США', 'Евро', 'Казахстанский тенге'];
+  function cmbField(cls, text) { return '<div class="combobox' + cls + '"><button type="button" class="combobox__field"><span class="combobox__value">' + text + '</span></button></div>'; }
+  function buildCombobox() {
+    var host = document.getElementById('combobox-body'), border = document.getElementById('cmb-border').value;
+    var base = ' combobox--size-' + document.getElementById('cmb-size').value + (border ? ' combobox--border-' + border : '');
+    function set(title, code, extra, gray) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code></h4>' +
+        '<div class="btn-scroll"><table class="btn-grid cmb-grid' + (gray ? ' on-gray' : '') + '"><tr><th></th>' + CMB_STATES.map(function (s) { return '<th>' + s[0] + '</th>'; }).join('') + '</tr>' +
+        [['со значением', '', 'Российский рубль'], ['пустое', ' combobox--empty', 'Выберите валюту']].map(function (r) {
+          return '<tr><th>' + r[0] + '</th>' + CMB_STATES.map(function (s) { return '<td>' + cmbField(base + extra + r[1] + s[1], r[2]) + '</td>'; }).join('') + '</tr>';
+        }).join('') + '</table></div></div>';
+    }
+    host.innerHTML = set('Поле', '.combobox', '', false) + set('На сером фоне', '.combobox--contrast', ' combobox--contrast', true) +
+      '<div class="btn-set"><h4>Меню <code>.combobox__menu</code></h4><p class="btn-note">Меню показывает и прячет прототип атрибутом <code>hidden</code>. Здесь оно открыто; пункт можно выбрать.</p>' +
+      '<div class="cmb-open"><div class="combobox is-open' + base + '" id="cmb-live"><button type="button" class="combobox__field" aria-haspopup="listbox" aria-expanded="true"><span class="combobox__value">' + CMB_ITEMS[0] + '</span></button>' +
+      '<ul class="combobox__menu" role="listbox">' + CMB_ITEMS.map(function (t, i) { return '<li class="combobox__item' + (i === 0 ? ' is-selected' : '') + (i === 1 ? ' is-hover' : '') + '" role="option">' + t + '</li>'; }).join('') + '</ul></div></div></div>';
+    var live = document.getElementById('cmb-live'), menu = live.querySelector('.combobox__menu');
+    live.querySelector('.combobox__field').addEventListener('click', function () { menu.hidden = !menu.hidden; live.classList.toggle('is-open', !menu.hidden); });
+    menu.addEventListener('click', function (e) {
+      var item = e.target.closest('.combobox__item'); if (!item) return;
+      [].forEach.call(menu.children, function (li) { li.classList.remove('is-selected', 'is-hover'); });
+      item.classList.add('is-selected'); live.querySelector('.combobox__value').textContent = item.textContent;
+    });
+  }
+
   // Поля ввода: вид поля, размер и подпись — переключатели; таблица «вариант × состояние» на обычном и контрастном фоне.
   // inlineHeight нет у многострочного, jumpingLabel есть только у однострочного
   var IN_KINDS = { // класс, узел Figma, значения
@@ -844,7 +1376,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   function peCmds(resetAttrs) {
     return '<div class="pe__cmds">' + peBtn('pe__reset', PE_G.reset, 'Сбросить настройки', resetAttrs) + peBtn('pe__done', PE_G.done, 'Сохранить и выйти') + peBtn('pe__close', PE_G.close, 'Закрыть') + '</div>';
   }
-  function peIcon() { return '<span class="pe__icon pe__icon--s" aria-hidden="true">' + PE_G.icon + '</span>'; }
+  function peIcon() { return '<span class="pe__icon" aria-hidden="true">' + PE_G.icon + '</span>'; }
   function peHead(inner, resetAttrs) { return '<div class="pe"><header class="pe__head">' + inner + peCmds(resetAttrs) + '</header></div>'; }
   function peEdit(value, name) {
     return '<label class="pe__name pe__name--edit"><input class="pe__name-input" value="' + value + '" placeholder="' + name + '" aria-label="Название"></label>';
@@ -1105,9 +1637,9 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     cell.appendChild(tray); document.getElementById('te-states').appendChild(cell);
   });
 
-  var ROUTES = { all: 'all', icons: 'icons', components: 'components', button: 'components', checkbox: 'components', chips: 'components', input: 'components', toolbar: 'components', widget: 'components', 'property-editor': 'components', 'pg-editors': 'components', 'text-editor': 'components', 'master-list': 'components', 'demo-frame': 'components',
+  var ROUTES = { all: 'all', icons: 'icons', components: 'components', button: 'components', checkbox: 'components', chips: 'components', 'close-button': 'components', 'arrow-button': 'components', back: 'components', breadcrumbs: 'components', combobox: 'components', 'switch': 'components', tumbler: 'components', tabs: 'components', accordion: 'components', input: 'components', toolbar: 'components', widget: 'components', 'right-sidebar': 'components', shop: 'components', 'property-editor': 'components', 'pg-editors': 'components', 'text-editor': 'components', 'master-list': 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
-  var COMPS = ['button', 'checkbox', 'chips', 'input', 'toolbar', 'widget', 'property-editor', 'pg-editors', 'text-editor', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
+  var COMPS = ['button', 'checkbox', 'chips', 'close-button', 'arrow-button', 'back', 'breadcrumbs', 'combobox', 'switch', 'tumbler', 'tabs', 'accordion', 'input', 'toolbar', 'widget', 'right-sidebar', 'shop', 'property-editor', 'pg-editors', 'text-editor', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
   var group = null, comp = 'button', libNav = document.getElementById('lib-nav'), menuBtn = document.getElementById('lib-menu');
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
   function setMenu(open) { libNav.classList.toggle('is-open', open); menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
@@ -1120,8 +1652,10 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     nav('main section[data-group]').forEach(function (s) { s.hidden = s.id !== (g === 'components' ? 'components' : id); });
     if (g === 'components') { comp = id; COMPS.forEach(function (c) { document.getElementById(c).hidden = c !== comp; }); }
     nav('.lib-item').forEach(function (a) { var on = a.getAttribute('href') === '#' + id; a.classList.toggle('is-on', on); if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
-    document.getElementById('lib-toolbar').hidden = g !== 'tokens'; // поиск — только по переменным
-    document.getElementById('lib-back').hidden = g !== 'components'; // «назад» к плитке — со страницы компонента
+    var bar = document.getElementById('lib-toolbar');
+    bar.hidden = g !== 'tokens'; // поиск — только по переменным, под заголовком и описанием страницы, как у иконок
+    if (g === 'tokens') { var lead = document.querySelector('#' + id + ' > p.lead'); if (lead) lead.after(bar); }
+    document.getElementById('lib-back').hidden = g === 'all'; // «назад» к плитке — с любой страницы, кроме самой плитки
     nav('.lib-item.is-on').forEach(function (a) { var box = a.closest('.lib-group'); if (box) setGroup(box, false); }); // группа выбранного пункта раскрыта
     applySize();
     setMenu(false);
@@ -1155,6 +1689,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     ['Конструктор', [
       { id: 'widget', title: 'Виджет', sum: 'Рамка при наведении и выделении, кружки-плюсы на сторонах, слот для тулбара, пустое состояние.', table: '#widget-body .wg-grid', cells: [[1, 2]] },
       { id: 'toolbar', title: 'Тулбар', sum: 'Стили default, info и success, кнопки-иконки, удаление, подтверждение, подпись со стрелкой.', table: '#toolbar-body table', cells: [[1, 1]] },
+      { id: 'right-sidebar', title: 'Правый сайдбар', sum: 'Тулбар с пунктами, панели «Данные» и «Слои», шапка панели; вписан, по ховеру или закреплён.', nodes: '#right-sidebar-body .btn-set:nth-child(1) .rsb-stage', w: 480 },
+      { id: 'shop', title: 'Магазин', sum: 'Виджеты трёх размеров, разделы с превью, расширенный вид с деревом категорий.', nodes: '#shop-body .btn-set:nth-child(1) .shop-stage', w: 480 },
       { id: 'demo-frame', title: 'Вспомогательная область', sum: 'Рамка прототипа: шапка, сцена и панель сценариев.', nodes: '#frame-demo', wrap: 'stage', w: 720 }
     ]],
     ['Свойства виджета', [
@@ -1166,7 +1702,16 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       { id: 'checkbox', title: 'Чекбокс', sum: 'Outlined, filled и ghost, третье состояние, подпись слева или справа.', table: '#checkbox-body table', cells: [[1, 1], [2, 1]] },
       { id: 'chips', title: 'Чипсы', sum: 'Контрастные и обычные, круглые, с иконкой и счётчиком, размеры m, l, xl и 5xl.', table: '#chips-body table', cells: [[1, 1], [2, 1]] },
       { id: 'input', title: 'Поля ввода', sum: 'Однострочное, многострочное, дата и время; метка слева, сверху или прыгающая.', table: '#input-body table', cells: [[1, 1], [1, 2]] },
-      { id: 'master-list', title: 'Мастер-список', sum: '«Список» и «Навигация», счётчики, дерево до 3 уровней, заголовок группы.', nodes: '#master-list-body .ml-tree > .ml__group, #master-list-body .ml-tree > .ml', wrap: 'ml-tree' }
+      { id: 'master-list', title: 'Мастер-список', sum: '«Список» и «Навигация», счётчики, дерево до 3 уровней, заголовок группы.', nodes: '#master-list-body .ml-tree > .ml__group, #master-list-body .ml-tree > .ml', wrap: 'ml-tree' },
+      { id: 'close-button', title: 'Кнопка закрытия', sum: 'Крестик закрытия окна или панели: пять видов, размеры s, m и l.', nodes: '#close-button-body td:nth-child(2) > .close-button', wrap: 'cl-row' },
+      { id: 'arrow-button', title: 'Кнопка-стрелка', sum: 'Листание галереи и списка, раскрытие, переход дальше: круглая и вытянутая, пять размеров.', nodes: '#arrow-button-body td:nth-child(2) > .arrow-button', wrap: 'cl-row' },
+      { id: 'back', title: 'Кнопка «Назад»', sum: 'Возврат к предыдущему экрану и одновременно его название: стрелка или стрелка в круге.', nodes: '#back-body .btn-set:nth-child(1) tr:nth-child(2) td:nth-child(2) > .back, #back-body .btn-set:nth-child(2) tr:nth-child(2) td:nth-child(2) > .back', wrap: 'bk-col' },
+      { id: 'breadcrumbs', title: 'Хлебные крошки', sum: 'Путь до текущей папки; с кнопкой «Назад» — шапка проводника. Длинный путь сворачивается в «…».', nodes: '#breadcrumbs-body .btn-set:nth-child(1) tr:nth-child(1) .breadcrumbs, #breadcrumbs-body .btn-set:nth-child(3) .bc-box:nth-child(1) > .breadcrumbs-path', wrap: 'bk-col' },
+      { id: 'combobox', title: 'Поле выбора', sum: 'Выбор значения из списка со стрелкой — в оформлении поля ввода. Меню открывается под полем.', table: '#combobox-body table', cells: [[1, 1], [2, 1]] },
+      { id: 'switch', title: 'Переключатель', sum: 'Включает и выключает настройку сразу: filled и outlined, размеры s, m и l, подпись слева или справа.', table: '#switch-body table', cells: [[2, 1], [1, 1]] },
+      { id: 'tumbler', title: 'Тумблер', sum: 'Переключатель из 2–4 вариантов на общей подложке: подписи, иконки, счётчик, контрастная подложка.', table: '#tumbler-body table', cells: [[1, 1], [2, 1]] },
+      { id: 'tabs', title: 'Вкладки', sum: 'Переключение разделов карточки или панели: маркер снизу, иконки и счётчики, главная вкладка.', nodes: '#tabs-body .btn-set:nth-child(3) .tabs', w: 480 },
+      { id: 'accordion', title: 'Аккордеон и сайдбар', sum: 'Навигация по разделам продукта: шапка с логотипом, разделы с иконками, подразделы, свёрнутый вид.', nodes: '#accordion-body .btn-set:nth-child(1) .acc-demo, #accordion-body .btn-set:nth-child(2) .acc-demo', wrap: 'acc-demo' }
     ]],
     ['SabyDoc', [
       { id: 'text-editor', title: 'Окно текстового редактора', sum: 'Шапка, боковые панели, верхний тулбар и область документа.', nodes: '#te-demo', w: 720 }
@@ -1175,6 +1720,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   function tileClone(node) { // копия без id: на странице они уже заняты оригиналом
     var c = node.cloneNode(true);
     [c].concat([].slice.call(c.querySelectorAll('[id], [for]'))).forEach(function (n) { n.removeAttribute('id'); n.removeAttribute('for'); });
+    // радиокнопки копии — в своей группе, иначе копия снимет выбор у оригинала на странице компонента
+    [].forEach.call(c.querySelectorAll('input[type="radio"]'), function (n) { n.name += '-tile'; });
     return c;
   }
   function tileContent(t) {
@@ -1218,7 +1765,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   }
 
   // Иконки. Список собирает tools/icons/build.js: «Имя код шрифты» (1 — cbuc-icons, 2 — cbuc-icons24, 3 — оба)
-  var ICON_DATA = '1c e71f 3,1CBitrix eaf4 3,AbstrShape ec22 1,AccordionArrowDown e9d7 3,AccordionArrowUp e9d8 3,Actor eb29 3,Add e677 3,AddArea ec25 1,AddButton e694 3,AddButtonNew e95d 3,AddCaption ea5b 3,AddContact eb6b 3,AddForSectoinOfAccordion eb25 3,AddHost eafc 3,AddImage ebd2 1,Addition eae9 3,AdditionalConditions e72b 3,AddMapMarker eacd 3,AddNote e76e 3,Admin e676 3,Admin2 e760 3,Admin2off e906 3,AdminInfo ea4a 3,AdminOff ec48 1,AdvertisingArrow ea5d 3,AfterScrolling ec15 1,AfterScrollingNull ec16 1,Agent ea43 3,Agreed ea26 3,Album e90a 3,Alert e675 3,AlertNull ec42 1,AlignmentBottom e6ef 3,AlignmentCenter e6bf 3,AlignmentLeft e6c0 3,AlignmentMiddle e6f0 3,AlignmentRight e6c1 3,AlignmentTop e6f1 3,AlignmentWidth e6c2 3,AlignmentWidth2 e9fb 3,AllSeason ec07 1,AllSides ebce 1,AllSides2 ebff 1,AmoCrm eb1f 3,And e9ef 3,Android e769 3,Annul eac2 3,AnotherSignatureCenter e674 3,Answers e9ec 3,Antiseptic eb7f 3,ApplyChangesL eaf0 3,ApplyChangesR eaef 3,Arbitrarily eaae 3,Archive e6ec 3,AreaBlur eade 3,AreaGeom eb28 3,ArrangeColumns e6da 3,ArrangeLargeIcons1 e6db 3,ArrangeLargeIcons2 e6dc 3,ArrangeList e708 3,ArrangeList03 e995 3,ArrangeList04 e994 3,ArrangeList1 e6dd 3,ArrangeList2 e6de 3,ArrangeList3 e9c8 3,ArrangePreview e6df 3,ArrangeSmallIconsPreview e720 3,Arrow1730 e692 3,Arrow1730Null e715 3,ArrowBack eb9e 3,ArrowBig e9f3 3,ArrowDown e673 3,ArrowDownNull e716 3,ArrowTimeBackward e9d6 3,ArrowTimeDown eb95 3,ArrowTimeForward e9d5 3,ArrowTimeUp eb94 3,ArrowUp e672 3,ArrowUpNull e717 3,Asterisk eae0 3,Attach e671 3,Attach2 eb6c 3,AttentionProcessing ea55 3,Author e6f2 3,AutoIndent e9e3 3,AutoIndent2 eac1 3,Autonomcash ea2b 3,AutoNumbering ec2e 1,AutoTuning e9fa 3,Avito eafd 3,babyBoy eb9c 3,Back e69c 3,Back2 e97f 3,BackArrow eaf7 3,BAD eb92 3,Badge ea4c 3,Badges eb4d 3,BadToGood e670 3,Ball ec02 1,Bank ea93 3,Bankrupt ec6a 1,Barcode e925 3,Barcode2 ea99 3,BarcodeNon ea81 3,Baseline ebcf 1,Beauty ebac 3,bed ec1c 1,BeforeScrolling ec13 1,BeforeScrollingNull ec14 1,Bell e69b 3,BellCross eb4e 3,Bids e68c 3,BidUp e97b 3,BigRemark e9ea 3,BigRemarkNull e9f2 3,Bike eafe 3,Bill e66f 3,Birthday e6a4 3,Bluetooth ec74 1,Blur ec08 1,Bold e6c3 3,Bonus eb57 3,Bonus-EN eba8 3,Boolean eab0 3,Bottle eb4f 3,BringOneStepToBack ec2c 1,BringOneStepToFront ec2b 1,BtArrow eb60 3,Bug ea92 3,Bug-Fill ebf3 1,Bulb ea05 3,Burger ea90 3,Button eb7e 3,Calc e981 3,Calendar e6c4 3,Calendar2 e75f 3,Call eadf 3,CallButton ec78 1,CallGroup ead5 3,CallIncoming e68e 3,CallOutgoing e65f 3,CallSaby e99f 3,Cameras eaff 3,CapitalInvestment e74b 3,CarryDiscount e9bb 3,Cashbox e9cf 3,Cashbox2 ea3c 3,CashboxNon eab6 3,Catalog ea9a 3,Cause ea59 3,CbPlus e959 3,Celebration ea57 3,Certificate ebed 1,Champagne ea2c 3,Change ebd1 1,ChangeAccount e916 3,ChangeOfOwners ec64 1,ChangeSize eb2b 3,Chat e90f 3,ChatGPT ec17 1,Check e66e 3,Check2 e644 3,Check3 e76f 3,CheckDoc e66d 3,Checkreport eb5e 3,Chest e76b 3,Chibbis ec7a 1,Circle ec21 1,CircleGeom eb2c 3,CircleWIthGap ec23 1,Classifications e918 3,Client ea44 3,Client2 ea9b 3,ClientChat eb80 3,Clients ea9c 3,Close e66c 3,CloseCheck eb8e 3,CloseNew ea27 3,Cloud eb84 3,CloudControl e9f4 3,CloudKey2 e9b0 3,CloudKey2None e9af 3,CloudOff eb7a 3,CloudUser e9f9 3,CollapseExpand ea2f 3,CollapseLight e9a8 3,Colorize e664 3,ColorizeNone e907 3,ColorMarker ebb8 1,Column1 e9c7 3,Column2 e9c6 3,CommaSign eadc 3,CommercialSignature e66b 3,Company e66a 3,Company2 e91e 3,Compare ea3d 3,Confluence eb96 3,ConnectionPeriod e9eb 3,ConnectionPeriodNon ea94 3,ContactSearch e704 3,Contrast e9a4 3,Copy e669 3,CopyPhoto eac4 3,Courses eb7b 3,CreateFolder e668 3,CreateFolder2 eb61 3,Crop e6e0 3,CropPic ea1d 3,CrossBold ec36 1,CrossCircle ec38 1,CrossCircleFill ec37 1,Crown e9ee 3,CrownFill eb38 3,CrownNull eaba 3,CrownOff eabe 3,CurlyBrace ec24 1,currency-KZ eba4 3,currency-RU e6a3 3,currency-TM ec00 1,currency-UZ eba6 3,currencyNone-KZ eba5 3,currencyNone-RU e9cd 3,currencyNone-TM ec01 1,currencyNone-UZ eba7 3,currentCurrency e6a3 3,currentCurrencyNone e9cd 3,Curtail e67b 3,CurtailList e658 3,CurtailMessage e6f3 3,Cutlery ea1f 3,CZN eb2d 3,Date ebbc 1,DayBackward e667 3,DayBackwardNull e718 3,DayForward e666 3,DayForwardBsLine e770 3,DayForwardNull e719 3,Decline e665 3,DeepSeek ec19 1,Degradation e94d 3,Delete e663 3,Delete02 e92a 3,DeliveryClub eb58 3,DemonstrationScreen ead0 3,Desktop e90d 3,DesktopComplete e90b 3,DesktopOff e917 3,Detailed eb49 3,DetailList e71a 3,Dinner ec6f 1,Direction ec43 1,Directory e919 3,Discount e703 3,Discount2 ea9d 3,DiscountCard e71b 3,DiscountCardSale e98e 3,Discrepancies eb21 3,Division eae6 3,DK e691 3,DKEng e9e0 3,DKNone e640 3,DKNoneEng e9de 3,DkOff e800 3,Docsvision ea23 3,Document e661 3,DocumentBase e967 3,DocumentBaseNull eb59 3,DocumentNo eb51 3,DocumentP e6ff 3,DocumentTerm e67a 3,DocumentUnknownType e700 3,DocumentW e6e1 3,DocumentX e6e2 3,DocumentXml e6e3 3,DocumentXmlEdit e900 3,DocumentZip e6e4 3,Dollar e6d6 3,Dolyame ec7d 1,DoubleLeftArrow ebfa 1,DoubleRightArrow ebfb 1,Down e996 3,Download ec34 1,DownloadNew ea30 3,DownloadWithSignatures ec3e 1,dragHandle eba3 3,Drop ea51 3,Dwg ea36 3,EdaSakhalin ec7c 1,Edit e660 3,EditComment e60d 3,Edo e679 3,Edo2 e689 3,Egais e905 3,eGov ec0b 1,ElectronicSignature ec3f 1,Email e65e 3,EmailMark ea89 3,EmailNew ea32 3,Embed ebda 1,Eml eaad 3,EmoiconAngry e6a9 3,EmoiconAngryInvert e92d 3,EmoiconAnnoyed e6aa 3,EmoiconAnnoyedInvert eb91 3,EmoiconBlind e6ab 3,EmoiconCool e6ac 3,EmoiconCry e6ad 3,EmoiconDevil e6ae 3,EmoiconDumb e6af 3,EmoiconFacepalm e926 3,EmoiconInlove e6b0 3,EmoiconKiss e6b1 3,EmoiconLaugh e6b2 3,EmoiconLaughInvert e92f 3,EmoiconMoney e6b3 3,EmoiconNerd e6b4 3,EmoiconNeutral e6b5 3,EmoiconNeutralInvert eb90 3,EmoiconPuzzled e6b6 3,EmoiconRofl e6b7 3,EmoiconSad e6b8 3,EmoiconShocked e6b9 3,EmoiconShockedInvert e92e 3,EmoiconSmile e6ba 3,EmoiconSmileInvert eb8f 3,EmoiconSnooze e6bb 3,EmoiconTongue e6bc 3,EmoiconWink e6bd 3,EmoiconYawn e6be 3,EmptyFolderClosed e96c 3,EmptyFolderOpen e96b 3,EmptyMessage e65d 3,EmptyVideoMessage e6fb 3,Enter e927 3,EnterRight ea04 3,Eo e688 3,Eo2 e687 3,Equally eae8 3,Erase e65c 3,Erase1 eaeb 3,Eraser eaca 3,Euro e6d7 3,Evening ec67 1,Examined e946 3,Exclamation e65b 3,ExclamationCircle eb56 3,ExclamationNarrow ea67 3,Executor eaf8 3,Exit ec35 1,ExitAccount ea16 3,ExitMan eb88 3,Expand e686 3,ExpandDown e802 3,ExpandLight e9aa 3,ExpandList e67d 3,ExpandMessage e6f4 3,ExpandTable eb62 3,ExpandUp e801 3,eye eab9 3,EyeHide ec4a 1,EyeShow ec49 1,FaceID ec75 1,Favorite e65a 3,FavoriteHalf eb44 3,FileAccess eb6d 3,Fill e659 3,FillintheInformation ea0f 3,Filter e64f 3,FilterBig ea2d 3,FilterNew e94c 3,FilterSmall e9ac 3,Finger ea4d 3,Fire e657 3,First e980 3,Flag e656 3,FlipHorizontal ec27 1,FlipVertical ec28 1,Flower ec03 1,FNS eb2e 3,Folder e655 3,FolderClosed e96e 3,folderClosedMin eb8b 3,FolderIOS e99a 3,FolderOpen e96d 3,folderOpenMin eb8c 3,Food ec04 1,Footwear eb00 3,Forward e97e 3,ForwardBaseLine eac5 3,FromArchive e69d 3,FSRAR eb2f 3,FSS eb30 3,Fuel ec4f 1,FuelCard ec51 1,FullScrin e95f 3,FurCoat eb01 3,Fx e9f1 3,gasStation ea17 3,GenderM ec60 1,GenderW ec5f 1,GeoCluster e947 3,GeoMarker e948 3,GeoTags ec4e 1,GIF eb1b 3,Gif2 eb42 3,Gift eb7c 3,GigaChat ec79 1,Girl ec58 1,Gmail ea3b 3,GooglePlus e763 3,GoTo eb1c 3,Gradient eb9d 3,Group e92b 3,GroupCall ebb5 3,Groups e654 3,GroupTabsDown e9e6 3,GroupTabsLeft e9e4 3,GroupTabsRight e9e5 3,GroupTabsUp e9e7 3,Guy eb9a 3,Hand e721 3,HandHouse ec65 1,Handshake ea7f 3,Handwrite1 e653 3,Handwrite2 e652 3,HangUp eb52 3,HardDrive e705 3,HashSign eae4 3,Header1 ebd3 1,Header2 ebd4 1,Header3 ebd5 1,Header4 ebd6 1,Header5 ebd7 1,Header6 ebd8 1,HeaderBottom e922 3,HeaderColumn ebec 1,HeaderRow ebeb 1,HeaderTop e923 3,HeadHunter e9ae 3,Headphone ec4c 1,Headstone e76c 3,Health ebaf 3,HHNon ea14 3,Hide e651 3,HierarchyView e650 3,Hipster ec5c 1,Home e64e 3,Home2 e64c 3,Home3 e920 3,Home3BsLine eac6 3,HorizontalDirection ebcc 1,Html e6c5 3,HyperLink ebdc 1,Icq e64d 3,Iiko eaf3 3,Implementation ebad 3,IncomingCall ea60 3,IncomingCallNull ea8c 3,IncomingMail ea64 3,Info e64b 3,InGroup e99e 3,InputHistory e6a8 3,InSales eaf2 3,insertCellAfter e9b6 3,insertCellBefore e9b5 3,InsertCode ea88 3,insertRowNumber e9b8 3,InsertSpoiler ea47 3,insertTable e9b9 3,InsideBorders eaf5 3,Instagram ea56 3,InstagramLine eb3b 3,IntangibleAssets e74c 3,InternationalArrow ea5c 3,Interview e9a6 3,Inventory ec3b 1,Invoice e9f5 3,invoiceLinear ec52 1,invoiceLinearOff ec53 1,iOS e76a 3,IPmask e64a 3,Italic e6c6 3,Jira ebea 1,Kanban eb8d 3,Key e9c5 3,keyWord ec2f 1,Kitchen ebaa 3,Knowledge ebb2 3,KnowledgeBase eb81 3,KPI eb82 3,Kuper ec7b 1,labelJumping ec10 1,labelLeft ec0e 1,labelTop ec0f 1,Languages eba0 3,Last e97d 3,Layers ebf9 1,Layout ebba 1,Ldap ea11 3,LDAPnew ea50 3,Lead e6f5 3,LeftSidebar ebbe 1,Lenta eb45 3,LessButton e6d4 3,LetterA e678 3,LetterN e979 3,LetterNull eab8 3,LetterP eabb 3,LetterY eabc 3,LevelAverage ea73 3,LevelCritical ea75 3,LevelHigh ea74 3,LevelLow ea72 3,Library ebb1 3,LightIndustry eb02 3,Lightning ea0b 3,Line e999 3,lineGraph ec0d 1,Link e6a7 3,Linked e649 3,Listbox e6d8 3,ListboxNull ea3a 3,ListboxrRflection e9db 3,ListMarked e6c7 3,ListNumbered e6c8 3,ListView e648 3,ListViewNew ea28 3,LLink ebdf 1,Location eb31 3,Lock e647 3,LockIn ea1b 3,LockOK e95c 3,LogoFacebook e722 3,LogoGosUslugi ea0e 3,LogoLinkedIn e723 3,logoMax ec0c 1,LogoMoiKrug e724 3,LogoMoiMir e725 3,LogoOk e728 3,LogoTelegram eb3a 3,LogoVk e727 3,LogoX e726 3,LongList e961 3,Lotus ec69 1,Love ea83 3,LoveHalf ebd0 1,LoveNull ea82 3,Lunch eb87 3,MagicWand e998 3,Mail e646 3,MailIncoming e6e5 3,MailLetter eace 3,MailOutgoing e6e6 3,Man ec59 1,ManWithHat ec5a 1,ManyDocuments ea39 3,Map e645 3,MapMarker e928 3,MapMarkerBig ea95 3,MapMarkerNull ea52 3,MarkCLeftLight e9a9 3,MarkCollapseBold e9bf 3,MarkCRightLight e9ab 3,MarkExpandBold e9c1 3,MarkExpandBoldMin eb8a 3,Marking eaf6 3,MarkLeftBold e9c0 3,markList1 ebe2 1,markList2 ebe3 1,markList3 ebe4 1,markList4 ebe5 1,markList5 ebe6 1,markList6 ebe7 1,markList7 ebe8 1,markList8 ebe9 1,MarkRightBold e9c2 3,MarkRightBoldMin eb89 3,Master e643 3,MedicalCase e72d 3,MedicalDevice eb93 3,Medicines eb03 3,Megaphone e69a 3,MegaphoneMan e699 3,MegaphoneNull e95a 3,MegaphoneOff e99b 3,Megaplan eb20 3,MenuAk ea98 3,Mercury ea34 3,MergeCells eb0d 3,MergeCells2 e9b2 3,Message2 e642 3,MessageWithArrow ec44 1,Microphone e706 3,Microphone1 eae1 3,MicrophoneNull e9b1 3,MicrophoneOff e90c 3,MilkProducts eb04 3,Minus eb6e 3,MixPayment ea0d 3,MixPayment1 ea9f 3,MixPaymentButton ea9e 3,MLink ebde 1,Model ec5d 1,Money e641 3,MoneyOk e95b 3,MoneyPrice ea38 3,MoreButton e6d5 3,Morning ec66 1,Motion e96f 3,MotivationCup ec72 1,Move e63f 3,Move2 e63e 3,MoveCellAbove eb17 3,MoveCellBelow eb18 3,MoveCellLeft eb19 3,MoveCellRight eb1a 3,MoveTableCell eb16 3,MP4 eb1d 3,multiline ec12 1,Multiplication eaec 3,MVD eb32 3,Nail ec70 1,NewCategory e63d 3,newChat ec45 1,News eb33 3,NewSmile eb6f 3,NewTab e63c 3,NewTask ec3c 1,Next e6d9 3,NextStep ebf5 1,NFC ebf0 1,Night ec68 1,NodeCurtailed e6d3 3,NodeExpanded e6d2 3,NoDocument e991 3,NoMoney ea35 3,Noone ec5e 1,NoPlan eb63 3,NoteIncluded ea87 3,NoteOff ea86 3,Notes e91f 3,NotesDoc ea42 3,NotesFill e9ce 3,NotForPrint eb39 3,NotificationBig ea5a 3,NotUpdatable ea4f 3,Number eaaf 3,Numbering ec2d 1,ObscureArea eac8 3,OCR e803 3,Odometer ec50 1,Offline e9bc 3,OnAgreement ea25 3,OpenedFolder e63a 3,Opening eb85 3,Or e9f0 3,osChrome eb46 3,osFirefox eb47 3,osJava eb48 3,osLinux eb4a 3,osMac eb4b 3,osWindows eb4c 3,OutgoingCall ea61 3,OutgoingCallNull ea8d 3,OutgoingMail ea65 3,OutGroup e99d 3,OutHotel e765 3,Oval e960 3,Pacifier e63b 3,PacifierCross eb05 3,Pack e6f6 3,Pack2 e91c 3,Pack3 eb1e 3,Package ea96 3,Packages ec55 1,PageBreaks e921 3,PageNumber ea49 3,pAlignCenter ea7a 3,pAlignLeft ea76 3,pAlignRight ea7b 3,pAlignWidth ebb7 1,paperBox ec54 1,PartiallyReady e72c 3,Paste e6fd 3,PasteAsText e71e 3,PasteBtr e9a1 3,PasteCodeBtr e9a2 3,PasteQuotesBtr e9a0 3,PasteStyle e768 3,PasteTextLetter e6e7 3,Patent ec3d 1,PatternsPoints e91a 3,Pause e639 3,Pause1 eae2 3,PauseCall ebb6 3,Pay eaa0 3,Payment e696 3,PaymentCard eaa2 3,PaymentCardButton eaa1 3,PaymentCash eaa4 3,PaymentCashButton eaa3 3,PaymentPart e695 3,PaymentPart2 ea2a 3,PaymentPartSend ea06 3,PaymentSalary eaa6 3,PaymentSalaryButton eaa5 3,pBringToFront ea7d 3,PDF e67c 3,Pedicure ec71 1,Pencil eac7 3,Percent eae7 3,Perfume eb06 3,Periodicity ebb3 3,PermittedBuyers e684 3,PermittedGoods e683 3,PermittedRegions e682 3,Pets ec6b 1,PF eb34 3,pGrid ea80 3,Phone e638 3,PhoneCAM e98f 3,PhoneCell e637 3,PhoneCellHorizontal ebf8 1,PhoneCompany ea29 3,PhoneContact e978 3,PhoneCrash e966 3,PhoneDial eacc 3,PhoneDown e914 3,PhoneFax e977 3,PhoneGetAutomatically e624 3,PhoneGetManually e615 3,PhoneHome e976 3,PhoneMes e975 3,PhoneMissed e965 3,PhoneNull e636 3,PhoneNumber e974 3,PhonePause e973 3,PhoneUnanswered e964 3,PhoneVariable e971 3,PhoneWork e635 3,PhoneWWW e990 3,Photo e6ed 3,PicAlignJustify ec09 1,PicAlignLeft ec05 1,PicAlignRight ec06 1,PicBtr e9a3 3,PicCenter e9ff 3,PicInTheText ea53 3,PicLeft e9fe 3,PicLeftT e9fd 3,PicOverTheText ea54 3,PicRight e9fc 3,Picture e6c9 3,Pin e630 3,Pin2 e930 3,PinCode e9c4 3,PinNull e97c 3,PinOff ea09 3,Pipe eb53 3,Pizza ec6e 1,placeholder ec11 1,PlayBack eac0 3,PlayForward eabf 3,PlaySound e99c 3,Plus ea48 3,Plus2 eb64 3,Polyline ec1e 1,Preferment e634 3,Presto e701 3,Preview eab3 3,Price e9d4 3,Print e633 3,PrintForm e9f8 3,Process eba2 3,Processing eb83 3,ProductsDownload ea20 3,Profile e632 3,Profile2 e91d 3,Promokod eb7d 3,Property e74d 3,pSendToBack ea7c 3,pTable ea77 3,pToPave ea78 3,pToStretch ea79 3,Publish2 e631 3,PublishedForMe ebb4 3,PUnanswered e972 3,Purchases ead9 3,QR e915 3,Question eb3c 3,Question2 e68b 3,QuestionNew e9c9 3,Queue eb3d 3,Quote e6e8 3,QuoteWidget ebd9 1,Qwen ec1a 1,R e9ed 3,RebuildWithDebugging eb22 3,Rec e9da 3,RecalculationOfPrices ea10 3,Received e62e 3,Received2 e62d 3,Rectangle e94e 3,Redirect eae3 3,Redo e6a1 3,Redo2 e6ca 3,ReduceButton e702 3,Refresh e62c 3,RefusedAgency e72e 3,RefusedOperator e72f 3,RelatedDocumentsDown ea07 3,RelatedDocumentsUp ea08 3,Remark e9be 3,RemarkNull e9bd 3,RemoteConnection ead7 3,RemoveAdd e766 3,removeCell e9b7 3,Rename e698 3,Reply ea2e 3,Report e62b 3,Reports eba9 3,RequestScreen eacf 3,Resend e62a 3,Resources e74e 3,Responsible e6f7 3,Responsible2 e767 3,Restore e629 3,RightAngle ec1f 1,RightSidebar ebbf 1,Ring eb78 3,Roaming e707 3,Robot eb74 3,RotateLeft ec2a 1,RotateRight ec29 1,RoundAngle ec20 1,RoundPlus eadd 3,RPN eb35 3,Ruler ec6d 1,Russian eb86 3,Saby e98c 3,SabyBird e9e2 3,SabyCloud e9dd 3,SabyCloudInside eb97 3,SabyCloudOutside eb98 3,SabyCloudRefresh eb99 3,SabyDisk e901 3,Sabydoc ebf1 1,SabyEng e9e1 3,Sabyscheme ebf2 1,Safari ec73 1,Safe ec57 1,Salary e9e9 3,Salepoint eab2 3,Sandclock e68f 3,SAP e904 3,Save e628 3,SaveAs e627 3,SaveAs2 ebf4 1,Scale e94f 3,ScaleOriginal eacb 3,Scan e626 3,ScanerAddPhoto ec4b 1,Scanner ea00 3,ScanSave e625 3,Scissors e969 3,ScrollToTop eb75 3,Search e623 3,Search2 e662 3,Search3 eaa7 3,Seen e622 3,SelectArea ea1e 3,SelectGeotag eb65 3,SelfPin e621 3,SelfVacation e620 3,Sell eaa8 3,Send e61f 3,SendLetter eb50 3,Sent e61e 3,Sent2 e61d 3,Sent3 e908 3,SentBig eaac 3,SentNot ea63 3,SentOff ead6 3,separateHorizontal e9b4 3,separateVertical e9b3 3,ServerKey e61c 3,Service ea4e 3,ServiceArrow ea5e 3,ServiceDuble ea71 3,ServiceHorizontal ebee 1,Settings e61b 3,Settings2 eaa9 3,SettingsNew e9d9 3,Shadow e9a5 3,Share e61a 3,shareMobile ec31 1,Shield eb76 3,Ship e9ca 3,Shipment e9f6 3,ShipmentPartial e9f7 3,Shop ea5f 3,ShortList e962 3,Show e619 3,ShowBig ea19 3,ShowControl e968 3,showVideo ec62 1,showVideoOff ec63 1,Shteker ea58 3,Sick e618 3,SickAuto eb3e 3,Signature e68a 3,SignatureBird ea85 3,SignatureBirdNone ea84 3,SignatureGosKey eb9f 3,SignatureNone e74a 3,SignaturePhone eb26 3,SignaturePhoneNone eb27 3,SignChange eaea 3,SJNon ea15 3,Skeleton e76d 3,Skype e617 3,SLink ebdd 1,SmileBtr e9a7 3,SMS ec46 1,Snow e970 3,SortByAmount ea97 3,SortByDiv eb3f 3,SortByOrder eb40 3,Sorting e909 3,SortingEng e9df 3,SortingNumber ea66 3,SortingStandard eb66 3,SoundMax e90e 3,SoundMidi e910 3,SoundMini e911 3,SoundOff e912 3,SoundOff1 eb67 3,SoundOn eb68 3,Space ea33 3,SplitCellHorizontally eb13 3,SplitCellVertically eb10 3,Square ea12 3,Squarefilled ea13 3,SquareGeom eb36 3,StandardAlgorithm ebf6 1,STAT eb37 3,Statement ea7e 3,Statistics e91b 3,statusAffairs e940 3,statusCars e945 3,statusCatches e935 3,statusCaution e943 3,statusCoffee e936 3,statusConnected e94a 3,statusConsultant e942 3,statusDeparted e94b 3,statusDictates e93c 3,statusDisease e93b 3,statusDisturb e949 3,statusDraws e932 3,statusDrips e944 3,statusFarmer e933 3,statusGymnast e931 3,statusMeditation e941 3,statusPlan e93f 3,statusPresident e93a 3,statusPromenade e938 3,statusSleeps e93e 3,statusStretching ec61 1,statusSun e937 3,statusTable e93d 3,statusThinks e934 3,statusTime e939 3,Sticker eb43 3,Stroked e6cb 3,Style ebbb 1,Subjects eba1 3,Subscribe e9d2 3,SubtractArea ec26 1,Subtraction eae5 3,Successful e616 3,Successful2 e92c 3,SuccessfulDocument ea45 3,Successfully ea46 3,SuccessfulNon eab1 3,Sum e614 3,Superjob e9ad 3,Support ebb0 3,Surveyor e613 3,Surveyors e612 3,SvMax ea40 3,SvMini ea41 3,SvNarrow ea3f 3,SvWide ea3e 3,SwipeMenu eab4 3,SystemAlgorithm ebf7 1,Table e6cc 3,TableAddLeft e953 3,TableAddRight e952 3,TableArrowLeft ec32 1,TableArrowRight ec33 1,TableCell eb0c 3,TableColumn eb0a 3,TableContourLeft ec39 1,TableContourRight ec3a 1,TableCreate e958 3,TableDelete e957 3,TableDeleteCell eb14 3,TableDeleteColumn e951 3,TableDeleteRow e954 3,TableFullLeft ec40 1,TableFullRight ec41 1,TableInsertAbove e956 3,TableInsertBelow e955 3,TableMoveAbove eb12 3,TableMoveBelow eb0f 3,TableMoveLeft eb11 3,TableMoveRight eb0e 3,TableRow eb0b 3,TableRowSettings eb15 3,TableScheme eb5a 3,TableSetting e950 3,Tablet ebbd 1,TabsWidget ebdb 1,Tag ea18 3,TakePhoto eb77 3,Target ebab 3,Telecommunications eb70 3,Telegram ea03 3,TelephoneNull ea8e 3,TemplateNews1 e985 3,TemplateNews2 e993 3,TemplateNews3 e992 3,TemplateNews4 e987 3,TemplateNews5 e986 3,TemplateNews6 e988 3,TemplateNews7 e98b 3,TemplateNews8 e98a 3,TemplateNews9 e989 3,Text eac9 3,TextColor e6cd 3,TextSettings e761 3,TFAdjustmentReport e729 3,TFAttach e74f 3,TFCloudKey e750 3,TFComputer e730 3,TFComputerCross eb54 3,TFComputerPlagin eb55 3,TFCurtailRTE e751 3,TFCurtailRTE2 e764 3,TFDelete e752 3,TFDesktop e731 3,TFDialogue e75c 3,TFDocStamp ea8f 3,TFDocument e732 3,TFDocumentINI eaf9 3,TFDocumentLnk eb23 3,TFDocumentMP4 e9cb 3,TFDocumentNon e9dc 3,TFDocumentODS e9cc 3,TFDocumentP e733 3,TFDocumentPDF e734 3,TFDocumentPY eafa 3,TFDocumentSQL eafb 3,TFDocumentUnknownType e735 3,TFDocumentVsdx e9d0 3,TFDocumentW e736 3,TFDocumentX e737 3,TFDocumentXML eab7 3,TFDocumentXML2 e738 3,TFDownload e739 3,TFEmployees e753 3,TFEmployees-Fill ebef 1,TFExpand e73a 3,TFExpandRTE e754 3,TFFavorite e73b 3,TFFileAudio e73c 3,TFFileVideo e73d 3,TFFolder e73e 3,TFFolder2 e73f 3,TFFolder2Opened eb41 3,TFFollow e740 3,TFForward e755 3,TFImage e72a 3,TFList e741 3,TFList2 e742 3,TFlist3 eac3 3,TFLocalDrive e743 3,TFMessage e756 3,TFMyDocuments e757 3,TFNetwork e744 3,TFNetworkDrive e745 3,TFNewTab e746 3,TFPreview e747 3,TFPreview2 e748 3,TFSettings e75d 3,TFTask e758 3,TFUSBDrive e759 3,TFUSBKey e75a 3,TFVideoMessage e75b 3,TFZip e749 3,TheBordersBottom ead1 3,TheBordersLeft ead4 3,TheBordersOnTop ead3 3,TheBordersRight ead2 3,TheNote e9d3 3,ThreeColumns eaed 3,ThresholdConditions e680 3,ThumbDown e611 3,ThumbDown2 e610 3,ThumbDownBig ea22 3,ThumbUp e60f 3,ThumbUp2 e60e 3,ThumbUpBig ea21 3,ThumbUpPlus ea0c 3,TileDownSide ebc4 1,TileHorizontalCenter ebc5 1,TileHorizontalStretch ebca 1,TileLeftSide ebc2 1,TileRightSide ebc1 1,TileSpaceAround ebc8 1,TileSpaceBetween ebc7 1,TileSpaceEvenly ebc9 1,TileUpSide ebc3 1,TileVerticalCenter ebc6 1,TileVerticalSpaceAround ebfd 1,TileVerticalSpaceBetween ebfc 1,TileVerticalSpaceEvenly ebfe 1,TileVerticalStretch ebcb 1,Time e68d 3,TimeFill ec47 1,TimeHistory e9c3 3,TimeHistoryMirror ea1a 3,TimeOff e963 3,TimeOK e9ba 3,TimeSkinny eb5b 3,Tires eb07 3,ToApprove ea24 3,ToArchive e697 3,Tobacco eb08 3,ToTheBegining ea0a 3,Trade e60c 3,Trade2 eb71 3,TransitionFrom e982 3,TransitionTo e983 3,Trash-bucket eb72 3,TreeClosed ea8b 3,TreeOpen ea8a 3,TreeView e60b 3,TrendDown e71c 3,TrendUp e71d 3,Tribunal ebae 3,Truck e6a5 3,Truck2 eb73 3,TruckHalf e690 3,TurnL e60a 3,TurnList e97a 3,TurnR e609 3,TurnstileIn e6f8 3,TurnstileOut e6f9 3,TwoColumns eaee 3,TwoForOne eb69 3,TypeApi ec0a 1,TypeArray ea6d 3,TypeBool ea6a 3,TypeDate ea68 3,TypeNum ea6c 3,TypeObject ea6e 3,TypeStr ea6b 3,TypeVoid ea69 3,UDS eb24 3,Underline e6ce 3,Undo e608 3,Undo2 e6cf 3,Unfavorite e607 3,UnFullScrin e95e 3,Unite e6fa 3,Unlink e6d0 3,Unloading ec30 1,UnloadNew ea31 3,Unlock e606 3,UnPublish e62f 3,UnSubscribe e9d1 3,Unsuccess e605 3,Up e997 3,UpDown ea62 3,Upload e604 3,UploadYourself ea6f 3,UsbKey e603 3,USBKey2 eab5 3,UseCase eb2a 3,Vacation e602 3,VacationNull e96a 3,ValidityPeriod e67f 3,Vape eb79 3,VerticalDirection ebcd 1,Viber ea02 3,VideoCall e693 3,VideoCall2 e929 3,VideoCallIncoming e69f 3,VideoCallNull e6a0 3,VideoCallOff e913 3,VideoCallOutgoing e69e 3,VideoGroup e98d 3,VideoLink e924 3,VideoMeeting ec1b 1,VideoMessage e6fc 3,View e6a2 3,ViewBack e789 3,Vkrugu e762 3,VoiceMenu e984 3,Volume ec56 1,WaitingSignature ea37 3,Wallet e601 3,WaterSign ead8 3,Way ea70 3,Web eb5c 3,Webasyst eaf1 3,WebCamera e6ee 3,WeekBackward e685 3,WeekDown e903 3,WeekForward e681 3,WeekUp e902 3,WeigherOff eadb 3,WeigherOn eada 3,Weight ec6c 1,WhatsUp ea01 3,Wheelchair eb09 3,Whiteboard eabd 3,Wi e6a6 3,WideArrow ec1d 1,Widget ebb9 1,WidgetShop ea91 3,WiFi e600 3,WifiOff ec4d 1,Woman eb9b 3,WomanWithHat ec5b 1,Work e9e8 3,Workers eaaa 3,WorkForAll ea1c 3,WorkInFocus e67e 3,WorkRead e6eb 3,WorkRussia eb6a 3,Writemessage eb5f 3,WWW e6d1 3,XLLink ebe0 1,XLLinkHeader ebe1 1,Yandex ea4b 3,YandexEda eb5d 3,YandexGPT ec18 1,Yes e75e 3,You e6fe 3,Youtube eaab 3,ZodiacSignAquarius e709 3,ZodiacSignAries e70a 3,ZodiacSignCancer e70b 3,ZodiacSignCapricorn e70c 3,ZodiacSignGemini e70d 3,ZodiacSignLeo e70e 3,ZodiacSignLibra e70f 3,ZodiacSignPisces e710 3,ZodiacSignSagittarius e711 3,ZodiacSignScorpio e712 3,ZodiacSignTaurus e713 3,ZodiacSignVirgo e714 3,ZoomIn e6e9 3,ZoomOut e6ea 3';
+  var ICON_DATA = '1c e71f 3,1CBitrix eaf4 3,3D eca3 3,AbstrShape ec22 3,AccordionArrowDown e9d7 3,AccordionArrowUp e9d8 3,Actor eb29 3,Add e677 3,AddArea ec25 3,AddButton e694 3,AddButtonNew e95d 3,AddCaption ea5b 3,AddContact eb6b 3,AddForSectoinOfAccordion eb25 3,AddHost eafc 3,AddImage ebd2 3,Addition eae9 3,AdditionalConditions e72b 3,AddMapMarker eacd 3,AddMember ec98 3,AddNote e76e 3,Admin e676 3,Admin2 e760 3,Admin2off e906 3,AdminInfo ea4a 3,AdminOff ec48 3,AdvertisingArrow ea5d 3,AfterScrolling ec15 3,AfterScrollingNull ec16 3,Agent ea43 3,Agreed ea26 3,Airplane ec8e 3,Album e90a 3,Alert e675 3,AlertNull ec42 3,AlignmentBottom e6ef 3,AlignmentCenter e6bf 3,AlignmentLeft e6c0 3,AlignmentMiddle e6f0 3,AlignmentRight e6c1 3,AlignmentTop e6f1 3,AlignmentWidth e6c2 3,AlignmentWidth2 e9fb 3,AllSeason ec07 3,AllSides ebce 3,AllSides2 ebff 3,AmoCrm eb1f 3,And e9ef 3,Android e769 3,Annul eac2 3,AnotherSignatureCenter e674 3,Answers e9ec 3,Antiseptic eb7f 3,ApplyChangesL eaf0 3,ApplyChangesR eaef 3,Arbitrarily eaae 3,Archive e6ec 3,AreaBlur eade 3,AreaGeom eb28 3,ArrangeColumns e6da 3,ArrangeLargeIcons1 e6db 3,ArrangeLargeIcons2 e6dc 3,ArrangeList e708 3,ArrangeList03 e995 3,ArrangeList04 e994 3,ArrangeList1 e6dd 3,ArrangeList2 e6de 3,ArrangeList3 e9c8 3,ArrangePreview e6df 3,ArrangeSmallIconsPreview e720 3,Arrow1730 e692 3,Arrow1730Null e715 3,ArrowBack eb9e 3,ArrowBig e9f3 3,ArrowDown e673 3,ArrowDownNull e716 3,ArrowTimeBackward e9d6 3,ArrowTimeDown eb95 3,ArrowTimeForward e9d5 3,ArrowTimeUp eb94 3,ArrowUp e672 3,arrowUpLeft ec7e 3,ArrowUpNull e717 3,Asterisk eae0 3,Attach e671 3,Attach2 eb6c 3,Attention2 ecb5 3,Attention3 ecb6 3,AttentionAverage ecb7 3,AttentionHigh ecb8 3,AttentionProcessing ea55 3,Author e6f2 3,AutoIndent e9e3 3,AutoIndent2 eac1 3,Autonomcash ea2b 3,AutoNumbering ec2e 3,AutoTuning e9fa 3,Avito eafd 3,babyBoy eb9c 3,BabyGirl ec99 3,Back e69c 3,Back2 e97f 3,BackArrow eaf7 3,Backspace ecb1 3,BAD eb92 3,Badge ea4c 3,Badges eb4d 3,BadToGood e670 3,Ball ec02 3,Bank ea93 3,Bankrupt ec6a 3,Barcode e925 3,Barcode2 ea99 3,BarcodeNon ea81 3,BarcodeScan ecab 3,Baseline ebcf 3,Beauty ebac 3,bed ec1c 3,BeforeScrolling ec13 3,BeforeScrollingNull ec14 3,Bell e69b 3,BellCross eb4e 3,BellFill ec87 3,Bids e68c 3,BidUp e97b 3,BigRemark e9ea 3,BigRemarkNull e9f2 3,Bike eafe 3,Bill e66f 3,Birthday e6a4 3,Bluetooth ec74 3,Blur ec08 3,Bold e6c3 3,Bonus eb57 3,Bonus-EN eba8 3,Boolean eab0 3,Bottle eb4f 3,BringOneStepToBack ec2c 3,BringOneStepToFront ec2b 3,BtArrow eb60 3,Bug ea92 3,Bug-Fill ebf3 3,Bulb ea05 3,Burger ea90 3,Button eb7e 3,Calc e981 3,Calendar e6c4 3,Calendar2 e75f 3,CalendarEdit eca5 3,CalendarLine ecb4 3,Call eadf 3,CallButton ec78 3,CallGroup ead5 3,CallIncoming e68e 3,CallOutgoing e65f 3,CallSaby e99f 3,Cameras eaff 3,CapitalInvestment e74b 3,Car ec8f 3,CarryDiscount e9bb 3,Cashbox e9cf 3,Cashbox2 ea3c 3,CashboxNon eab6 3,Catalog ea9a 3,Cause ea59 3,CbPlus e959 3,CBRF ecb0 3,Celebration ea57 3,Certificate ebed 3,Champagne ea2c 3,Change ebd1 3,ChangeAccount e916 3,ChangeOfOwners ec64 3,ChangeSize eb2b 3,Chat e90f 3,ChatGPT ec17 3,Check e66e 3,Check2 e644 3,Check3 e76f 3,CheckDoc e66d 3,Checkreport eb5e 3,Chest e76b 3,Chibbis ec7a 3,Circle ec21 3,CircleGeom eb2c 3,CircleWIthGap ec23 3,Classifications e918 3,Client ea44 3,Client2 ea9b 3,Client2Null ec97 3,ClientChat eb80 3,Clients ea9c 3,Close e66c 3,CloseCheck eb8e 3,CloseNew ea27 3,Cloud eb84 3,CloudControl e9f4 3,CloudKey2 e9b0 3,CloudKey2None e9af 3,CloudOff eb7a 3,CloudUser e9f9 3,CollapseExpand ea2f 3,CollapseLight e9a8 3,Colorize e664 3,ColorizeNone e907 3,ColorMarker ebb8 3,Column1 e9c7 3,Column2 e9c6 3,CommaSign eadc 3,CommercialSignature e66b 3,Company e66a 3,Company2 e91e 3,Compare ea3d 3,Confluence eb96 3,ConnectionPeriod e9eb 3,ConnectionPeriodNon ea94 3,ContactSearch e704 3,Container ecaa 3,ContainerFill eca9 3,Contrast e9a4 3,Copy e669 3,CopyPhoto eac4 3,Courses eb7b 3,CreateFolder e668 3,CreateFolder2 eb61 3,Crop e6e0 3,CropPic ea1d 3,CrossBold ec36 3,CrossCircle ec38 3,CrossCircleFill ec37 3,Crown e9ee 3,CrownFill eb38 3,CrownNull eaba 3,CrownOff eabe 3,CurlyBrace ec24 3,currency-KZ eba4 3,currency-RU e6a3 3,currency-TM ec00 3,currency-UZ eba6 3,currencyNone-KZ eba5 3,currencyNone-RU e9cd 3,currencyNone-TM ec01 3,currencyNone-UZ eba7 3,currentCurrency e6a3 3,currentCurrencyNone e9cd 3,Curtail e67b 3,CurtailList e658 3,CurtailMessage e6f3 3,Cutlery ea1f 3,CZN eb2d 3,dashedLine ecb9 3,Date ebbc 3,DayBackward e667 3,DayBackwardNull e718 3,DayForward e666 3,DayForwardBsLine e770 3,DayForwardNull e719 3,Decline e665 3,DeepSeek ec19 3,Degradation e94d 3,Delete e663 3,Delete02 e92a 3,DeliveryClub eb58 3,DemonstrationScreen ead0 3,Desktop e90d 3,DesktopComplete e90b 3,DesktopOff e917 3,Detailed eb49 3,DetailList e71a 3,DigitalCurrency eca6 3,Dinner ec6f 3,DinnerTable eca1 3,DinnerTableFill eca2 3,Direction ec43 3,Directory e919 3,Discount e703 3,Discount2 ea9d 3,DiscountCard e71b 3,DiscountCardSale e98e 3,Discrepancies eb21 3,Division eae6 3,DK e691 3,DKEng e9e0 3,DKNone e640 3,DKNoneEng e9de 3,DkOff e800 3,Docsvision ea23 3,Document e661 3,DocumentBase e967 3,DocumentBaseNull eb59 3,DocumentNo eb51 3,DocumentP e6ff 3,DocumentTerm e67a 3,DocumentUnknownType e700 3,DocumentW e6e1 3,DocumentX e6e2 3,DocumentXml e6e3 3,DocumentXmlEdit e900 3,DocumentZip e6e4 3,Dollar e6d6 3,Dolyame ec7d 3,dottedLine ecba 3,DoubleLeftArrow ebfa 3,DoubleRightArrow ebfb 3,Down e996 3,Download ec34 3,DownloadNew ea30 3,DownloadWithSignatures ec3e 3,dragHandle eba3 3,Drop ea51 3,Dwg ea36 3,EdaSakhalin ec7c 3,Edit e660 3,EditComment e60d 3,Edo e679 3,Edo2 e689 3,Egais e905 3,eGov ec0b 3,ElectronicSignature ec3f 3,Email e65e 3,EmailMark ea89 3,EmailNew ea32 3,Embed ebda 3,Eml eaad 3,EmoiconAngry e6a9 3,EmoiconAngryInvert e92d 3,EmoiconAnnoyed e6aa 3,EmoiconAnnoyedInvert eb91 3,EmoiconBlind e6ab 3,EmoiconCool e6ac 3,EmoiconCry e6ad 3,EmoiconDevil e6ae 3,EmoiconDumb e6af 3,EmoiconFacepalm e926 3,EmoiconInlove e6b0 3,EmoiconKiss e6b1 3,EmoiconLaugh e6b2 3,EmoiconLaughInvert e92f 3,EmoiconMoney e6b3 3,EmoiconNerd e6b4 3,EmoiconNeutral e6b5 3,EmoiconNeutralInvert eb90 3,EmoiconPuzzled e6b6 3,EmoiconRofl e6b7 3,EmoiconSad e6b8 3,EmoiconShocked e6b9 3,EmoiconShockedInvert e92e 3,EmoiconSmile e6ba 3,EmoiconSmileInvert eb8f 3,EmoiconSnooze e6bb 3,EmoiconTongue e6bc 3,EmoiconWink e6bd 3,EmoiconYawn e6be 3,EmptyFolderClosed e96c 3,EmptyFolderOpen e96b 3,EmptyMessage e65d 3,EmptyVideoMessage e6fb 3,Enter e927 3,EnterAccount ec9a 3,EnterMan ec9c 3,EnterRight ea04 3,Eo e688 3,Eo2 e687 3,Equally eae8 3,Erase e65c 3,Erase1 eaeb 3,Eraser eaca 3,Euro e6d7 3,Evening ec67 3,Examined e946 3,Exclamation e65b 3,ExclamationCircle eb56 3,ExclamationNarrow ea67 3,Executor eaf8 3,Exit ec35 3,ExitAccount ea16 3,ExitMan eb88 3,Expand e686 3,ExpandDown e802 3,ExpandLight e9aa 3,ExpandList e67d 3,ExpandMessage e6f4 3,ExpandTable eb62 3,ExpandUp e801 3,eye eab9 3,EyeHide ec4a 3,EyeOff ec86 3,EyeShow ec49 3,FaceID ec75 3,Favorite e65a 3,FavoriteHalf eb44 3,FileAccess eb6d 3,Fill e659 3,FillintheInformation ea0f 3,Filter e64f 3,FilterBig ea2d 3,FilterNew e94c 3,FilterSmall e9ac 3,Finger ea4d 3,Fire e657 3,First e980 3,Flag e656 3,FlipHorizontal ec27 3,FlipVertical ec28 3,Flower ec03 3,FNS eb2e 3,Folder e655 3,FolderClosed e96e 3,folderClosedMin eb8b 3,FolderIOS e99a 3,FolderOpen e96d 3,folderOpenMin eb8c 3,Food ec04 3,Footwear eb00 3,Forward e97e 3,ForwardBaseLine eac5 3,FromArchive e69d 3,FSRAR eb2f 3,FSS eb30 3,Fuel ec4f 3,FuelCard ec51 3,FullScrin e95f 3,FurCoat eb01 3,Fx e9f1 3,gasStation ea17 3,GenderM ec60 3,GenderW ec5f 3,GeoCluster e947 3,GeoMarker e948 3,GeoTags ec4e 3,GIF eb1b 3,Gif2 eb42 3,Gift eb7c 3,GigaChat ec79 3,Girl ec58 3,Gmail ea3b 3,GooglePlus e763 3,GoTo eb1c 3,Gradient eb9d 3,Group e92b 3,GroupCall ebb5 3,Groups e654 3,GroupTabsDown e9e6 3,GroupTabsLeft e9e4 3,GroupTabsRight e9e5 3,GroupTabsUp e9e7 3,Guy eb9a 3,Hand e721 3,HandHouse ec65 3,Handshake ea7f 3,Handwrite1 e653 3,Handwrite2 e652 3,HangUp eb52 3,HardDrive e705 3,HashSign eae4 3,Header1 ebd3 3,Header2 ebd4 3,Header3 ebd5 3,Header4 ebd6 3,Header5 ebd7 3,Header6 ebd8 3,HeaderBottom e922 3,HeaderColumn ebec 3,HeaderRow ebeb 3,HeaderTop e923 3,HeadHunter e9ae 3,Headphone ec4c 3,Headstone e76c 3,Health ebaf 3,HHNon ea14 3,Hide e651 3,HierarchyView e650 3,Hipster ec5c 3,Home e64e 3,Home2 e64c 3,Home3 e920 3,Home3BsLine eac6 3,HorizontalDirection ebcc 3,Html e6c5 3,HyperLink ebdc 3,Icq e64d 3,Iiko eaf3 3,Implementation ebad 3,IncomingCall ea60 3,IncomingCallNull ea8c 3,IncomingMail ea64 3,Info e64b 3,infoFill ec82 3,InGroup e99e 3,InputHistory e6a8 3,InSales eaf2 3,insertCellAfter e9b6 3,insertCellBefore e9b5 3,InsertCode ea88 3,insertRowNumber e9b8 3,InsertSpoiler ea47 3,insertTable e9b9 3,InsideBorders eaf5 3,Instagram ea56 3,InstagramLine eb3b 3,IntangibleAssets e74c 3,InternationalArrow ea5c 3,Interview e9a6 3,Inventory ec3b 3,Invoice e9f5 3,invoiceLinear ec52 3,invoiceLinearOff ec53 3,iOS e76a 3,IPmask e64a 3,Italic e6c6 3,Jira ebea 3,Kanban eb8d 3,Key e9c5 3,Keyboard ec8a 3,KeyboardClose ecb2 3,keyWord ec2f 3,Kitchen ebaa 3,Knowledge ebb2 3,KnowledgeBase eb81 3,KPI eb82 3,Kuper ec7b 3,labelJumping ec10 3,labelLeft ec0e 3,labelTop ec0f 3,Languages eba0 3,Last e97d 3,Layers ebf9 3,Layout ebba 3,Ldap ea11 3,LDAPnew ea50 3,Lead e6f5 3,LeftSidebar ebbe 3,Lenta eb45 3,LessButton e6d4 3,LetterA e678 3,LetterN e979 3,LetterNull eab8 3,LetterP eabb 3,LetterY eabc 3,LevelAverage ea73 3,LevelCritical ea75 3,LevelHigh ea74 3,LevelLow ea72 3,Library ebb1 3,LightIndustry eb02 3,Lightning ea0b 3,LightningOff ec9f 3,Line e999 3,lineGraph ec0d 3,Link e6a7 3,Linked e649 3,LinkedNull ec84 3,Listbox e6d8 3,ListboxNull ea3a 3,ListboxrRflection e9db 3,ListMarked e6c7 3,ListNumbered e6c8 3,ListView e648 3,ListViewNew ea28 3,LLink ebdf 3,Location eb31 3,Lock e647 3,LockIn ea1b 3,LockOK e95c 3,LogoFacebook e722 3,LogoGosUslugi ea0e 3,LogoLinkedIn e723 3,logoMax ec0c 3,LogoMoiKrug e724 3,LogoMoiMir e725 3,LogoOk e728 3,LogoTelegram eb3a 3,LogoVk e727 3,LogoX e726 3,LongList e961 3,Lotus ec69 3,Love ea83 3,LoveHalf ebd0 3,LoveNull ea82 3,Lunch eb87 3,MagicWand e998 3,Mail e646 3,MailIncoming e6e5 3,MailLetter eace 3,MailOutgoing e6e6 3,Man ec59 3,ManWithHat ec5a 3,ManyDocuments ea39 3,Map e645 3,MapMarker e928 3,MapMarkerBig ea95 3,MapMarkerNull ea52 3,MarkCLeftLight e9a9 3,MarkCollapseBold e9bf 3,MarkCRightLight e9ab 3,Markdown eca7 3,MarkExpandBold e9c1 3,MarkExpandBoldMin eb8a 3,Marking eaf6 3,MarkLeftBold e9c0 3,markList1 ebe2 3,markList2 ebe3 3,markList3 ebe4 3,markList4 ebe5 3,markList5 ebe6 3,markList6 ebe7 3,markList7 ebe8 3,markList8 ebe9 3,MarkRightBold e9c2 3,MarkRightBoldMin eb89 3,Master e643 3,MedicalCase e72d 3,MedicalDevice eb93 3,Medicines eb03 3,Meeting ec9d 3,Megaphone e69a 3,MegaphoneMan e699 3,MegaphoneNull e95a 3,MegaphoneOff e99b 3,Megaplan eb20 3,MenuAk ea98 3,Mercury ea34 3,MergeCells eb0d 3,MergeCells2 e9b2 3,Message2 e642 3,MessageWithArrow ec44 3,Microphone e706 3,Microphone1 eae1 3,MicrophoneFillOff ec8c 3,MicrophoneNull e9b1 3,MicrophoneOff e90c 3,MilkProducts eb04 3,Minus eb6e 3,Minzdrav ecad 3,MixPayment ea0d 3,MixPayment1 ea9f 3,MixPaymentButton ea9e 3,MLink ebde 3,Model ec5d 3,Money e641 3,MoneyNull ec91 3,MoneyOk e95b 3,MoneyPrice ea38 3,MoreButton e6d5 3,Morning ec66 3,Motion e96f 3,MotivationCup ec72 3,Move e63f 3,Move2 e63e 3,MoveCellAbove eb17 3,MoveCellBelow eb18 3,MoveCellLeft eb19 3,MoveCellRight eb1a 3,MoveTableCell eb16 3,MP4 eb1d 3,multiline ec12 3,Multiplication eaec 3,MVD eb32 3,Nail ec70 3,NewCategory e63d 3,newChat ec45 3,News eb33 3,NewSmile eb6f 3,NewTab e63c 3,NewTask ec3c 3,Next e6d9 3,NextStep ebf5 3,NFC ebf0 3,Night ec68 3,NodeCurtailed e6d3 3,NodeExpanded e6d2 3,NoDocument e991 3,Nomenclature ec93 3,NoMoney ea35 3,Noone ec5e 3,NoPlan eb63 3,NoteIncluded ea87 3,NoteOff ea86 3,Notes e91f 3,NotesDoc ea42 3,NotesFill e9ce 3,NotForPrint eb39 3,NotificationBig ea5a 3,NotUpdatable ea4f 3,NSPK ecac 3,Number eaaf 3,Numbering ec2d 3,ObscureArea eac8 3,OCR e803 3,Odometer ec50 3,Offline e9bc 3,OnAgreement ea25 3,OnOff ecb3 3,OpenedFolder e63a 3,Opening eb85 3,Or e9f0 3,osChrome eb46 3,osFirefox eb47 3,osJava eb48 3,osLinux eb4a 3,osMac eb4b 3,osWindows eb4c 3,OurCompany ec96 3,OutgoingCall ea61 3,OutgoingCallNull ea8d 3,OutgoingMail ea65 3,OutGroup e99d 3,OutHotel e765 3,Oval e960 3,Pacifier e63b 3,PacifierCross eb05 3,Pack e6f6 3,Pack2 e91c 3,Pack3 eb1e 3,Package ea96 3,PackageNull ec94 3,Packages ec55 3,PackagesOff eca4 3,PageBreaks e921 3,PageNumber ea49 3,pAlignCenter ea7a 3,pAlignLeft ea76 3,pAlignRight ea7b 3,pAlignWidth ebb7 3,paperBox ec54 3,PartiallyReady e72c 3,Paste e6fd 3,PasteAsText e71e 3,PasteBtr e9a1 3,PasteCodeBtr e9a2 3,PasteQuotesBtr e9a0 3,PasteStyle e768 3,PasteTextLetter e6e7 3,Patent ec3d 3,PatternsPoints e91a 3,Pause e639 3,Pause1 eae2 3,PauseCall ebb6 3,PauseOff ec8b 3,Pay eaa0 3,Payment e696 3,PaymentCard eaa2 3,PaymentCardButton eaa1 3,PaymentCash eaa4 3,PaymentCashButton eaa3 3,PaymentPart e695 3,PaymentPart2 ea2a 3,PaymentPartSend ea06 3,PaymentSalary eaa6 3,PaymentSalaryButton eaa5 3,pBringToFront ea7d 3,PDF e67c 3,Pedicure ec71 3,Pencil eac7 3,Percent eae7 3,Perfume eb06 3,Periodicity ebb3 3,PermittedBuyers e684 3,PermittedGoods e683 3,PermittedRegions e682 3,Pets ec6b 3,PF eb34 3,pGrid ea80 3,Phone e638 3,PhoneCAM e98f 3,PhoneCell e637 3,PhoneCellHorizontal ebf8 3,PhoneCompany ea29 3,PhoneContact e978 3,PhoneCrash e966 3,PhoneDial eacc 3,PhoneDown e914 3,PhoneFax e977 3,PhoneGetAutomatically e624 3,PhoneGetManually e615 3,PhoneHome e976 3,PhoneMes e975 3,PhoneMissed e965 3,PhoneNull e636 3,PhoneNumber e974 3,PhonePause e973 3,PhoneUnanswered e964 3,PhoneVariable e971 3,PhoneWork e635 3,PhoneWWW e990 3,Photo e6ed 3,PhotoOff ec89 3,PicAlignJustify ec09 3,PicAlignLeft ec05 3,PicAlignRight ec06 3,PicBtr e9a3 3,PicCenter e9ff 3,PicInTheText ea53 3,PicLeft e9fe 3,PicLeftT e9fd 3,PicOverTheText ea54 3,PicRight e9fc 3,Picture e6c9 3,Pin e630 3,Pin2 e930 3,PinCode e9c4 3,PinFillOff ec85 3,PinNull e97c 3,PinOff ea09 3,Pipe eb53 3,Pizza ec6e 3,placeholder ec11 3,Play ec80 3,PlayBack eac0 3,PlayForward eabf 3,PlaySound e99c 3,Plus ea48 3,Plus2 eb64 3,Polyline ec1e 3,Preferment e634 3,Presto e701 3,Preview eab3 3,Price e9d4 3,Print e633 3,PrintForm e9f8 3,Process eba2 3,Processing eb83 3,ProductsDownload ea20 3,Profile e632 3,Profile2 e91d 3,Promokod eb7d 3,Property e74d 3,PropertyNull ec95 3,pSendToBack ea7c 3,pTable ea77 3,pToPave ea78 3,pToStretch ea79 3,Publish2 e631 3,PublishedForMe ebb4 3,PUnanswered e972 3,Purchases ead9 3,pxLine1 ecbb 3,pxLine2 ecbc 3,pxLine4 ecbd 3,pxLine6 ecbe 3,pxLine8 ecbf 3,QR e915 3,QRScan ec92 3,Question eb3c 3,Question2 e68b 3,QuestionNew e9c9 3,Queue eb3d 3,Quote e6e8 3,QuoteWidget ebd9 3,Qwen ec1a 3,R e9ed 3,RebuildWithDebugging eb22 3,Rec e9da 3,RecalculationOfPrices ea10 3,Received e62e 3,Received2 e62d 3,Reconciliation ecae 3,Rectangle e94e 3,Redirect eae3 3,Redo e6a1 3,Redo2 e6ca 3,ReduceButton e702 3,Refresh e62c 3,RefusedAgency e72e 3,RefusedOperator e72f 3,RelatedDocumentsDown ea07 3,RelatedDocumentsUp ea08 3,Remark e9be 3,RemarkNull e9bd 3,RemoteConnection ead7 3,RemoveAdd e766 3,removeCell e9b7 3,Rename e698 3,RenameNull ec83 3,Reply ea2e 3,Report e62b 3,Reports eba9 3,RequestScreen eacf 3,Resend e62a 3,Resources e74e 3,Responsible e6f7 3,Responsible2 e767 3,Restore e629 3,RightAngle ec1f 3,RightSidebar ebbf 3,Ring eb78 3,Roaming e707 3,Robot eb74 3,RotateLeft ec2a 3,RotateRight ec29 3,RoundAngle ec20 3,RoundPlus eadd 3,Route ec8d 3,RPN eb35 3,Ruler ec6d 3,Russian eb86 3,Saby e98c 3,SabyBird e9e2 3,SabyCloud e9dd 3,SabyCloudInside eb97 3,SabyCloudOutside eb98 3,SabyCloudRefresh eb99 3,SabyDisk e901 3,Sabydoc ebf1 3,SabyEng e9e1 3,Sabyscheme ebf2 3,Safari ec73 3,Safe ec57 3,Salary e9e9 3,Salepoint eab2 3,Sandclock e68f 3,SAP e904 3,Save e628 3,SaveAs e627 3,SaveAs2 ebf4 3,Scale e94f 3,ScaleOriginal eacb 3,Scan e626 3,ScanerAddPhoto ec4b 3,Scanner ea00 3,ScanSave e625 3,Scissors e969 3,ScrollToTop eb75 3,Search e623 3,Search2 e662 3,Search3 eaa7 3,Seen e622 3,SelectArea ea1e 3,SelectGeotag eb65 3,SelfPin e621 3,SelfVacation e620 3,SelfVacationNull eca0 3,Sell eaa8 3,Send e61f 3,SendLetter eb50 3,Sent e61e 3,Sent2 e61d 3,Sent3 e908 3,SentBig eaac 3,SentNot ea63 3,SentOff ead6 3,separateHorizontal e9b4 3,separateVertical e9b3 3,ServerKey e61c 3,Service ea4e 3,ServiceArrow ea5e 3,ServiceDuble ea71 3,ServiceHorizontal ebee 3,Settings e61b 3,Settings2 eaa9 3,SettingsNew e9d9 3,SFR ecaf 3,Shadow e9a5 3,Share e61a 3,shareMobile ec31 3,Shield eb76 3,Ship e9ca 3,Shipment e9f6 3,ShipmentPartial e9f7 3,Shop ea5f 3,ShortList e962 3,Show e619 3,ShowBig ea19 3,ShowControl e968 3,showVideo ec62 3,showVideoOff ec63 3,Shteker ea58 3,Sick e618 3,SickAuto eb3e 3,Signature e68a 3,SignatureBird ea85 3,SignatureBirdNone ea84 3,SignatureGosKey eb9f 3,SignatureNone e74a 3,SignaturePhone eb26 3,SignaturePhoneNone eb27 3,SignChange eaea 3,Size eca8 3,SJNon ea15 3,Skeleton e76d 3,Skype e617 3,SLink ebdd 3,SmileBtr e9a7 3,SMS ec46 3,Snow e970 3,SortByAmount ea97 3,SortByDiv eb3f 3,SortByOrder eb40 3,Sorting e909 3,SortingEng e9df 3,SortingNumber ea66 3,SortingStandard eb66 3,SoundMax e90e 3,SoundMidi e910 3,SoundMini e911 3,SoundOff e912 3,SoundOff1 eb67 3,SoundOn eb68 3,Space ea33 3,SplitCellHorizontally eb13 3,SplitCellVertically eb10 3,Square ea12 3,Squarefilled ea13 3,SquareGeom eb36 3,StandardAlgorithm ebf6 3,STAT eb37 3,Statement ea7e 3,Statistics e91b 3,statusAffairs e940 3,statusCars e945 3,statusCatches e935 3,statusCaution e943 3,statusCoffee e936 3,statusConnected e94a 3,statusConsultant e942 3,statusDeparted e94b 3,statusDictates e93c 3,statusDisease e93b 3,statusDisturb e949 3,statusDraws e932 3,statusDrips e944 3,statusFarmer e933 3,statusGymnast e931 3,statusMeditation e941 3,statusPlan e93f 3,statusPresident e93a 3,statusPromenade e938 3,statusSleeps e93e 3,statusStretching ec61 3,statusSun e937 3,statusTable e93d 3,statusThinks e934 3,statusTime e939 3,Sticker eb43 3,Stop ec81 3,Stoplist ec9e 3,Stroked e6cb 3,Style ebbb 3,Subjects eba1 3,Subscribe e9d2 3,SubtractArea ec26 3,Subtraction eae5 3,Successful e616 3,Successful2 e92c 3,SuccessfulDocument ea45 3,Successfully ea46 3,SuccessfulNon eab1 3,Sum e614 3,Superjob e9ad 3,Support ebb0 3,Surveyor e613 3,Surveyors e612 3,SvMax ea40 3,SvMini ea41 3,SvNarrow ea3f 3,SvWide ea3e 3,SwipeMenu eab4 3,SystemAlgorithm ebf7 3,Table e6cc 3,TableAddLeft e953 3,TableAddRight e952 3,TableArrowLeft ec32 3,TableArrowRight ec33 3,TableCell eb0c 3,TableColumn eb0a 3,TableContourLeft ec39 3,TableContourRight ec3a 3,TableCreate e958 3,TableDelete e957 3,TableDeleteCell eb14 3,TableDeleteColumn e951 3,TableDeleteRow e954 3,TableFullLeft ec40 3,TableFullRight ec41 3,TableInsertAbove e956 3,TableInsertBelow e955 3,TableMoveAbove eb12 3,TableMoveBelow eb0f 3,TableMoveLeft eb11 3,TableMoveRight eb0e 3,TableRow eb0b 3,TableRowSettings eb15 3,TableScheme eb5a 3,TableSetting e950 3,Tablet ebbd 3,TabsWidget ebdb 3,Tag ea18 3,TakePhoto eb77 3,Target ebab 3,Telecommunications eb70 3,Telegram ea03 3,TelephoneNull ea8e 3,TemplateNews1 e985 3,TemplateNews2 e993 3,TemplateNews3 e992 3,TemplateNews4 e987 3,TemplateNews5 e986 3,TemplateNews6 e988 3,TemplateNews7 e98b 3,TemplateNews8 e98a 3,TemplateNews9 e989 3,Text eac9 3,TextColor e6cd 3,TextSettings e761 3,TFAdjustmentReport e729 3,TFAttach e74f 3,TFBackward ec7f 3,TFCloudKey e750 3,TFComputer e730 3,TFComputerCross eb54 3,TFComputerPlagin eb55 3,TFCurtailRTE e751 3,TFCurtailRTE2 e764 3,TFDelete e752 3,TFDesktop e731 3,TFDialogue e75c 3,TFDocStamp ea8f 3,TFDocument e732 3,TFDocumentINI eaf9 3,TFDocumentLnk eb23 3,TFDocumentMP4 e9cb 3,TFDocumentNon e9dc 3,TFDocumentODS e9cc 3,TFDocumentP e733 3,TFDocumentPDF e734 3,TFDocumentPY eafa 3,TFDocumentSQL eafb 3,TFDocumentUnknownType e735 3,TFDocumentVsdx e9d0 3,TFDocumentW e736 3,TFDocumentX e737 3,TFDocumentXML eab7 3,TFDocumentXML2 e738 3,TFDownload e739 3,TFEmployees e753 3,TFEmployees-Fill ebef 3,TFExpand e73a 3,TFExpandRTE e754 3,TFFavorite e73b 3,TFFileAudio e73c 3,TFFileVideo e73d 3,TFFolder e73e 3,TFFolder2 e73f 3,TFFolder2Opened eb41 3,TFFollow e740 3,TFForward e755 3,TFImage e72a 3,TFList e741 3,TFList2 e742 3,TFlist3 eac3 3,TFLocalDrive e743 3,TFMessage e756 3,TFMyDocuments e757 3,TFNetwork e744 3,TFNetworkDrive e745 3,TFNewTab e746 3,TFPreview e747 3,TFPreview2 e748 3,TFSettings e75d 3,TFTask e758 3,TFUSBDrive e759 3,TFUSBKey e75a 3,TFVideoMessage e75b 3,TFZip e749 3,TheBordersBottom ead1 3,TheBordersLeft ead4 3,TheBordersOnTop ead3 3,TheBordersRight ead2 3,TheNote e9d3 3,ThreeColumns eaed 3,ThresholdConditions e680 3,ThumbDown e611 3,ThumbDown2 e610 3,ThumbDownBig ea22 3,ThumbUp e60f 3,ThumbUp2 e60e 3,ThumbUpBig ea21 3,ThumbUpPlus ea0c 3,TileDownSide ebc4 3,TileHorizontalCenter ebc5 3,TileHorizontalStretch ebca 3,TileLeftSide ebc2 3,TileRightSide ebc1 3,TileSpaceAround ebc8 3,TileSpaceBetween ebc7 3,TileSpaceEvenly ebc9 3,TileUpSide ebc3 3,TileVerticalCenter ebc6 3,TileVerticalSpaceAround ebfd 3,TileVerticalSpaceBetween ebfc 3,TileVerticalSpaceEvenly ebfe 3,TileVerticalStretch ebcb 3,Time e68d 3,TimeFill ec47 3,TimeHistory e9c3 3,TimeHistoryMirror ea1a 3,TimeOff e963 3,TimeOK e9ba 3,TimeSkinny eb5b 3,Tires eb07 3,ToApprove ea24 3,ToArchive e697 3,Tobacco eb08 3,ToTheBegining ea0a 3,Trade e60c 3,Trade2 eb71 3,TransitionFrom e982 3,TransitionTo e983 3,Trash-bucket eb72 3,TreeClosed ea8b 3,TreeOpen ea8a 3,TreeView e60b 3,TrendDown e71c 3,TrendUp e71d 3,Tribunal ebae 3,Truck e6a5 3,Truck2 eb73 3,TruckHalf e690 3,TurnL e60a 3,TurnList e97a 3,TurnR e609 3,TurnstileIn e6f8 3,TurnstileOut e6f9 3,TwoColumns eaee 3,TwoForOne eb69 3,TypeApi ec0a 3,TypeArray ea6d 3,TypeBool ea6a 3,TypeDate ea68 3,TypeNum ea6c 3,TypeObject ea6e 3,TypeStr ea6b 3,TypeVoid ea69 3,UDS eb24 3,Underline e6ce 3,Undo e608 3,Undo2 e6cf 3,Unfavorite e607 3,UnFullScrin e95e 3,Unite e6fa 3,Unlink e6d0 3,Unloading ec30 3,UnloadNew ea31 3,Unlock e606 3,UnPublish e62f 3,UnSubscribe e9d1 3,Unsuccess e605 3,Up e997 3,UpDown ea62 3,Upload e604 3,UploadYourself ea6f 3,UsbKey e603 3,USBKey2 eab5 3,UseCase eb2a 3,Vacation e602 3,VacationNull e96a 3,ValidityPeriod e67f 3,Vape eb79 3,VerticalDirection ebcd 3,Viber ea02 3,VideoCall e693 3,VideoCall2 e929 3,VideoCallFillOff ec88 3,VideoCallIncoming e69f 3,VideoCallNull e6a0 3,VideoCallOff e913 3,VideoCallOutgoing e69e 3,VideoGroup e98d 3,VideoLink e924 3,VideoMeeting ec1b 3,VideoMessage e6fc 3,View e6a2 3,ViewBack e789 3,Vkrugu e762 3,VoiceMenu e984 3,Volume ec56 3,WaitingSignature ea37 3,Walker ec9b 3,Wallet e601 3,Warehouse ec90 3,WaterSign ead8 3,Way ea70 3,Web eb5c 3,Webasyst eaf1 3,WebCamera e6ee 3,WeekBackward e685 3,WeekDown e903 3,WeekForward e681 3,WeekUp e902 3,WeigherOff eadb 3,WeigherOn eada 3,Weight ec6c 3,WhatsUp ea01 3,Wheelchair eb09 3,Whiteboard eabd 3,Wi e6a6 3,WideArrow ec1d 3,Widget ebb9 3,WidgetShop ea91 3,WiFi e600 3,WifiOff ec4d 3,Woman eb9b 3,WomanWithHat ec5b 3,Work e9e8 3,Workers eaaa 3,WorkForAll ea1c 3,WorkInFocus e67e 3,WorkRead e6eb 3,WorkRussia eb6a 3,Writemessage eb5f 3,WWW e6d1 3,XLLink ebe0 3,XLLinkHeader ebe1 3,Yandex ea4b 3,YandexEda eb5d 3,YandexGPT ec18 3,Yes e75e 3,You e6fe 3,Youtube eaab 3,ZodiacSignAquarius e709 3,ZodiacSignAries e70a 3,ZodiacSignCancer e70b 3,ZodiacSignCapricorn e70c 3,ZodiacSignGemini e70d 3,ZodiacSignLeo e70e 3,ZodiacSignLibra e70f 3,ZodiacSignPisces e710 3,ZodiacSignSagittarius e711 3,ZodiacSignScorpio e712 3,ZodiacSignTaurus e713 3,ZodiacSignVirgo e714 3,ZoomIn e6e9 3,ZoomOut e6ea 3';
   var ICONS = ICON_DATA ? ICON_DATA.split(',').map(function (r) { r = r.split(' '); return { name: r[0], low: r[0].toLowerCase(), code: r[1], fonts: +r[2] }; }) : [];
   var ICON_LIMIT = 300, iconsAll = false; // сначала первые 300: вся сетка — больше тысячи кнопок
   function buildIcons() {
@@ -1282,13 +1829,21 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   document.getElementById('wg-style').addEventListener('change', buildWidgets);
   document.getElementById('ch-size').addEventListener('change', buildChips);
   document.getElementById('ch-pos').addEventListener('change', buildChips);
+  document.getElementById('cl-size').addEventListener('change', buildCloseButtons);
+  document.getElementById('bk-size').addEventListener('change', buildBack);
+  ['cmb-size', 'cmb-border'].forEach(function (id) { document.getElementById(id).addEventListener('change', buildCombobox); });
+  document.getElementById('tb-size').addEventListener('change', buildTumbler);
+  ['tabs-style', 'tabs-size'].forEach(function (id) { document.getElementById(id).addEventListener('change', buildTabs); });
+  ['sw-size', 'sw-pos'].forEach(function (id) { document.getElementById(id).addEventListener('change', buildSwitch); });
+  ['bc-size', 'bc-color'].forEach(function (id) { document.getElementById(id).addEventListener('change', buildBreadcrumbs); });
+  ['ab-size', 'ab-dir'].forEach(function (id) { document.getElementById(id).addEventListener('change', buildArrowButtons); });
   ['in-kind', 'in-size', 'in-label'].forEach(function (id) { document.getElementById(id).addEventListener('change', buildInputs); });
   ['ml-pos', 'ml-arrow'].forEach(function (id) { document.getElementById(id).addEventListener('change', buildMasterList); });
   ['ml-layout', 'ml-align', 'ml-style'].forEach(function (id) { document.getElementById(id).addEventListener('change', buildMlGroup); });
 
   var start = location.hash.slice(1);
   if (!go(start, false)) go('all', false);
-  buildButtons(); buildCheckboxes(); buildChips(); buildInputs(); buildToolbars(); buildWidgets(); buildPropertyEditor(); buildPgEditors(); buildMasterList(); buildColors(); buildSizes(); buildShadows();
+  buildButtons(); buildCheckboxes(); buildChips(); buildCloseButtons(); buildArrowButtons(); buildBack(); buildBreadcrumbs(); buildCombobox(); buildSwitch(); buildTumbler(); buildTabs(); buildAccordion(); buildInputs(); buildToolbars(); buildWidgets(); buildRightSidebar(); buildShop(); buildPropertyEditor(); buildPgEditors(); buildMasterList(); buildColors(); buildSizes(); buildShadows();
   buildTiles(); buildIcons();
   if (ROUTES[start]) { // открыт по адресу страницы: браузер прокрутил бы к якорю, а страница начинается с начала.
     // На время загрузки убираем якорь из адреса, после неё возвращаем и встаём в начало

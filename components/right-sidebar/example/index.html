@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>right-sidebar — пример</title>
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../../button/button.css"> <!-- слот кнопки разворота -->
+  <link rel="stylesheet" href="../right-sidebar.css">
+  <style>
+    html, body { height: 100%; }
+    body { margin: 0; display: flex; font-family: var(--font-font-family-default), sans-serif; font-size: 14px;
+      background: var(--components-constructor-constructor_background-color); color: var(--text-text-color); } /* фон конструктора */
+    main { flex: 1 1 auto; padding: 24px; }
+    main p { margin: 0 0 12px; max-width: 520px; color: var(--text-label_text-color); }
+    .rsb { padding-right: 8px; } /* маркер активного пункта стоит правее тулбара */
+  </style>
+</head>
+<body>
+  <main>
+    <p>Пункт тулбара открывает панель, повторный клик сворачивает. Стрелки строк сворачивают дерево.</p>
+    <p>Наведите на тулбар: под пунктами появится кнопка разворота. Она переводит сайдбар
+      в режим «По ховеру» и обратно.</p>
+    <p>В режиме «По ховеру» панель открывается наведением и висит поверх страницы; клик по пункту закрепляет её.</p>
+  </main>
+
+  <aside class="rsb" id="sidebar" aria-label="Правый сайдбар">
+    <div class="rsb__panels">
+      <section class="rsb__panel" data-rsb-panel="shop">
+        <header class="rsb__head">
+          <div class="rsb__title"><h3 class="rsb__name">Виджеты</h3></div>
+          <div class="rsb__tools"><label class="rsb__search"><input class="rsb__search-input" type="search" placeholder="Найти" aria-label="Найти"></label></div>
+        </header>
+        <div class="rsb__content"></div>
+      </section>
+
+      <section class="rsb__panel is-open" data-rsb-panel="data">
+        <header class="rsb__head">
+          <div class="rsb__title"><h3 class="rsb__name">Данные</h3></div>
+          <div class="rsb__tools"><label class="rsb__search"><input class="rsb__search-input" type="search" placeholder="Найти" aria-label="Найти"></label></div>
+        </header>
+        <div class="rsb__content" role="tree">
+          <div class="rsb__field rsb__field--object" role="treeitem" aria-expanded="true">
+            <span class="rsb__row-name">Аккаунт</span><button type="button" class="rsb__arrow" aria-label="Свернуть или развернуть"></button>
+            <span class="rsb__type">Аккаунт</span>
+          </div>
+          <div class="rsb__field rsb__field--node rsb__row--level-2" role="treeitem" aria-expanded="false">
+            <span class="rsb__row-name">Тип</span><button type="button" class="rsb__arrow" aria-label="Свернуть или развернуть"></button>
+            <span class="rsb__type">Строка</span>
+          </div>
+          <div class="rsb__field rsb__row--level-3" role="treeitem"><span class="rsb__row-name">Код</span><span class="rsb__type">Число</span></div>
+          <div class="rsb__field rsb__row--level-3" role="treeitem"><span class="rsb__row-name">Название</span><span class="rsb__type">Строка</span></div>
+          <div class="rsb__field rsb__row--level-2" role="treeitem"><span class="rsb__row-name">Номер лицевого счета</span><span class="rsb__type">Число</span></div>
+          <div class="rsb__field rsb__row--level-2" role="treeitem"><span class="rsb__row-name">Название аккаунта</span><span class="rsb__type">Строка</span></div>
+          <div class="rsb__field rsb__field--object" role="treeitem" aria-expanded="false">
+            <span class="rsb__row-name">Пользователь</span><button type="button" class="rsb__arrow" aria-label="Свернуть или развернуть"></button>
+            <span class="rsb__type">Пользователь</span>
+          </div>
+          <div class="rsb__field rsb__row--level-2" role="treeitem"><span class="rsb__row-name">Имя</span><span class="rsb__type">Строка</span></div>
+        </div>
+      </section>
+
+      <section class="rsb__panel" data-rsb-panel="layers">
+        <header class="rsb__head"><div class="rsb__title"><h3 class="rsb__name">Слои</h3></div></header>
+        <div class="rsb__content" role="tree">
+          <div class="rsb__layer" role="treeitem" aria-expanded="true">
+            <button type="button" class="rsb__arrow" aria-label="Свернуть или развернуть"></button>
+            <span class="rsb__row-icon" aria-hidden="true">&#xeaee;</span><span class="rsb__row-name">Строка</span>
+            <span class="rsb__cmds">
+              <button type="button" class="rsb__cmd rsb__cmd--m" title="Скрыть" aria-label="Скрыть">&#xe651;</button>
+              <button type="button" class="rsb__cmd rsb__cmd--danger" title="Удалить" aria-label="Удалить">&#xeb72;</button>
+            </span>
+          </div>
+          <div class="rsb__layer rsb__row--level-2 is-active" role="treeitem">
+            <button type="button" class="rsb__arrow rsb__arrow--empty" tabindex="-1" aria-hidden="true"></button>
+            <span class="rsb__row-icon" aria-hidden="true">&#xe9a3;</span><span class="rsb__row-name">Изображение</span>
+            <span class="rsb__cmds">
+              <button type="button" class="rsb__cmd rsb__cmd--m" title="Скрыть" aria-label="Скрыть">&#xe651;</button>
+              <button type="button" class="rsb__cmd rsb__cmd--danger" title="Удалить" aria-label="Удалить">&#xeb72;</button>
+            </span>
+          </div>
+          <div class="rsb__layer rsb__row--level-2" role="treeitem">
+            <button type="button" class="rsb__arrow rsb__arrow--empty" tabindex="-1" aria-hidden="true"></button>
+            <span class="rsb__row-icon" aria-hidden="true">&#xebb9;</span><span class="rsb__row-name">Название организации</span>
+            <span class="rsb__cmds">
+              <button type="button" class="rsb__cmd rsb__cmd--m" title="Скрыть" aria-label="Скрыть">&#xe651;</button>
+              <button type="button" class="rsb__cmd rsb__cmd--danger" title="Удалить" aria-label="Удалить">&#xeb72;</button>
+            </span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="rsb__bar">
+      <div class="rsb__items">
+        <button type="button" class="rsb__item rsb__item--shop" data-rsb-tab="shop" title="Магазин" aria-label="Магазин"><span class="rsb__icon" aria-hidden="true">&#xeadd;</span></button>
+        <button type="button" class="rsb__item" data-rsb-tab="data" title="Данные" aria-label="Данные"><span class="rsb__icon" aria-hidden="true">&#xebbc;</span></button>
+        <button type="button" class="rsb__item" data-rsb-tab="layers" title="Слои" aria-label="Слои"><span class="rsb__icon" aria-hidden="true">&#xebf9;</span></button>
+      </div>
+      <div class="rsb__dock"><button type="button" class="btn btn--filled btn--style-pale btn--size-xl btn--icon" aria-label="Развернуть панель"><span class="btn__icon" aria-hidden="true">&#xebfa;</span></button></div>
+      <div class="rsb__informers"><button type="button" class="rsb__help" aria-label="Помощь">?</button></div>
+    </div>
+  </aside>
+
+  <script src="../right-sidebar.js"></script>
+  <script>
+    var el = document.getElementById('sidebar');
+    RightSidebar.mount(el, {
+      onTab: function (key) { console.log('вкладка:', key); },
+      onDock: function (docked) { console.log(docked ? 'вписан' : 'по ховеру'); }
+    });
+  </script>
+</body>
+</html>

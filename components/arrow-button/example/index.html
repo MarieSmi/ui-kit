@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>arrow-button — пример</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../arrow-button.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    table { border-collapse: collapse; }
+    th { padding: 4px 16px 4px 0; font-weight: 400; text-align: left; color: var(--text-label_text-color); white-space: nowrap; }
+    td { padding: 6px 24px 6px 0; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>inlineHeight <select id="size">
+      <option value="s">s · 20</option><option value="m" selected>m · 24</option><option value="mt">mt · 26</option><option value="xl">xl · 32</option><option value="5xl">5xl · 48</option>
+    </select></label>
+    <label>direction <select id="dir">
+      <option>right</option><option>left</option><option>up</option><option>down</option>
+    </select></label>
+  </div>
+  <div id="out"></div>
+
+  <script>
+    // Виды и стили — viewMode и buttonStyle из Controls/extButtons:ArrowButton
+    const SETS = [
+      ['Круглая', [['filled · pale', ''], ['filled · default', 'arrow-button--style-default'], ['ghost', 'arrow-button--ghost'], ['link', 'arrow-button--link']]],
+      ['Вытянутая', [['stretched', 'arrow-button--stretched'], ['stretched · pale', 'arrow-button--stretched arrow-button--style-pale'],
+        ['stretched · default', 'arrow-button--stretched arrow-button--style-default'], ['stretched-ghost', 'arrow-button--stretched-ghost']]],
+    ];
+    const STATES = [['покой', ''], ['hover', ' is-hover'], ['press', ' is-active'], ['readOnly', ' is-readonly']];
+
+    function render() {
+      const size = document.getElementById('size').value, dir = document.getElementById('dir').value;
+      document.getElementById('out').innerHTML = SETS.map(([title, views]) => `
+        <h2>${title}</h2>
+        <table>
+          <tr><th></th>${STATES.map(([t]) => `<th>${t}</th>`).join('')}</tr>
+          ${views.map(([t, v]) => `<tr><th>${t}</th>${STATES.map(([, s]) =>
+            `<td><button type="button" class="arrow-button ${v} arrow-button--${dir} arrow-button--size-${size}${s}" aria-label="Стрелка"></button></td>`).join('')}</tr>`).join('')}
+        </table>`).join('');
+    }
+    document.getElementById('size').onchange = render;
+    document.getElementById('dir').onchange = render;
+    render();
+  </script>
+</body>
+</html>

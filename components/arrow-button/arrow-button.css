@@ -1,0 +1,183 @@
+/*!
+ * arrow-button — кнопка со стрелкой: листание галереи и списка, раскрытие, переход дальше.
+ * Перенесена из кода Saby: Controls/extButtons:ArrowButton (ArrowButton.tsx, Arrow.tsx, ArrowStretched.tsx,
+ * _ArrowButton.less и стили Controls/buttons). Размеры и цвета покоя сняты с живого примера Saby Components.
+ * Figma: component set «arrow/arrowButton» библиотеки «⚙️ Default components» (nuC4KFMiS36uDWDUp9wKGl),
+ * ключ 766f785726d4cc1b95706a78fd3beaf89ffbaa9d. Свойства и состояния взяты из кода, с макетом не сверялись.
+ * viewMode → без класса (filled) / .arrow-button--ghost / --link / --stretched / --stretched-ghost;
+ * buttonStyle → без класса (pale; у stretched — полупрозрачная тёмная) / .arrow-button--style-default / --style-pale;
+ * direction → без класса (right) / .arrow-button--left / --up / --down;
+ * inlineHeight → .arrow-button--size-s / -m (по умолчанию) / -mt / -xl / -5xl;
+ * readOnly, наведение, нажатие → .is-readonly / .is-hover / .is-active (и :disabled / :hover / :active).
+ * Стрелку рисует сам компонент (маска на ::before), разметка — пустая кнопка с aria-label.
+ * Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/arrow-button
+ *
+ * Устройство: вид и стиль задают фон, рамку, тень и цвет стрелки для покоя, наведения и нажатия
+ * (--ab-*-r / -h / -a), правила состояний внизу выбирают нужные. Рамка — внутренняя тень, чтобы не менять размер.
+ */
+
+/* ---------- Основа: filled, pale, вправо, размер m ---------- */
+.arrow-button {
+  --ab-h: var(--inline_height-inline_height_m);
+  --ab-is: var(--icon-icon_size-icon-size_s);
+  /* размер стрелки у stretched: ширина × высота до поворота */
+  --ab-sw: var(--font-font-size-font-size_m);
+  --ab-sh: var(--icon-icon_size-icon-size_s);
+  /* тени контрастной кнопки (style-default); смещение 0 0 — нет токена */
+  --ab-sh-d: 0 0 var(--blur-shadow-blur_d) var(--color-shadow-color_d);
+  --ab-sh-dh: 0 0 var(--blur-shadow-blur_b) var(--color-shadow-color_b);
+
+  --ab-bg-r: var(--background-contrast-pale_color);
+  --ab-bg-h: var(--ab-bg-r);
+  --ab-bg-a: var(--background-contrast-pale_active_color);
+  --ab-bd-r: transparent;
+  --ab-bd-h: var(--border-hover_border-color);
+  --ab-bd-a: var(--ab-bd-h);
+  --ab-shd-r: 0 0 transparent; /* без тени: none в списке box-shadow ломает всё свойство */
+  --ab-shd-h: 0 0 transparent;
+  --ab-ic-r: var(--icon-label_icon-color);
+  --ab-ic-h: var(--ab-ic-r);
+  --ab-rot: 0deg;
+
+  box-sizing: border-box; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--ab-h); height: var(--ab-h); margin: 0; padding: 0; border: 0;
+  border-radius: var(--components-button-border-radius_button);
+  color: var(--ab-ic-r);
+  background: var(--ab-bg-r);
+  box-shadow: inset 0 0 0 1px var(--ab-bd-r), var(--ab-shd-r); /* толщина рамки 1px — нет токена */
+  cursor: pointer; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Стрелка вправо / влево — путь из Arrow.tsx в квадрате 16×16 */
+.arrow-button::before {
+  content: ""; flex: none; width: var(--ab-is); height: var(--ab-is); background: currentColor; transform: rotate(var(--ab-rot));
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M11 8L7 14L6 14L10 8L6 2L7 2L11 8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M11 8L7 14L6 14L10 8L6 2L7 2L11 8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+/* Стрелка вверх / вниз — путь из Arrow.tsx в поле 16×14 */
+.arrow-button--up::before,
+.arrow-button--down::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 14'%3E%3Cpath d='M8 3.5L15 9H13L8 5.3L3 9H1L8 3.5Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 14'%3E%3Cpath d='M8 3.5L15 9H13L8 5.3L3 9H1L8 3.5Z'/%3E%3C/svg%3E");
+}
+.arrow-button--left, .arrow-button--down { --ab-rot: 180deg; }
+
+/* ---------- Размер: высота и размер стрелки ---------- */
+.arrow-button--size-s { --ab-h: var(--inline_height-inline_height_s); }
+.arrow-button--size-m { --ab-h: var(--inline_height-inline_height_m); }
+.arrow-button--size-mt { --ab-h: var(--inline_height-inline_height_mt); }
+.arrow-button--size-xl {
+  --ab-h: var(--inline_height-inline_height_xl);
+  --ab-is: var(--icon-icon_size-icon-size_m);
+  --ab-sw: var(--inline_height-inline_height_s);
+  --ab-sh: var(--icon-icon_size-icon-size_m);
+}
+.arrow-button--size-5xl {
+  --ab-h: var(--inline_height-inline_height_5xl);
+  --ab-is: var(--icon-icon_size-icon-size_l);
+  --ab-sw: var(--inline_height-inline_height_l);
+  --ab-sh: var(--icon-icon_size-icon-size_l);
+  /* у больших контрастных кнопок тень смещена вниз; 0 4px — нет токена */
+  --ab-sh-d: 0 4px var(--blur-shadow-blur_b) var(--color-shadow-color_b);
+  --ab-sh-dh: 0 4px var(--blur-shadow-blur_a) var(--color-shadow-color_a);
+}
+
+/* ---------- Стиль подложки ---------- */
+/* default: контрастная подложка с тенью, тёмная стрелка */
+.arrow-button--style-default {
+  --ab-bg-r: var(--components-button-default_contrast_background-color_button);
+  --ab-bg-a: var(--background-active_background-color); /* default_active_background-color_button — в ките нет, это алиас на active_background-color */
+  --ab-bd-h: transparent;
+  --ab-shd-r: var(--ab-sh-d);
+  --ab-shd-h: var(--ab-sh-dh);
+  --ab-ic-r: var(--icon-icon-color);
+}
+
+/* ---------- Вид ---------- */
+/* ghost: без подложки, подложка появляется при наведении */
+.arrow-button--ghost,
+.arrow-button--stretched-ghost {
+  --ab-bg-r: transparent;
+  --ab-bg-h: var(--background-contrast-pale_color);
+  --ab-bg-a: var(--background-contrast-pale_hover_color);
+  --ab-bd-h: transparent;
+  --ab-shd-r: 0 0 transparent;
+  --ab-shd-h: 0 0 transparent;
+  --ab-ic-r: var(--icon-label_icon-color);
+  --ab-ic-h: var(--icon-label_hover_icon-color);
+}
+/* link: только стрелка, ширина — по стрелке */
+.arrow-button--link {
+  --ab-bg-r: transparent;
+  --ab-bg-a: transparent;
+  --ab-bd-h: transparent;
+  --ab-shd-r: 0 0 transparent;
+  --ab-shd-h: 0 0 transparent;
+  --ab-ic-r: var(--icon-label_icon-color);
+  --ab-ic-h: var(--icon-label_hover_icon-color);
+  width: var(--ab-is); border-radius: 0;
+}
+/* stretched: вытянутая, для листания; без стиля — полупрозрачная тёмная с белой стрелкой */
+.arrow-button--stretched,
+.arrow-button--stretched-ghost {
+  width: var(--ab-sw); border-radius: var(--border-radius-border-radius_l);
+}
+.arrow-button--stretched {
+  --ab-bg-r: var(--components-button-translucent_background-color_button);
+  --ab-bg-h: var(--components-button-translucent_hover_background-color_button);
+  --ab-bg-a: var(--components-button-translucent_active_background-color_button);
+  --ab-bd-h: transparent;
+  --ab-ic-r: var(--icon-contrast_icon-color); /* translucent_on_icon-color — в ките нет; значение то же, #fff */
+}
+.arrow-button--stretched.arrow-button--style-pale {
+  --ab-bg-r: var(--background-contrast-pale_color);
+  --ab-bg-h: var(--ab-bg-r);
+  --ab-bg-a: var(--background-contrast-pale_active_color);
+  --ab-bd-h: var(--border-hover_border-color);
+  --ab-ic-r: var(--icon-label_icon-color);
+}
+.arrow-button--stretched.arrow-button--style-default {
+  --ab-bg-r: var(--components-button-default_contrast_background-color_button);
+  --ab-bg-h: var(--ab-bg-r);
+  --ab-bg-a: var(--background-active_background-color);
+  --ab-ic-r: var(--icon-icon-color);
+}
+/* Стрелка stretched — путь из ArrowStretched.tsx в поле 16×14, смотрит вверх; влево и вправо — поворотом */
+.arrow-button--stretched::before,
+.arrow-button--stretched-ghost::before {
+  width: var(--ab-sw); height: var(--ab-sh); transform: rotate(var(--ab-rot));
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 14'%3E%3Cpath d='M8 4L15 9H14L8 5L2 9H1L8 4Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 14'%3E%3Cpath d='M8 4L15 9H14L8 5L2 9H1L8 4Z'/%3E%3C/svg%3E");
+}
+.arrow-button--stretched, .arrow-button--stretched-ghost { --ab-rot: 90deg; }
+.arrow-button--stretched.arrow-button--left, .arrow-button--stretched-ghost.arrow-button--left { --ab-rot: -90deg; }
+/* вверх и вниз: кнопка лежит — ширина и высота меняются местами */
+.arrow-button--stretched.arrow-button--up, .arrow-button--stretched-ghost.arrow-button--up,
+.arrow-button--stretched.arrow-button--down, .arrow-button--stretched-ghost.arrow-button--down { width: var(--ab-h); height: var(--ab-sw); }
+.arrow-button--stretched.arrow-button--up, .arrow-button--stretched-ghost.arrow-button--up { --ab-rot: 0deg; }
+.arrow-button--stretched.arrow-button--down, .arrow-button--stretched-ghost.arrow-button--down { --ab-rot: 180deg; }
+
+/* ---------- Состояния ---------- */
+.arrow-button:hover,
+.arrow-button.is-hover {
+  color: var(--ab-ic-h); background: var(--ab-bg-h);
+  box-shadow: inset 0 0 0 1px var(--ab-bd-h), var(--ab-shd-h);
+}
+.arrow-button:active,
+.arrow-button.is-active {
+  color: var(--ab-ic-h); background: var(--ab-bg-a);
+  box-shadow: inset 0 0 0 1px var(--ab-bd-a), var(--ab-shd-h);
+}
+/* readOnly: без подложки, бледная рамка и стрелка; у link и ghost рамки нет */
+.arrow-button:disabled,
+.arrow-button.is-readonly {
+  color: var(--icon-readonly_icon-color); background: transparent;
+  box-shadow: inset 0 0 0 1px var(--components-button-readonly_border-color_button);
+  cursor: default;
+}
+.arrow-button--link:disabled, .arrow-button--link.is-readonly,
+.arrow-button--ghost:disabled, .arrow-button--ghost.is-readonly,
+.arrow-button--stretched-ghost:disabled, .arrow-button--stretched-ghost.is-readonly { box-shadow: none; }
+/* Focus в коде Saby — общий класс платформы, в кит не перенесён: остаётся обводка браузера по :focus-visible */

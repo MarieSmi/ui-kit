@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>switch — пример</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../switch.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: "Inter", sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    .bar { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; color: var(--text-label_text-color); }
+    h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 600; }
+    table { border-collapse: collapse; }
+    th { padding: 4px 16px 4px 0; font-weight: 400; text-align: left; color: var(--text-label_text-color); white-space: nowrap; }
+    td { padding: 6px 32px 6px 0; }
+    .narrow { width: 220px; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <label>size <select id="size">
+      <option value="s">s</option><option value="m" selected>m</option><option value="l">l</option>
+    </select></label>
+    <label>captionPosition <select id="pos">
+      <option value="end" selected>end</option><option value="start">start</option>
+    </select></label>
+  </div>
+  <div id="out"></div>
+
+  <h2>multiline</h2>
+  <div class="narrow">
+    <label class="switch switch--multiline">
+      <input class="switch__input" type="checkbox" role="switch" checked>
+      <span class="switch__button"></span>
+      <span class="switch__caption">Показывать страницу в меню сайта и в карте сайта</span>
+    </label>
+  </div>
+
+  <script>
+    // Виды — viewMode из Controls/toggle:Switch. Переключатели в таблице живые: клик меняет значение без JS
+    const VIEWS = [['filled', ''], ['outlined', ' switch--outlined']];
+    const VALUES = [['value false', ''], ['value true', ' checked']];
+    const STATES = [['покой', ''], ['hover', ' is-hover'], ['readOnly', ' is-readonly']];
+
+    function render() {
+      const size = document.getElementById('size').value;
+      const start = document.getElementById('pos').value === 'start' ? ' switch--caption-start' : '';
+      document.getElementById('out').innerHTML = VIEWS.map(([title, cls]) => `
+        <h2>${title}</h2>
+        <table>
+          <tr><th></th>${STATES.map(([t]) => `<th>${t}</th>`).join('')}</tr>
+          ${VALUES.map(([t, checked]) => `<tr><th>${t}</th>${STATES.map(([, s]) => `<td>
+            <label class="switch${cls} switch--size-${size}${start}${s}">
+              <input class="switch__input" type="checkbox" role="switch"${checked}${s === ' is-readonly' ? ' disabled' : ''}>
+              <span class="switch__button"></span>
+              <span class="switch__caption">Поисковая индексация</span>
+            </label></td>`).join('')}</tr>`).join('')}
+        </table>`).join('');
+    }
+    document.getElementById('size').onchange = render;
+    document.getElementById('pos').onchange = render;
+    render();
+  </script>
+</body>
+</html>

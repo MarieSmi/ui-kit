@@ -58,7 +58,7 @@
 | `Название=Изменяется` | `<button class="pe__name">`, наведение `:hover` или `.is-hover` |
 | `Empty=on` | `.pe__name.is-empty` или `placeholder` у поля правки |
 | `Edit=on` | `<label class="pe__name pe__name--edit"><input class="pe__name-input"></label>` |
-| `Иконка=true` | `<span class="pe__icon">` с глифом перед именем. Глиф по умолчанию `&#xebb9;` — с `.pe__icon--s`, его нет в `cbuc-icons24` кита |
+| `Иконка=true` | `<span class="pe__icon">` с глифом перед именем. Глиф по умолчанию `&#xebb9;` (`cbuc-icons24`, 24px). Модификатор `.pe__icon--s` больше не нужен и ничего не меняет, класс оставлен для совместимости |
 | `Тип=Измененное имя` | свой глиф в `.pe__icon` и `.pe__mark` с подсказкой `.pe__hint` после имени |
 | `Тип=Провал` | `<button class="pe__back">&#xeb9e;</button>` вместо `.pe__icon`, у `.pe__reset` — `disabled` |
 

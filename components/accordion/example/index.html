@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>accordion — пример</title>
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../accordion.css">
+  <style>
+    body { margin: 0; padding: 24px; font-family: var(--font-font-family-default), sans-serif; font-size: 14px;
+      background: var(--background-background-color); color: var(--text-text-color); }
+    h2 { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
+    p { margin: 0 0 12px; color: var(--text-label_text-color); }
+    .demos { display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start; }
+    .box { display: flex; }
+  </style>
+</head>
+<body>
+  <div class="demos">
+    <div>
+      <h2>Сайдбар продукта</h2>
+      <p>Кнопка «≡» сворачивает и разворачивает без JS.</p>
+      <div class="box" style="height: 300px">
+        <aside class="sidebar">
+          <div class="sidebar__header">
+            <div class="sidebar__top">
+              <a class="sidebar__bird" href="#" aria-label="Saby">&#xe9e2;</a>
+              <a class="sidebar__logo" href="#"><span class="sidebar__logo-name">saby</span><span class="sidebar__logo-title">design</span></a>
+            </div>
+            <div class="sidebar__bottom">
+              <label class="sidebar__toggle" title="Свернуть или развернуть"><input class="sidebar__toggle-input" type="checkbox" aria-label="Свернуть меню"></label>
+              <span class="sidebar__scheme">конструктор сайтов</span>
+            </div>
+          </div>
+          <nav class="accordion" aria-label="Разделы">
+            <a class="accordion__item is-selected" href="#" aria-current="page"><span class="accordion__icon" aria-hidden="true">&#xe9eb;</span><span class="accordion__title">Сайты</span></a>
+            <a class="accordion__item is-hover" href="#"><span class="accordion__icon" aria-hidden="true">&#xe9d5;</span><span class="accordion__title">Виджеты</span></a>
+            <a class="accordion__item" href="#"><span class="accordion__icon" aria-hidden="true">&#xe943;</span><span class="accordion__short">Стиль</span><span class="accordion__title">Оформление</span></a>
+            <a class="accordion__item" href="#"><span class="accordion__icon" aria-hidden="true">&#xe96d;</span><span class="accordion__title">Диск</span></a>
+          </nav>
+        </aside>
+      </div>
+    </div>
+
+    <div>
+      <h2>Свёрнутый</h2>
+      <p>.sidebar--compact</p>
+      <div class="box" style="height: 330px">
+        <aside class="sidebar sidebar--compact">
+          <div class="sidebar__header">
+            <div class="sidebar__top">
+              <a class="sidebar__bird" href="#" aria-label="Saby">&#xe9e2;</a>
+              <a class="sidebar__logo" href="#"><span class="sidebar__logo-name">saby</span><span class="sidebar__logo-title">design</span></a>
+            </div>
+            <div class="sidebar__bottom">
+              <button type="button" class="sidebar__toggle" aria-label="Развернуть"></button>
+            </div>
+          </div>
+          <nav class="accordion" aria-label="Разделы">
+            <a class="accordion__item" href="#"><span class="accordion__icon" aria-hidden="true">&#xe9eb;</span><span class="accordion__title">Сайты</span></a>
+            <a class="accordion__item is-selected" href="#" aria-current="page"><span class="accordion__icon" aria-hidden="true">&#xe9d5;</span><span class="accordion__title">Виджеты</span></a>
+            <a class="accordion__item" href="#"><span class="accordion__icon" aria-hidden="true">&#xe943;</span><span class="accordion__short">Стиль</span><span class="accordion__title">Оформление</span></a>
+            <a class="accordion__item" href="#"><span class="accordion__icon" aria-hidden="true">&#xe96d;</span><span class="accordion__title">Диск</span></a>
+          </nav>
+        </aside>
+      </div>
+    </div>
+
+    <div>
+      <h2>Подразделы и группы</h2>
+      <p>.is-active, .accordion__item--sub, .accordion__group, .accordion__spacer</p>
+      <div class="box" style="height: 360px">
+        <aside class="sidebar">
+          <div class="sidebar__header">
+            <div class="sidebar__top">
+              <a class="sidebar__bird" href="#" aria-label="Saby">&#xe9e2;</a>
+              <a class="sidebar__logo" href="#"><span class="sidebar__logo-name">saby</span><span class="sidebar__logo-title">design</span></a>
+            </div>
+            <div class="sidebar__bottom">
+              <label class="sidebar__toggle" title="Свернуть или развернуть"><input class="sidebar__toggle-input" type="checkbox" aria-label="Свернуть меню"></label>
+              <span class="sidebar__scheme">конструктор сайтов</span>
+            </div>
+          </div>
+          <nav class="accordion" aria-label="Разделы">
+            <a class="accordion__item is-active" href="#"><span class="accordion__icon" aria-hidden="true">&#xe9eb;</span><span class="accordion__title">Сайты</span></a>
+            <a class="accordion__item accordion__item--sub is-selected" href="#" aria-current="page"><span class="accordion__title">Статистика сайтов</span></a>
+            <a class="accordion__item" href="#"><span class="accordion__icon" aria-hidden="true">&#xe9d5;</span><span class="accordion__title">Виджеты</span></a>
+            <div class="accordion__group"></div>
+            <a class="accordion__item" href="#"><span class="accordion__icon" aria-hidden="true">&#xe954;</span><span class="accordion__title">Аналитика</span></a>
+            <div class="accordion__spacer"></div>
+            <a class="accordion__item" href="#"><span class="accordion__icon" aria-hidden="true">&#xe92d;</span><span class="accordion__title">Настройки</span></a>
+          </nav>
+        </aside>
+      </div>
+    </div>
+
+    <div>
+      <h2>Аккордеон без шапки</h2>
+      <p>.accordion и .accordion--compact</p>
+      <div class="box" style="height: 200px; gap: 24px">
+        <nav class="accordion" aria-label="Разделы">
+          <a class="accordion__item is-selected" href="#" aria-current="page"><span class="accordion__icon" aria-hidden="true">&#xe9eb;</span><span class="accordion__title">Сайты</span></a>
+          <a class="accordion__item" href="#"><span class="accordion__icon" aria-hidden="true">&#xe9d5;</span><span class="accordion__title">Виджеты</span></a>
+        </nav>
+        <nav class="accordion accordion--compact" aria-label="Разделы">
+          <a class="accordion__item is-selected" href="#" aria-current="page"><span class="accordion__icon" aria-hidden="true">&#xe9eb;</span><span class="accordion__title">Сайты</span></a>
+          <a class="accordion__item" href="#"><span class="accordion__icon" aria-hidden="true">&#xe9d5;</span><span class="accordion__title">Виджеты</span></a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

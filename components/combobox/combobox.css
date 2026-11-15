@@ -1,0 +1,134 @@
+/*!
+ * combobox — поле выбора значения из списка со стрелкой, в оформлении поля ввода. Меню открывается под полем.
+ * Перенесено из кода Saby: Controls/ComboBox (ComboBox.less, _dropdown/Combobox.tsx) и строки меню Controls/menu.
+ * Размеры и цвета сняты с живого примера Saby Components.
+ * Figma: «Поле выбора». В библиотеке «⚙️ Default components» component set не найден; одноимённый «combobox» есть
+ * в библиотеке «📚Дополнительные компоненты», ключ 7ddf71e1584dcafd8f47a111d21e25a8d3eb840f. С макетом не сверялось.
+ * placeholder → .combobox--empty; contrastBackground → .combobox--contrast;
+ * borderVisibility → без класса (partial) / .combobox--border-visible / --border-hidden;
+ * inlineHeight → .combobox--size-m (по умолчанию) / -l / -xl;
+ * readOnly, validationStatus=invalid, наведение, открытое меню → .is-readonly / .is-invalid / .is-hover / .is-open
+ * (наведение — и :hover, фокус — :focus-within).
+ * Разметка:
+ *   <div class="combobox">
+ *     <button type="button" class="combobox__field"><span class="combobox__value">…</span></button>
+ *     <ul class="combobox__menu" hidden><li class="combobox__item is-selected">…</li>…</ul>
+ *   </div>
+ * Меню показывает и прячет прототип атрибутом hidden. Стрелка — глиф ExpandLight шрифта cbuc-icons, её ставит
+ * сам компонент. Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/combobox
+ */
+
+/* ---------- Поле ---------- */
+.combobox {
+  --cmb-h: var(--inline_height-inline_height_default);
+  --cmb-px: 0px;                                        /* отступ текста от края: есть только у contrast */
+  --cmb-bg: transparent;
+  --cmb-line-r: var(--border-unaccented_border-color);        /* same_border-color_input */
+  --cmb-line-h: var(--border-unaccented_hover_border-color);  /* same_hover-border-color_input */
+  --cmb-fg: var(--text-text-color);
+  --cmb-ic-r: var(--icon-unaccented_icon-color);
+  --cmb-ic-h: var(--icon-unaccented_hover_icon-color);
+  /* сдвиг меню влево, чтобы текст пункта встал под текст поля: отступ меню 6 + отступ пункта 8 + половина маркера 6
+     − рамка 1 − отступ маркера 2; 1px рамки — нет токена */
+  --cmb-shift: calc(var(--offset-offset_xs) + var(--offset-offset_s) + var(--icon-icon_size-icon-size_2xs) / 2 - 1px - var(--offset-offset_3xs));
+
+  box-sizing: border-box; position: relative; display: inline-block; vertical-align: top; max-width: 100%;
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--components-input-font-size-font-size_m_input); font-weight: var(--font-font-weight-regular);
+}
+.combobox__field {
+  box-sizing: border-box; display: flex; align-items: center;
+  width: 100%; height: var(--cmb-h); margin: 0; padding: 0 var(--cmb-px); border: 0;
+  font: inherit; line-height: normal; color: var(--cmb-fg); text-align: left;
+  background: var(--cmb-bg);
+  box-shadow: inset 0 -1px 0 var(--cmb-line-r); /* линия снизу; толщина 1px — нет токена */
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.combobox__value {
+  flex: 1 1 auto; min-width: 0; margin-right: var(--offset-offset_2xs); /* trigger_padding-right_combobox */
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* Стрелка: глиф ExpandLight (e9aa) шрифта cbuc-icons, шрифт подключает проект */
+.combobox__field::after {
+  content: "\e9aa"; flex: none;
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s); line-height: 1;
+  font-weight: var(--font-font-weight-regular); color: var(--cmb-ic-r);
+}
+
+/* ---------- Варианты ---------- */
+/* Подсказка в пустом поле */
+.combobox--empty .combobox__value { color: var(--components-input-placeholder-color_inputtext); }
+/* contrastBackground: белое поле для серого фона, линия появляется при наведении */
+.combobox--contrast {
+  --cmb-px: var(--components-input-padding-horizontal_inputtext);
+  --cmb-bg: var(--background-background-color);            /* background-color_inputText */
+  --cmb-line-r: transparent;                                /* contrast_border-color_input */
+  --cmb-line-h: var(--border-unaccented_border-color);      /* contrast_hover-border-color_input */
+  --cmb-shift: calc(var(--offset-offset_xs) + var(--offset-offset_s) + var(--icon-icon_size-icon-size_2xs) / 2 - 1px - var(--offset-offset_3xs) - var(--components-input-padding-horizontal_inputtext));
+}
+/* borderVisibility */
+.combobox--border-visible .combobox__field { box-shadow: inset 0 0 0 1px var(--extra-separator_color); } /* рамка 1px — нет токена */
+.combobox--border-hidden .combobox__field { box-shadow: none; }
+/* Высота */
+.combobox--size-m { --cmb-h: var(--inline_height-inline_height_m); }
+.combobox--size-l { --cmb-h: var(--inline_height-inline_height_l); }
+.combobox--size-xl { --cmb-h: var(--inline_height-inline_height_xl); }
+
+/* ---------- Состояния поля ---------- */
+.combobox:not(.combobox--border-visible, .combobox--border-hidden) .combobox__field:hover,
+.combobox:not(.combobox--border-visible, .combobox--border-hidden):focus-within .combobox__field,
+.combobox:not(.combobox--border-visible, .combobox--border-hidden).is-hover .combobox__field { box-shadow: inset 0 -1px 0 var(--cmb-line-h); }
+.combobox__field:hover::after,
+.combobox.is-hover .combobox__field::after,
+.combobox.is-open .combobox__field::after { color: var(--cmb-ic-h); }
+/* Ошибка: линия цвета ошибки в любом состоянии */
+.combobox.is-invalid:not(.combobox--border-hidden) .combobox__field,
+.combobox.is-invalid:not(.combobox--border-hidden) .combobox__field:hover { box-shadow: inset 0 -1px 0 var(--extra-invalid_border-color); }
+.combobox--border-visible.is-invalid .combobox__field,
+.combobox--border-visible.is-invalid .combobox__field:hover { box-shadow: inset 0 0 0 1px var(--extra-invalid_border-color); }
+/* readOnly: бледная линия, без подложки и стрелки, не нажимается */
+.combobox.is-readonly .combobox__field,
+.combobox.is-readonly .combobox__field:hover,
+.combobox__field:disabled,
+.combobox__field:disabled:hover {
+  background: transparent; cursor: default;
+  box-shadow: inset 0 -1px 0 var(--border-readonly_border-color);
+}
+.combobox.is-readonly .combobox__field::after,
+.combobox__field:disabled::after { content: none; }
+.combobox.is-readonly .combobox__value,
+.combobox__field:disabled .combobox__value { margin-right: 0; }
+
+/* ---------- Меню ---------- */
+.combobox__menu {
+  box-sizing: border-box; position: absolute; z-index: 10; top: 100%; left: 0;
+  min-width: calc(100% + var(--cmb-shift) + var(--offset-offset_s)); /* не уже поля вместе со сдвигом */
+  /* вверх — на рамку 1px и 2px, как в Saby; влево — чтобы текст пункта встал под текст поля */
+  margin: calc(-1 * (1px + var(--offset-offset_3xs))) 0 0 calc(-1 * var(--cmb-shift));
+  padding: var(--offset-offset_m) var(--offset-offset_s); list-style: none;
+  border-radius: var(--border-radius-border-radius_s);
+  background: var(--components-popuptemplate-background-color_sticky);
+  /* тень окна: два слоя, как в Saby; смещение 0 0 и цвет второго слоя — нет токена (берём shadow-color_a) */
+  box-shadow: 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a), 0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a);
+}
+.combobox__menu[hidden] { display: none; }
+.combobox__item {
+  box-sizing: border-box; display: flex; align-items: center;
+  height: var(--components-popup-menu-item_height_menu); margin: 0 0 var(--offset-offset_xs); padding: 0 var(--offset-offset_s);
+  border-radius: var(--components-popup-menu-item_border-radius);
+  font-size: var(--font-font-size-font-size_xl); line-height: normal; color: var(--text-text-color);
+  white-space: nowrap; cursor: pointer;
+}
+.combobox__item:last-child { margin-bottom: 0; }
+/* Маркер выбранного пункта: кружок 6px в поле 12px; место под него есть у всех пунктов */
+.combobox__item::before {
+  content: ""; flex: none; width: var(--icon-icon_size-icon-size_2xs); height: var(--icon-icon_size-icon-size_2xs);
+  margin-right: 3px; /* нет токена */
+  border-radius: 50%; background: transparent; background-clip: content-box; padding: 3px; box-sizing: border-box; /* 3px — нет токена */
+}
+.combobox__item.is-selected::before,
+.combobox__item[aria-selected="true"]::before { background-color: var(--extra-marker_color); }
+.combobox__item:hover,
+.combobox__item.is-hover { background: var(--components-dropdownpopup-item_hover_background-color_menu); }
+/* Focus в коде Saby — общий класс платформы, в кит не перенесён: остаётся обводка браузера по :focus-visible */

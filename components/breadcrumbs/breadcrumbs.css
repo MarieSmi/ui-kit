@@ -1,0 +1,119 @@
+/*!
+ * breadcrumbs — хлебные крошки: путь до текущей папки. Вместе с кнопкой «Назад» — шапка проводника.
+ * Перенесены из кода Saby: Controls/breadcrumbs:Path и Controls/breadcrumbs:HeadingPath (View.module.less,
+ * HeadingPath.module.less, _breadcrumbs.less). Размеры и цвета покоя сняты с живого примера Saby Components.
+ * Figma: component set «BreadCrumbs» библиотеки «⚙️ Default components» (nuC4KFMiS36uDWDUp9wKGl),
+ * ключ ec58fe67289d747836e1448a69047e2cf0c37a62. Свойства и состояния взяты из кода, с макетом не сверялись.
+ * fontSize → .breadcrumbs--size-xs (по умолчанию) / -s / -m / -l; fontColorStyle=link → .breadcrumbs--color-link;
+ * readOnly → .is-readonly; наведение на крошку → .is-hover (и :hover).
+ * Разметка:
+ *   <nav class="breadcrumbs">
+ *     <span class="breadcrumbs__middle">
+ *       <a class="breadcrumbs__crumb">…</a> … <span class="breadcrumbs__dots">...</span>
+ *     </span>
+ *     <a class="breadcrumbs__crumb breadcrumbs__crumb--last">…</a>
+ *   </nav>
+ * Шапка проводника: .breadcrumbs-path с кнопкой «Назад» в .breadcrumbs-path__back, «домиком» и крошками в
+ * .breadcrumbs-path__crumbs; displayMode=multiline → .breadcrumbs-path--multiline.
+ * Стрелки между крошками рисует сам компонент (маска на ::before). Цвета и размеры — токены ui-kit.
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/breadcrumbs
+ *
+ * Сворачивание в «…» — без JS, приёмом из Saby: все крошки, кроме последней, лежат в .breadcrumbs__middle в одну
+ * строку; .breadcrumbs__dots — float справа после них. Пока крошки помещаются, он стоит в первой строке и сдвинут
+ * вверх за край. Когда строка переполнена, float падает на вторую строку и тем же сдвигом встаёт на место первой.
+ */
+
+/* ---------- Крошки ---------- */
+.breadcrumbs {
+  --bc-h: var(--inline_height-inline_height_default);
+  --bc-fs: var(--font-font-size-font-size_xs);
+  --bc-fg-r: var(--text-label_text-color);
+  --bc-fg-h: var(--text-label_hover_text-color);
+  --bc-ic: var(--text-label_text-color); /* стрелка между крошками — цвета меток при любом цвете текста */
+  --bc-bg: var(--background-background-color); /* фон под «…»: должен совпадать с фоном места, где стоят крошки */
+  --bc-min: calc(var(--icon-icon_size-icon-size_s) + 28px); /* самая узкая крошка: стрелка + 28px текста; 28px — нет токена */
+
+  box-sizing: border-box;
+  display: flex; align-items: flex-start;
+  min-width: 0; max-width: 100%; height: var(--bc-h); margin: 0; padding: 0; overflow: hidden;
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--bc-fs); font-weight: var(--font-font-weight-regular); line-height: var(--bc-h);
+  color: var(--bc-fg-r); white-space: nowrap;
+}
+/* Невидимая опора: по ней считается базовая линия пути, когда он стоит в строке с кнопкой «Назад» */
+.breadcrumbs::before { content: "\200b"; flex: none; width: 0; overflow: hidden; }
+.breadcrumbs__middle {
+  flex: 0 1 auto; min-width: 0; height: var(--bc-h); overflow: hidden;
+  font-size: 0; /* убирает пробелы между крошками из разметки */
+}
+.breadcrumbs__crumb,
+.breadcrumbs__dots {
+  box-sizing: border-box; display: inline-block; vertical-align: top;
+  height: var(--bc-h); max-width: 100%; margin: 0; padding: 0; border: 0; background: none;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font: inherit; font-size: var(--bc-fs); line-height: var(--bc-h);
+  color: var(--bc-fg-r); text-decoration: none; cursor: pointer;
+}
+/* Последняя крошка — снаружи .breadcrumbs__middle: не шире половины и не уже стрелки с 28px текста */
+.breadcrumbs__crumb--last { flex: none; max-width: 50%; min-width: var(--bc-min); }
+.breadcrumbs > .breadcrumbs__crumb--last:first-child { max-width: 100%; min-width: 0; } /* путь из одной крошки */
+
+/* Стрелка перед крошкой — путь из View (Saby) в квадрате 16×16, размер 1em; у первой крошки стрелки нет */
+.breadcrumbs__crumb:not(:first-child)::before,
+.breadcrumbs__middle + .breadcrumbs__crumb::before,
+.breadcrumbs__dots::before {
+  content: ""; display: inline-block; vertical-align: baseline; width: 1em; height: 1em; background: var(--bc-ic);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5.41374 4.00339L11 9.5V10.5L5.41374 16L4.70663 15.2929L9.99783 10.00169L4.70663 4.71049L5.41374 4.00339Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5.41374 4.00339L11 9.5V10.5L5.41374 16L4.70663 15.2929L9.99783 10.00169L4.70663 4.71049L5.41374 4.00339Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* «…» вместо непоместившихся крошек. Сам float нулевой ширины (иначе он занимал бы место в строке), содержимое
+   выступает влево; подложка с размытым краем закрывает обрезанный текст под ним */
+.breadcrumbs__dots {
+  float: right; position: relative; bottom: var(--bc-h); z-index: 1;
+  display: flex; justify-content: flex-end; align-items: baseline; width: 0; max-width: none; overflow: visible;
+}
+.breadcrumbs__dots::before { flex: none; align-self: center; }
+.breadcrumbs__dots::after {
+  content: ""; position: absolute; z-index: -1; top: 0; right: 0; bottom: 0; width: 2em; /* стрелка 1em и «...»; 2em — нет токена */
+  background: var(--bc-bg);
+  box-shadow: -6px 0 4px var(--bc-bg); /* размытый край: в Saby отдельный слой 10px с blur 2px — нет токена */
+}
+
+/* ---------- Размер и цвет ---------- */
+.breadcrumbs--size-xs { --bc-fs: var(--font-font-size-font-size_xs); }
+.breadcrumbs--size-s { --bc-fs: var(--font-font-size-font-size_s); }
+.breadcrumbs--size-m { --bc-fs: var(--font-font-size-font-size_m); }
+.breadcrumbs--size-l { --bc-fs: var(--font-font-size-font-size_l); }
+.breadcrumbs--color-link { --bc-fg-r: var(--text-link_text-color); --bc-fg-h: var(--text-link_hover_text-color); }
+
+/* ---------- Состояния ---------- */
+.breadcrumbs__crumb:hover, .breadcrumbs__crumb.is-hover,
+.breadcrumbs__dots:hover, .breadcrumbs__dots.is-hover { color: var(--bc-fg-h); text-decoration: underline; }
+/* readOnly: крошки не нажимаются */
+.breadcrumbs.is-readonly .breadcrumbs__crumb,
+.breadcrumbs.is-readonly .breadcrumbs__dots { color: var(--bc-fg-r); text-decoration: none; cursor: default; }
+
+/* ---------- Шапка проводника: кнопка «Назад», «домик», крошки ---------- */
+.breadcrumbs-path {
+  box-sizing: border-box; display: flex; align-items: baseline;
+  max-width: 100%; overflow: hidden;
+}
+/* Кнопка «Назад» (компонент back кита) — не шире половины; 6px — запас под её обводку, нет токена */
+.breadcrumbs-path__back { flex: none; display: flex; align-items: baseline; min-width: 1px; max-width: calc(50% + 6px); }
+.breadcrumbs-path__crumbs { flex: 1 1 auto; display: flex; align-items: baseline; min-width: 28px; } /* 28px — нет токена */
+.breadcrumbs-path__crumbs .breadcrumbs { flex: 1 1 0; /* вся оставшаяся ширина: от неё считается половина для последней крошки */padding-left: var(--offset-offset_3xs); }
+/* «Домик» — переход в корень; глиф Home3 шрифта cbuc-icons в разметке: &#xe920; */
+.breadcrumbs-path__home {
+  flex: none; margin: 0 0 0 var(--offset-offset_s); padding: 0; border: 0; background: none;
+  font-family: var(--icon-font-family-s_icon_font-family); /* шрифт cbuc-icons подключает проект */
+  font-size: var(--icon-icon_size-icon-size_s); line-height: 1; font-weight: var(--font-font-weight-regular);
+  color: var(--text-label_text-color); text-decoration: none; cursor: pointer;
+}
+.breadcrumbs-path__home:hover, .breadcrumbs-path__home.is-hover { color: var(--text-label_hover_text-color); }
+/* multiline: крошки строкой над кнопкой «Назад» */
+.breadcrumbs-path--multiline { flex-direction: column; align-items: stretch; }
+.breadcrumbs-path--multiline .breadcrumbs-path__crumbs { order: -1; flex: none; padding-left: var(--offset-offset_m); }
+.breadcrumbs-path--multiline .breadcrumbs-path__home { margin-left: 0; }
+.breadcrumbs-path--multiline .breadcrumbs-path__back { align-self: flex-start; max-width: 100%; }
+/* Focus в коде Saby — общий класс платформы, в кит не перенесён: остаётся обводка браузера по :focus-visible */

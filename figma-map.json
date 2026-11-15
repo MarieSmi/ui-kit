@@ -76,6 +76,311 @@
         "captionVisible#6921:7": { "true": "есть .checkbox__caption", "false": "без .checkbox__caption" }
       }
     },
+    "close-button": {
+      "kit": "components/close-button",
+      "since": "1.17.0",
+      "source": {
+        "repository": "saby-components",
+        "files": ["packages/controls/Controls/_extButtons/CloseButton.tsx", "packages/controls/Controls/_extButtons/CloseButton/_CloseButton.less"],
+        "note": "Виды, размеры и состояния перенесены из кода Saby (Controls/extButtons:CloseButton). Свойства component set в Figma не читались: имена свойств ниже — параметры компонента Saby."
+      },
+      "figma": {
+        "fileKey": "nuC4KFMiS36uDWDUp9wKGl",
+        "file": "⚙️ Default components",
+        "verified": false
+      },
+      "element": "<button type=\"button\" class=\"close-button …\" aria-label=\"Закрыть\"></button>",
+      "base": "close-button",
+      "sets": [
+        { "name": "close/closeButton", "key": "8514357ba189f7dc239ccd8cce495173b10c8c99" }
+      ],
+      "properties": {
+        "viewMode": { "toolButton": null, "linkButton": "close-button--link-button", "link": "close-button--link-button", "functionalButton": "close-button--functional-button", "external": "close-button--external", "externalWide": "close-button--external-wide" },
+        "size": { "class": "close-button--size-{value}", "values": ["s", "m", "l"], "note": "по умолчанию m; у linkButton всегда s" },
+        "offset": { "default": "close-button--offset", "null": null },
+        "_hover": { "true": "is-hover", "false": null, "alt": ":hover" },
+        "_active": { "true": "is-active", "false": null, "alt": ":active" }
+      }
+    },
+    "arrow-button": {
+      "kit": "components/arrow-button",
+      "since": "1.17.0",
+      "source": {
+        "repository": "saby-components",
+        "files": ["packages/controls/Controls/_extButtons/ArrowButton.tsx", "packages/controls/Controls/_extButtons/ArrowButton/Arrow.tsx", "packages/controls/Controls/_extButtons/ArrowButton/ArrowStretched.tsx", "packages/controls/Controls/_extButtons/ArrowButton/_ArrowButton.less", "packages/controls/Controls/_buttons/_Button.less"],
+        "note": "Виды, размеры и состояния перенесены из кода Saby (Controls/extButtons:ArrowButton) и живого примера. Свойства component set в Figma не читались: имена свойств ниже — параметры компонента Saby."
+      },
+      "figma": {
+        "fileKey": "nuC4KFMiS36uDWDUp9wKGl",
+        "file": "⚙️ Default components",
+        "verified": false
+      },
+      "element": "<button type=\"button\" class=\"arrow-button …\" aria-label=\"…\"></button>",
+      "base": "arrow-button",
+      "sets": [
+        { "name": "arrow/arrowButton", "key": "766f785726d4cc1b95706a78fd3beaf89ffbaa9d" }
+      ],
+      "properties": {
+        "viewMode": { "filled": null, "ghost": "arrow-button--ghost", "link": "arrow-button--link", "stretched": "arrow-button--stretched", "stretched-ghost": "arrow-button--stretched-ghost" },
+        "buttonStyle": { "pale": null, "default": "arrow-button--style-default", "note": "у stretched: без стиля — полупрозрачная тёмная, pale — arrow-button--style-pale" },
+        "direction": { "right": null, "left": "arrow-button--left", "up": "arrow-button--up", "down": "arrow-button--down" },
+        "inlineHeight": { "class": "arrow-button--size-{value}", "values": ["s", "m", "mt", "xl", "5xl"], "note": "по умолчанию m" },
+        "translucent": { "note": "не входит в кит" },
+        "readOnly": { "true": "is-readonly", "false": null, "alt": ":disabled" },
+        "_hover": { "true": "is-hover", "false": null, "alt": ":hover" },
+        "_active": { "true": "is-active", "false": null, "alt": ":active" }
+      }
+    },
+    "back": {
+      "kit": "components/back",
+      "since": "1.17.0",
+      "source": {
+        "repository": "saby-components",
+        "files": ["packages/controls/Controls/_heading/Back.tsx", "packages/controls/Controls/_heading/Back/_Back.less", "packages/controls/Controls/_heading/Heading/_Heading.less"],
+        "note": "Варианты и состояния перенесены из кода Saby (Controls/heading:Back) и живого примера. Свойства component set в Figma не читались: имена свойств ниже — параметры компонента Saby. Соответствие component set «other / backButtonArrow» компоненту Back не проверено."
+      },
+      "figma": {
+        "fileKey": "nuC4KFMiS36uDWDUp9wKGl",
+        "file": "⚙️ Default components",
+        "verified": false
+      },
+      "element": "<button type=\"button\" class=\"back …\"><span class=\"back__icon\"></span><span class=\"back__caption\">…</span></button>",
+      "base": "back",
+      "sets": [
+        { "name": "other / backButtonArrow", "key": "9ae5caa5b9998c31f0e5967b76fa58c7a8f24efe" }
+      ],
+      "properties": {
+        "fontSize": { "class": "back--size-{value}", "values": ["m", "l", "xl", "2xl", "3xl", "4xl", "5xl"], "note": "по умолчанию 3xl" },
+        "fontColorStyle": { "class": "back--color-{value}", "values": ["default", "secondary", "link", "label"], "primary": null },
+        "iconStyle": { "class": "back--icon-{value}", "values": ["default", "primary", "link", "label"], "secondary": null },
+        "iconViewMode": { "default": null, "functionalButton": "back--functional-button" },
+        "buttonStyle": { "pale": null, "default": "back--style-default", "note": "только с iconViewMode=functionalButton" },
+        "textOverflow": { "ellipsis": null, "none": "back--wrap" },
+        "viewMode": { "default": null, "fade": "не входит в кит" },
+        "readOnly": { "true": "is-readonly", "false": null, "alt": ":disabled" },
+        "_hover": { "true": "is-hover", "false": null, "alt": ":hover" },
+        "_active": { "true": "is-active", "false": null, "alt": ":active" }
+      },
+      "content": {
+        "caption": { "kit": "текст в .back__caption" }
+      }
+    },
+    "breadcrumbs": {
+      "kit": "components/breadcrumbs",
+      "since": "1.17.0",
+      "source": {
+        "repository": "saby-components",
+        "files": ["packages/controls/Controls/_breadcrumbs/Path.tsx", "packages/controls/Controls/_breadcrumbs/HeadingPath.tsx", "packages/controls/Controls/_breadcrumbs/View/View.module.less", "packages/controls/Controls/_breadcrumbs/HeadingPath/HeadingPath.module.less"],
+        "note": "Перенесено из кода Saby (Controls/breadcrumbs:Path и :HeadingPath) и живого примера. Свойства component set в Figma не читались: имена свойств ниже — параметры компонентов Saby."
+      },
+      "figma": {
+        "fileKey": "nuC4KFMiS36uDWDUp9wKGl",
+        "file": "⚙️ Default components",
+        "verified": false
+      },
+      "element": "<nav class=\"breadcrumbs …\"><span class=\"breadcrumbs__middle\"><a class=\"breadcrumbs__crumb\">…</a>…<span class=\"breadcrumbs__dots\">...</span></span><a class=\"breadcrumbs__crumb breadcrumbs__crumb--last\">…</a></nav>",
+      "base": "breadcrumbs",
+      "sets": [
+        { "name": "BreadCrumbs", "key": "ec58fe67289d747836e1448a69047e2cf0c37a62" }
+      ],
+      "properties": {
+        "fontSize": { "class": "breadcrumbs--size-{value}", "values": ["xs", "s", "m", "l"], "note": "по умолчанию xs" },
+        "fontColorStyle": { "label": null, "link": "breadcrumbs--color-link" },
+        "readOnly": { "true": "is-readonly", "false": null },
+        "_hover": { "true": "is-hover на .breadcrumbs__crumb", "false": null, "alt": ":hover" }
+      },
+      "parts": {
+        "headingPath": "breadcrumbs-path",
+        "back": "breadcrumbs-path__back (внутри — компонент back)",
+        "home": "breadcrumbs-path__home",
+        "crumbs": "breadcrumbs-path__crumbs",
+        "multiline": "breadcrumbs-path--multiline"
+      }
+    },
+    "combobox": {
+      "kit": "components/combobox",
+      "since": "1.17.0",
+      "source": {
+        "repository": "saby-components",
+        "files": ["packages/controls/Controls/ComboBox.less", "packages/controls/Controls/_dropdown/Combobox.tsx", "packages/controls/Controls/_menu"],
+        "note": "Перенесено из кода Saby (Controls/ComboBox) и живого примера. Свойства component set в Figma не читались: имена свойств ниже — параметры компонента Saby. Не сопоставлять по ключу: соответствие component set не проверено."
+      },
+      "figma": {
+        "fileKey": null,
+        "file": "📚Дополнительные компоненты",
+        "verified": false,
+        "note": "В «⚙️ Default components» component set не найден. Одноимённый «combobox» есть в библиотеке «📚Дополнительные компоненты», ключ 7ddf71e1584dcafd8f47a111d21e25a8d3eb840f; ключ файла неизвестен."
+      },
+      "element": "<div class=\"combobox …\"><button type=\"button\" class=\"combobox__field\"><span class=\"combobox__value\">…</span></button><ul class=\"combobox__menu\" hidden><li class=\"combobox__item\">…</li></ul></div>",
+      "base": "combobox",
+      "properties": {
+        "placeholder": { "note": "пустое поле: combobox--empty, текст подсказки в .combobox__value" },
+        "contrastBackground": { "true": "combobox--contrast", "false": null },
+        "borderVisibility": { "partial": null, "visible": "combobox--border-visible", "hidden": "combobox--border-hidden" },
+        "inlineHeight": { "class": "combobox--size-{value}", "values": ["m", "l", "xl"], "note": "по умолчанию m" },
+        "readOnly": { "true": "is-readonly", "false": null, "alt": ":disabled у .combobox__field" },
+        "validationStatus": { "valid": null, "invalid": "is-invalid" },
+        "_hover": { "true": "is-hover", "false": null, "alt": ":hover" },
+        "_opened": { "true": "is-open и меню без hidden", "false": null }
+      },
+      "parts": {
+        "field": "combobox__field",
+        "value": "combobox__value",
+        "menu": "combobox__menu",
+        "item": "combobox__item",
+        "selectedItem": "is-selected или aria-selected=\"true\""
+      }
+    },
+    "switch": {
+      "kit": "components/switch",
+      "since": "1.17.0",
+      "source": {
+        "repository": "saby-components",
+        "files": ["packages/controls/Controls/_toggle/Switch.tsx", "packages/controls/Controls/_toggle/SwitchButton.tsx", "packages/controls/Controls/_toggle/Switch/resources/CaptionTemplate.tsx", "packages/controls/Controls/_toggle/Switch/_Switch.less", "packages/controls/Controls/_toggle/SwitchButton/_SwitchButton.less"],
+        "note": "Виды, размеры и состояния перенесены из кода Saby (Controls/toggle:Switch) и живого примера. Свойства component set в Figma не читались: имена свойств ниже — параметры компонента Saby."
+      },
+      "figma": {
+        "fileKey": "nuC4KFMiS36uDWDUp9wKGl",
+        "file": "⚙️ Default components",
+        "verified": false
+      },
+      "element": "<label class=\"switch …\"><input class=\"switch__input\" type=\"checkbox\" role=\"switch\"><span class=\"switch__button\"></span><span class=\"switch__caption\">…</span></label>",
+      "base": "switch",
+      "sets": [
+        { "name": "switch", "key": "026125b305039d03eaf847e61bfd4f9c45b56bc7", "note": "тот же component set, что у ml__switch в master-list" }
+      ],
+      "properties": {
+        "viewMode": { "filled": null, "outlined": "switch--outlined" },
+        "size": { "class": "switch--size-{value}", "values": ["s", "m", "l"], "note": "по умолчанию m" },
+        "captionPosition": { "end": null, "start": "switch--caption-start" },
+        "multiline": { "true": "switch--multiline", "false": null },
+        "value": { "true": "атрибут checked у .switch__input", "false": null },
+        "readOnly": { "true": "is-readonly", "false": null, "alt": "атрибут disabled у .switch__input" },
+        "resetValue": { "note": "не входит в кит" },
+        "switchColor": { "note": "не входит в кит" },
+        "_hover": { "true": "is-hover", "false": null, "alt": ":hover" }
+      },
+      "parts": {
+        "button": "switch__button",
+        "caption": "switch__caption"
+      }
+    },
+    "tumbler": {
+      "kit": "components/tumbler",
+      "since": "1.17.0",
+      "source": {
+        "repository": "saby-components",
+        "files": ["packages/controls/Controls/_Tumbler/Tumbler.tsx", "packages/controls/Controls/_Tumbler/_Tumbler.less"],
+        "note": "Виды, размеры и состояния перенесены из кода Saby (Controls/Tumbler:Control) и живого примера. Свойства component set в Figma не читались: имена свойств ниже — параметры компонента Saby. Не сопоставлять по ключу: ключ component set «tumblerHorizontal» не читался."
+      },
+      "figma": {
+        "fileKey": "nuC4KFMiS36uDWDUp9wKGl",
+        "file": "⚙️ Default components",
+        "verified": false
+      },
+      "element": "<div class=\"tumbler …\" role=\"radiogroup\"><label class=\"tumbler__item\"><input class=\"tumbler__input\" type=\"radio\" name=\"…\"><span class=\"tumbler__caption\">…</span></label>…</div>",
+      "base": "tumbler",
+      "sets": [
+        { "name": "tumblerHorizontal", "key": null }
+      ],
+      "properties": {
+        "contrastBackground": { "true": "tumbler--contrast", "false": null },
+        "inlineHeight": { "class": "tumbler--size-{value}", "values": ["xs", "s", "m", "l", "xl", "2xl", "3xl", "4xl", "5xl"], "note": "default — без класса" },
+        "direction": { "horizontal": null, "vertical": "tumbler--vertical" },
+        "readOnly": { "true": "is-readonly на .tumbler", "false": null },
+        "backgroundStyle": { "note": "не входит в кит" },
+        "selectedKey": { "note": "выбранный пункт: checked у .tumbler__input, is-selected или aria-checked=\"true\" у .tumbler__item" },
+        "_hover": { "true": "is-hover на .tumbler__item", "false": null, "alt": ":hover" }
+      },
+      "parts": {
+        "item": "tumbler__item",
+        "input": "tumbler__input",
+        "caption": "tumbler__caption",
+        "icon": "tumbler__icon",
+        "counter": "tumbler__counter"
+      }
+    },
+    "tabs": {
+      "kit": "components/tabs",
+      "since": "1.17.0",
+      "source": {
+        "repository": "saby-components",
+        "files": ["packages/controls/Controls/_tabs/Buttons.tsx", "packages/controls/Controls/_tabs/Buttons/templates/TextCounterTabTemplate.tsx", "packages/controls/Controls/_tabs/Buttons/_Buttons.less", "packages/controls/Controls/_tabs/styles/_Online.less", "packages/controls/Controls/Application/_styles/_marker.less"],
+        "note": "Виды и состояния перенесены из кода Saby (Controls/tabs:Buttons) и живого примера. Свойства component set в Figma не читались: имена свойств ниже — параметры компонента Saby. Не сопоставлять по ключу: ключ component set «tabs/horizontal» не читался."
+      },
+      "figma": {
+        "fileKey": "nuC4KFMiS36uDWDUp9wKGl",
+        "file": "⚙️ Default components",
+        "verified": false
+      },
+      "element": "<div class=\"tabs …\" role=\"tablist\"><label class=\"tabs__item\"><input class=\"tabs__input\" type=\"radio\" name=\"…\"><span class=\"tabs__caption\" data-caption=\"…\">…</span></label>…</div>",
+      "base": "tabs",
+      "sets": [
+        { "name": "tabs/horizontal", "key": null }
+      ],
+      "properties": {
+        "selectedStyle": { "primary": null, "secondary": "tabs--style-secondary", "unaccented": "tabs--style-unaccented" },
+        "inlineHeight": { "s": null, "l": null, "4xl": "tabs--size-4xl" },
+        "borderVisible": { "true": null, "false": "tabs--no-border" },
+        "horizontalPadding": { "xs": null, "null": "tabs--padding-null" },
+        "isMainTab": { "true": "tabs__item--main на .tabs__item", "false": null },
+        "align": { "note": "порядок разметки: вкладки до .tabs__space — слева, после — справа" },
+        "direction": { "note": "vertical не входит в кит" },
+        "selectedKey": { "note": "выбранная вкладка: checked у .tabs__input, is-selected или aria-selected=\"true\" у .tabs__item" },
+        "_hover": { "true": "is-hover на .tabs__item", "false": null, "alt": ":hover" }
+      },
+      "parts": {
+        "item": "tabs__item",
+        "input": "tabs__input",
+        "caption": "tabs__caption",
+        "icon": "tabs__icon",
+        "counter": "tabs__counter",
+        "space": "tabs__space"
+      }
+    },
+    "accordion": {
+      "kit": "components/accordion",
+      "since": "1.17.0",
+      "source": {
+        "repository": "saby-components",
+        "files": ["packages/page/NavigationPanels/_accordion/View.tsx", "packages/page/NavigationPanels/_accordion/ItemTemplate.tsx", "packages/page/NavigationPanels/_accordion/Accordion/_Accordion.less", "packages/page/NavigationPanels/_sidebars/Sidebar.tsx", "packages/page/NavigationPanels/_sidebars/Sidebar/_Sidebar.less", "packages/page/NavigationPanels/_sidebars/NavSchemeLink.tsx", "packages/page/NavigationPanels/Logo.tsx"],
+        "note": "Вид и состояния перенесены из кода Saby (NavigationPanels/accordion:View и NavigationPanels/sidebars:Sidebar, тема navigation_theme-default) и живого примера. Макет «Аккордеон [30.07.26]» в Figma не читался: ключа файла и компонента нет, имена свойств ниже — параметры компонентов Saby. Не сопоставлять по ключу."
+      },
+      "figma": {
+        "fileKey": null,
+        "file": "Аккордеон [30.07.26]",
+        "verified": false
+      },
+      "element": "<aside class=\"sidebar …\"><div class=\"sidebar__header\">…</div><nav class=\"accordion\"><a class=\"accordion__item\"><span class=\"accordion__icon\">…</span><span class=\"accordion__title\">…</span></a>…</nav></aside>",
+      "base": "accordion",
+      "sets": [],
+      "properties": {
+        "accordionExpanded": { "true": null, "false": "sidebar--compact на .sidebar", "alt": "отмеченный .sidebar__toggle-input" },
+        "expanded": { "true": null, "false": "accordion--compact на .accordion" },
+        "selectedKey": { "note": "выбранный раздел: is-selected или aria-current=\"page\" у .accordion__item; раздел с выбранным подразделом — is-active" },
+        "item.parent": { "note": "подраздел: accordion__item--sub, стоит сразу после своего раздела" },
+        "item.groupId": { "note": "смена группы — <div class=\"accordion__group\">; группа footer — <div class=\"accordion__spacer\"> перед ней" },
+        "item.shortTitle": { "note": "<span class=\"accordion__short\"> перед .accordion__title" },
+        "logo": { "note": "текст .sidebar__logo-title" },
+        "navSchemeTitle": { "note": "текст .sidebar__scheme" },
+        "theme": { "default": null, "note": "onlinenavigation не входит в кит" },
+        "_hover": { "true": "is-hover на .accordion__item или .sidebar__toggle", "false": null, "alt": ":hover" }
+      },
+      "parts": {
+        "sidebar": "sidebar",
+        "header": "sidebar__header",
+        "bird": "sidebar__bird",
+        "logo": "sidebar__logo",
+        "toggle": "sidebar__toggle",
+        "scheme": "sidebar__scheme",
+        "item": "accordion__item",
+        "icon": "accordion__icon",
+        "title": "accordion__title",
+        "shortTitle": "accordion__short",
+        "group": "accordion__group",
+        "spacer": "accordion__spacer"
+      }
+    },
     "toolbar": {
       "kit": "components/toolbar",
       "since": "1.4.0",
@@ -160,6 +465,316 @@
         "Содержимое#391:0": { "kit": "любая разметка в .wg__content" },
         "Контент#4587:0": { "kit": "любая разметка в .wg__content" },
         "toolbar": { "kit": "инстанс toolbar style=info: настройки U+E75D, удалить U+EB72, ещё U+EAB4 — разметка по записи toolbar" }
+      }
+    },
+    "right-sidebar": {
+      "kit": "components/right-sidebar",
+      "since": "1.18.0",
+      "figma": {
+        "fileKey": "rHabzni5OI5D4fxBLQdj2m",
+        "file": "⚙️Builder-components",
+        "page": "0:1",
+        "section": "5:28436"
+      },
+      "element": "<aside class=\"rsb …\"><div class=\"rsb__panels\"><section class=\"rsb__panel\" data-rsb-panel=\"…\">…</section></div><div class=\"rsb__bar\"><div class=\"rsb__items\"><button class=\"rsb__item\" data-rsb-tab=\"…\">…</button></div></div></aside>",
+      "js": "RightSidebar.mount(el, { onTab, onToggle })",
+      "base": "rsb",
+      "sets": [
+        {
+          "name": "Правый сайдбар",
+          "node": "5:28859",
+          "key": "84ed34a01ba1cdc66229e21f789bebd65ca1f95c",
+          "class": "rsb"
+        },
+        {
+          "name": "Тулбар",
+          "node": "5:28438",
+          "key": "cac50424c375e1e49bf28e29b2dcc438f860b770",
+          "class": "rsb__bar",
+          "note": "отдельный компонент, не набор"
+        },
+        {
+          "name": "_Пункт тулбара",
+          "node": "1517:58645",
+          "key": "c40f519f7973f9af76fc8d68b59897073c18c489",
+          "class": "rsb__item"
+        },
+        {
+          "name": "Шапка панели в сайдбаре",
+          "node": "5:28538",
+          "key": "6a02434b964653440a55828602d901401a8f1339",
+          "class": "rsb__head"
+        },
+        {
+          "name": "Контент сайдбара",
+          "node": "5:28569",
+          "key": "2364d2dd476072beb80f0a632d998327b93c2004",
+          "class": "rsb__content",
+          "note": "Тип=Поля и Тип=Слои; Тип=Магазин — компонент shop (.shop__list)"
+        },
+        {
+          "name": "Записи",
+          "key": "3193b8e24b08c1426bce75389f4f1742e5f72fb1",
+          "class": "rsb__field",
+          "note": "из другой библиотеки (remote); строки вкладки «Поля». Типы Датасет, Расчетное поле, Вариативный и состояние Edit не входят в кит"
+        },
+        {
+          "name": "Пункт списка",
+          "node": "5:28133",
+          "key": "84f4b1364c608a96a26b2c2af365fae861d6306e",
+          "class": "rsb__layer",
+          "note": "строки вкладки «Слои»; Disable, Edit, Доступ, Три точки, Переключатель не входят в кит"
+        },
+        {
+          "name": "_Уровни вложенности",
+          "key": "3736dcb34d09548cd4ca2a903ffd3b659a5ec06f",
+          "class": "rsb__row--level-{n}",
+          "note": "отступ слоя: Уровень=2 → 20px … Уровень=5 → 80px. В ките уровень строки считается иначе: место под стрелку есть у каждой строки, поэтому лист с Уровень=4 под узлом уровня 2 — это .rsb__row--level-3"
+        },
+        {
+          "name": "_Уровни вложенности полей",
+          "node": "171:79875",
+          "key": "2eca803d17fc44b255f4afea7f7c9cc1efe2587c",
+          "class": "rsb__row--level-{value}"
+        },
+        {
+          "name": "helpButton",
+          "key": "23bc06fe1bf189be28afacc8e7b9e804d0b5e066",
+          "class": "rsb__help",
+          "note": "из другой библиотеки (remote)"
+        },
+        {
+          "name": "search",
+          "key": "1d2ecaf10a3947fbd516101c5d33a55d34a58e8c",
+          "class": "rsb__search",
+          "note": "из другой библиотеки (remote); в шапке только style=contrast, inlineHeight=m"
+        },
+        {
+          "name": "Кнопка разворота панели",
+          "node": "22358:147715",
+          "key": "d2e361d9d7f5b0fc2f446bb7c19bcf518a86fd32",
+          "class": "rsb__dock",
+          "fileKey": "G3QPR5r3X5ox6DmPwj6rJ7",
+          "file": "Расширенный конструктор",
+          "note": "другой файл; внутри — слот: кнопка кита button (.btn.btn--filled.btn--style-pale.btn--size-xl.btn--icon, набор filled cf2896…), глиф ставит JS; Состояние=Свернуть → иконка U+EBFB (вписан, панель открыта), Развернуть → U+EBFA; Hover=on → .is-hover / :hover на .rsb__dock (всё свободное место тулбара): фон pale_hover_color, иконка secondary; Hover=off — кнопка не видна (opacity: 0) и появляется при наведении на тулбар (.rsb__bar:hover) или при :focus-visible. Внутри — «Сворачивание» (2fac3398ab2676ae4d095ab61997e4a687e879a4)"
+        },
+        {
+          "name": "_Поле - Архив",
+          "node": "5:28846",
+          "key": "26eaaa65b1b928270dc3ab12e6a16a77323ca0f0",
+          "class": null,
+          "note": "не входит в кит: архивный набор"
+        }
+      ],
+      "properties": {
+        "Состояние": {
+          "Вписан": null,
+          "По ховеру": "rsb--hover",
+          "Закреплен": "rsb--pinned"
+        },
+        "Вкладка": {
+          "Свернут": "ни одной .rsb__panel.is-open",
+          "Магазин": ".rsb__panel.is-open с компонентом shop",
+          "Поле данных": ".rsb__panel.is-open со строками .rsb__field",
+          "Слои": ".rsb__panel.is-open со строками .rsb__layer",
+          "note": "пункт открытой вкладки — .rsb__item.is-active"
+        },
+        "_Пункт тулбара.Тип": {
+          "Раздел": null,
+          "Магазин": "rsb__item--shop",
+          "МагазинRound": "rsb__item--round"
+        },
+        "_Пункт тулбара.⛔ Hover": {
+          "on": "is-hover",
+          "off": null,
+          "alt": ":hover"
+        },
+        "_Пункт тулбара.Active": {
+          "on": "is-active",
+          "off": null,
+          "alt": "aria-selected=\"true\""
+        },
+        "Шапка.⛔ Тип": {
+          "Панель": null,
+          "Виджет": "rsb__head--widget"
+        },
+        "Шапка.Имя#1517:18": {
+          "kit": "текст в .rsb__name"
+        },
+        "Шапка.Поиск#9276:2": {
+          "true": "есть .rsb__search в .rsb__tools",
+          "false": "без .rsb__search"
+        },
+        "Шапка.Доп. кнопка#1517:12": {
+          "true": "кнопка в .rsb__title после названия (слот: .btn кита; у магазина — .shop__expand)",
+          "false": null
+        },
+        "Шапка.Фильтр#1517:9": {
+          "true": "кнопка в .rsb__tools (слот; у магазина — .shop__filter)",
+          "false": null
+        },
+        "Шапка.Стрелки#1517:6": {
+          "true": "слот: кнопки-стрелки в .rsb__tools",
+          "false": null
+        },
+        "Шапка.Плюс#1517:15": {
+          "true": "слот: кнопка в .rsb__title",
+          "false": null
+        },
+        "Шапка.Кнопка сайдбара#1522:0": {
+          "true": "слот: кнопка в .rsb__tools",
+          "false": null
+        },
+        "Записи.Иерархия": {
+          "Поле": null,
+          "Узел": "rsb__field--node",
+          "Объект": "rsb__field--object"
+        },
+        "Записи.Состояние": {
+          "Default": null,
+          "Hover": "is-hover",
+          "alt": ":hover"
+        },
+        "Пункт списка.⛔ Hover": {
+          "on": "is-hover",
+          "off": null,
+          "alt": ":hover"
+        },
+        "Пункт списка.Active": {
+          "on": "is-active",
+          "off": null,
+          "alt": "aria-selected=\"true\""
+        },
+        "Пункт списка.Стрелка вложенности#85:9": {
+          "true": ".rsb__arrow и aria-expanded у строки",
+          "false": ".rsb__arrow.rsb__arrow--empty"
+        },
+        "Пункт списка.Иконка#233:47": {
+          "true": "есть .rsb__row-icon",
+          "false": "без .rsb__row-icon"
+        },
+        "Пункт списка.Имя#4144:9": {
+          "kit": "текст в .rsb__row-name"
+        },
+        "Пункт списка.Глазик#636:0": {
+          "true": ".rsb__cmd.rsb__cmd--m с глифом U+E651 в .rsb__cmds",
+          "false": null
+        },
+        "Пункт списка.Удаление#2866:0": {
+          "true": ".rsb__cmd.rsb__cmd--danger с глифом U+EB72 в .rsb__cmds",
+          "false": null
+        }
+      },
+      "content": {
+        "about": "Иконки пунктов тулбара — глифы в .rsb__icon: магазин U+EADD, данные U+EBBC, слои U+EBF9. Шрифт и размер m — cbuc-icons24, 24px.",
+        "Button": {
+          "kit": "кнопки шапки — компонент button кита в слоте: .btn.btn--size-m.btn--icon, viewMode и buttonStyle по записи button"
+        },
+        "BreadCrumbs": {
+          "kit": "путь в шапке «Виджет» — компонент breadcrumbs кита в слоте .rsb__path (ключ набора в макете 108727deb0ce707bc786248e9091d54477224bb5 отличается от записи breadcrumbs)"
+        }
+      }
+    },
+    "shop": {
+      "kit": "components/shop",
+      "since": "1.18.0",
+      "figma": {
+        "fileKey": "rHabzni5OI5D4fxBLQdj2m",
+        "file": "⚙️Builder-components",
+        "page": "0:1",
+        "section": "5:28436"
+      },
+      "element": "<section class=\"shop …\"><div class=\"shop__head\">…</div><div class=\"shop__body\"><nav class=\"shop__master\">…</nav><div class=\"shop__list\">…</div></div></section>",
+      "js": "Shop.mount(el, { onAdd, onCategory, onExpand })",
+      "base": "shop",
+      "sets": [
+        {
+          "name": "Магазин",
+          "node": "1517:69549",
+          "key": "f0a3c8ad655bef0bb648f8f1313d2dec8400b760",
+          "class": "shop"
+        },
+        {
+          "name": "Виджет магазина",
+          "node": "1517:29714",
+          "key": "528fd5933b053a146449392ae17feafe91bb4056",
+          "class": "shop__widget"
+        },
+        {
+          "name": "Контент сайдбара",
+          "node": "5:28569",
+          "key": "2364d2dd476072beb80f0a632d998327b93c2004",
+          "class": "shop__list",
+          "note": "только Тип=Магазин (5:28570); слои Small / Medium → .shop__grid--small / --medium, Big → .shop__section"
+        },
+        {
+          "name": "Шапка панели в сайдбаре",
+          "node": "5:28538",
+          "key": "6a02434b964653440a55828602d901401a8f1339",
+          "class": "shop__head",
+          "note": "слот: внутри — .rsb__head по записи right-sidebar"
+        },
+        {
+          "name": "componentsMaster/navigation",
+          "key": "be116e69b43dfe632d6ffcf5c43a463a07a81c40",
+          "class": "shop__master",
+          "note": "из другой библиотеки (remote), устаревший набор; в слоте — компонент master-list кита (.ml.ml--nav), счётчик .ml__count--secondary"
+        }
+      ],
+      "properties": {
+        "Открытие расширенного": {
+          "off": null,
+          "on": "is-expanded"
+        },
+        "Виджет магазина.Размер": {
+          "class": "shop__widget--{value}",
+          "values": [
+            "small",
+            "medium",
+            "big"
+          ]
+        },
+        "Виджет магазина.⛔ Hover": {
+          "on": "is-hover",
+          "off": null,
+          "alt": ":hover"
+        },
+        "Виджет магазина.Имя виджета#2431:0": {
+          "kit": "текст в .shop__widget-name; у small скрыт — дублируется в title"
+        },
+        "Виджет магазина.Заголовок#2463:4": {
+          "true": "есть .shop__widget-name в .shop__widget-text",
+          "false": "без названия",
+          "note": "только Размер=big"
+        },
+        "Виджет магазина.Описание#2463:2": {
+          "true": "есть .shop__widget-desc",
+          "false": null,
+          "note": "только Размер=big"
+        },
+        "Виджет магазина.Текст описания#2463:5": {
+          "kit": "текст в .shop__widget-desc"
+        },
+        "Виджет магазина.Плюс#4072:0": {
+          "true": "есть .shop__plus в .shop__preview",
+          "false": null,
+          "note": "только Размер=big"
+        },
+        "Виджет магазина.Тег#2463:3": {
+          "kit": "не входит в кит"
+        }
+      },
+      "content": {
+        "about": "Иконка виджета — глиф в .shop__widget-icon: small — cbuc-icons24 24px, medium — cbuc-icons 16px. Плюс на превью — глиф U+EAE9.",
+        "Превью": {
+          "kit": "слот .shop__preview: картинка или разметка; картинок в ките нет"
+        },
+        "Доп. кнопка шапки": {
+          "kit": ".shop__expand: глиф U+E995, в расширенном магазине U+EBFB"
+        },
+        "filterButton": {
+          "kit": ".shop__filter с глифом U+E94C, видна только при .is-expanded"
+        }
       }
     },
     "chips": {

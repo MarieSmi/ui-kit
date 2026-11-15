@@ -41,8 +41,8 @@
   color: var(--icon-label_icon-color);
   font-family: var(--icon-font-family-m_icon_font-family); font-size: var(--icon-icon_size-icon-size_m); line-height: 1;
 }
-/* Глифа U+EBB9 нет в cbuc-icons24 кита: из cbuc-icons, размер 20px даёт те же 17.5px рисунка, что и в макете */
-.pe__icon--s { font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_st); }
+/* .pe__icon--s больше ничего не меняет: с CbucIcons 1.6.3 глиф U+EBB9 есть в cbuc-icons24. Класс оставлен для
+   совместимости со старой разметкой */
 /* Тип=Провал: кнопка «назад» на месте иконки */
 .pe__back {
   flex: none; display: flex; align-items: center; justify-content: center;
@@ -265,7 +265,7 @@ button.pe__dim-unit:is(:hover, .is-hover) { color: var(--text-link_text-color); 
   width: var(--inline_height-inline_height_m); height: var(--inline_height-inline_height_m);
   margin: 0; padding: 0; border: 0; border-radius: var(--border-radius-border-radius_2xs);
   background: none; color: var(--icon-secondary_icon-color);
-  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s); line-height: 1; /* cbuc-icons 16px: рисунок 14px, как в макете; в cbuc-icons24 кита U+EBCE нет, а U+E95F крупнее */
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s); line-height: 1; /* cbuc-icons 16px: рисунок 14px, как в макете; в cbuc-icons24 U+EBCE и U+E95F крупнее */
   cursor: pointer;
 }
 .pe__switch:is(:hover, .is-hover) { background: var(--background-hover_background-color); }
