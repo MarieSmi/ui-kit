@@ -7,7 +7,8 @@
 - **Токены** — `tokens.css`: цвета, отступы, радиусы и типографика как CSS-переменные с именами из Figma.
 - **Компоненты** — `components/<имя>/`: у каждого свой CSS и, если нужно, JS.
 - **Шрифты** — `fonts/`: Inter и иконочные шрифты из макетов, подключаются через `fonts/fonts.css`.
-- **Каталог** — `catalog/index.html`: все токены и компоненты с переключением темы и размера.
+- **Каталог** — `catalog/index.html`: плитка всех компонентов, страница на каждый компонент, цвета, размеры,
+  тени и иконки; навигация слева, переключение темы и размера.
   Открывается через локальный сервер (`npx serve` в корне кита). Версия для артефакта Claude, где
   всё вшито в один файл, собирается командой `python3 tools/catalog/build-artifact.py <файл>`.
 
@@ -18,13 +19,13 @@
 Файлы раздаёт jsDelivr прямо из GitHub по тегу:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.15.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.15.0/components/<имя>/<имя>.css">
-<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.15.0/components/<имя>/<имя>.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.16.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.16.0/components/<имя>/<имя>.css">
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.16.0/components/<имя>/<имя>.js"></script>
 ```
 
 - `tokens.css` подключается **первым**: компоненты берут значения из его переменных.
-- Версия в адресе (`@1.15.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
+- Версия в адресе (`@1.16.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
 - Во всех адресах одного прототипа должна стоять одна и та же версия.
 - В артефактах Claude адреса `cdn.jsdelivr.net/gh/` не работают: там код кита вшивается в файл.
 
@@ -34,7 +35,7 @@
 прототип подключает сам, отдельным файлом:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.15.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.16.0/fonts/fonts.css">
 ```
 
 | Шрифт | Файлы | Где используется |
@@ -45,6 +46,10 @@
 | Accordion-Font | `fonts/Accordion-Font.ttf` | иконки аккордеона |
 
 Шрифтов тем Large и mobile (SF Pro, sbis-mobile-icons) в ките нет.
+
+Все иконки `cbuc-icons` и `cbuc-icons24` с именами — на странице «Иконки» каталога: по клику копируется символ
+иконки (`&#xe9e2;`), который вставляется в разметку компонента. Имён в файлах шрифтов нет, список собирает
+`node tools/icons/build.js <путь к _glyphs.less>` по таблице «имя → код» шрифта cbuc-icons из проекта Saby.
 
 ## Токены
 

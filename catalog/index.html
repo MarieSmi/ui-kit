@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="../components/text-editor/text-editor.css" data-kit="text-editor">
 <script src="../components/text-editor/text-editor.js" data-kit="text-editor"></script>
 <style>
-/* Каталог: шапка с переключателями темы и размера, дальше секции токенов и компонентов.
+/* Каталог: слева навигация с переключателями темы и размера, справа страница компонента или раздела токенов.
    Цвета страницы — только токены кита, поэтому каталог перекрашивается вместе с выбранной темой. */
 :root {
   --bg: var(--background-unaccented_background-color);
@@ -37,28 +37,32 @@
   --focus: var(--extra-focused_border-color);
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); /* стрелка-шеврон для масок */
   color-scheme: light;
 }
 :root[data-ui-theme$="dark"], :root[data-ui-theme="dark-v2"], :root[data-ui-theme="dark-v3"] { color-scheme: dark; }
 
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--fg); font: 400 14px/1.45 var(--sans); }
+body { margin: 0; background: var(--surface); color: var(--fg); font: 400 14px/1.45 var(--sans); }
 a { color: var(--link); }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
-.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-
-header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
-.top .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding-block: 12px; }
-.brand { display: flex; align-items: baseline; gap: 8px; margin-right: auto; }
-.brand h1 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
-.brand .ver { font: 500 12px var(--mono); color: var(--muted); }
-.controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+/* Каркас как на сайте Saby Components: навигация слева, содержимое справа */
+.lib { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.lib-nav { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: calc(16px + env(safe-area-inset-top, 0px)) 8px 0 max(8px, env(safe-area-inset-left, 0px)); background: var(--bg); border-right: 1px solid var(--line); }
+.lib-nav { display: flex; flex-direction: column; }
+.lib-nav > * { flex: none; }
+.lib-head { display: flex; align-items: center; gap: 8px; padding: 0 8px 16px; }
+.lib-logo { display: flex; align-items: center; gap: 8px; margin-right: auto; color: var(--fg); text-decoration: none; font-size: 16px; font-weight: 600; line-height: 1.2; }
+.lib-logo-mark { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px; border-radius: 6px; background: var(--accent); color: var(--text-contrast_text-color); font-size: 13px; }
+.lib-logo-sub { display: block; font: 400 11px var(--mono); color: var(--muted); }
+.lib-menu-btn { display: none; font: 500 13px var(--sans); color: var(--fg); background: var(--surface); border: 1px solid var(--border-unaccented_border-color); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+.controls { display: grid; gap: 8px; position: sticky; bottom: 0; margin-top: auto; padding: 12px 8px calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--bg); } /* тема — редкая настройка: закреплена внизу навигации */
 .controls label[hidden] { display: none; }
-.controls label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.controls label { position: relative; display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
 select, input[type=search] { font: 400 14px var(--sans); color: var(--fg); background: var(--surface); border: 1px solid var(--border-unaccented_border-color); border-radius: 6px; padding: 5px 8px; }
-input[type=search] { width: 220px; max-width: 100%; }
+input[type=search] { width: 320px; max-width: 100%; }
 /* Своя стрелка: системная упирается в край. Это маска на подписи селекта, поэтому она чёткая и перекрашивается вместе с темой */
 select { appearance: none; padding-right: 28px; }
 select:disabled { opacity: .5; }
@@ -67,21 +71,72 @@ label:has(> select)::after { content: ""; position: absolute; right: 9px; top: 5
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
 label:has(> select:disabled)::after { opacity: .5; }
-/* Меню в два уровня: разделы «Компоненты» и «Переменные», под ними пункты выбранного раздела */
-nav.toc { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 20px; padding-bottom: 10px; font-size: 13px; }
-nav.toc a { color: var(--muted); text-decoration: none; }
-nav.toc a:hover { color: var(--fg); }
-.toc-main { display: flex; gap: 2px; padding: 3px; margin-left: -15px; background: var(--bg); border-radius: 8px; } /* текст первой вкладки — на линии логотипа */
-.toc-main a { padding: 5px 12px; border-radius: 6px; font-weight: 500; }
-nav.toc .toc-main a.is-on { color: var(--extra-item_selected_text-color); background: var(--extra-item_selected_color); }
-.toc-sub { display: flex; flex-wrap: wrap; gap: 4px 16px; }
-.toc-sub[hidden] { display: none; }
-.toc-sub a.is-on { color: var(--fg); }
-.toc-pick { align-items: baseline; gap: 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-.toc-pick select { text-transform: none; letter-spacing: normal; }
+.controls label:has(> select)::after { top: auto; bottom: 13px; margin: 0; } /* подпись над селектом: стрелка — по центру селекта */
+.controls select { width: 100%; }
+.lib-group { display: flex; flex-direction: column; margin-top: 12px; }
+.lib-group-title { display: flex; align-items: center; gap: 6px; width: 100%; padding: 4px 8px; border: 0; border-radius: 6px; background: none; font: 400 12px var(--sans); color: var(--muted); text-align: left; cursor: pointer; }
+.lib-group-title:hover { color: var(--fg); }
+.lib-group-title::after { content: ""; flex: none; width: 8px; height: 5px; background: currentColor; -webkit-mask: var(--chev) center / contain no-repeat; mask: var(--chev) center / contain no-repeat; }
+.lib-group.is-collapsed .lib-group-title::after { transform: rotate(-90deg); }
+.lib-group.is-collapsed .lib-item { display: none; }
+@media (prefers-reduced-motion: no-preference) { .lib-group-title::after { transition: transform .12s; } }
+.lib-item { padding: 6px 8px; border-radius: 6px; color: var(--fg); text-decoration: none; }
+.lib-item:hover { background: var(--background-hover_background-color); }
+.lib-item.is-on, .lib-item.is-on:hover { background: var(--surface); font-weight: 600; box-shadow: 0 0 var(--blur-shadow-blur_c) var(--color-shadow-color_c); } /* shadow_c; смещение 0 0 — нет токена */
+.lib-item-all { display: block; margin-top: 12px; }
+/* Плитка компонентов: уменьшенный живой пример, название, краткое описание */
+.gal-group + .gal-group { margin-top: 32px; }
+.gal-group > h3 { margin: 0 0 12px; font-size: 18px; line-height: 1.3; font-weight: 600; }
+.gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.gal-tile { position: relative; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.gal-tile:hover, .gal-tile:focus-within { border-color: transparent; box-shadow: 0 0 var(--blur-shadow-blur_c) var(--color-shadow-color_c); } /* shadow_c; смещение 0 0 — нет токена */
+.gal-preview { display: flex; align-items: center; justify-content: center; height: 180px; overflow: hidden; background: var(--bg); border-bottom: 1px solid var(--line); pointer-events: none; }
+.gal-content { flex: none; width: max-content; max-width: 720px; transform-origin: center; }
+.gal-content > table { border-collapse: collapse; }
+.gal-content > .ml-tree { display: grid; gap: 6px; }
+.gal-body { padding: 10px 14px 14px; }
+.gal-title { font-weight: 600; }
+.gal-link { color: var(--fg); text-decoration: none; }
+.gal-link::after { content: ""; position: absolute; inset: 0; } /* ссылка растянута на всю плитку */
+.gal-link:focus-visible { outline: 0; }
+.gal-tile:has(.gal-link:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+.gal-sum { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { .gal-tile { transition: box-shadow .15s, border-color .15s; } }
+/* Иконки: сетка глифов шрифта cbuc-icons, по клику копируется символ */
+.ico-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-bottom: 16px; }
+.ico-toolbar label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.ico-count { font: 400 12px var(--mono); color: var(--muted); }
+.ico-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 4px; }
+.ico { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; padding: 12px 4px 8px; border: 0; border-radius: 6px; background: none; font: inherit; color: inherit; cursor: copy; }
+.ico:hover { background: var(--background-hover_background-color); }
+.ico-glyph { display: flex; align-items: center; justify-content: center; height: 32px; font-family: "cbuc-icons"; font-size: 16px; line-height: 1; color: var(--icon-icon-color); }
+.ico-grid[data-size="24"] .ico-glyph { font-family: "cbuc-icons24"; font-size: 24px; }
+.ico-grid[data-size="32"] .ico-glyph { font-size: 32px; }
+.ico-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; color: var(--muted); }
+.ico-more { margin-top: 16px; padding: 0; border: 0; background: none; font: inherit; color: var(--link); cursor: pointer; }
+.ico-more[hidden] { display: none; }
+.lib-main { min-width: 0; background: var(--surface); }
+.wrap { max-width: 1200px; padding: 32px max(48px, env(safe-area-inset-right, 0px)) 80px 48px; }
+.lib-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-bottom: 20px; }
+.lib-toolbar label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.lib-back { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 16px -10px; padding: 5px 12px 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 13px; }
+.lib-back[hidden] { display: none; }
+.lib-back:hover { background: var(--background-hover_background-color); }
+.lib-back::before { content: ""; flex: none; width: 10px; height: 6px; background: currentColor; transform: rotate(90deg); -webkit-mask: var(--chev) center / contain no-repeat; mask: var(--chev) center / contain no-repeat; }
+.lib-toolbar[hidden] { display: none; }
+@media (max-width: 760px) {
+  .lib { grid-template-columns: minmax(0, 1fr); }
+  .lib-nav { position: static; height: auto; padding-bottom: 12px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .lib-head { padding-bottom: 0; }
+  .lib-menu-btn { display: block; }
+  .controls { position: static; padding-bottom: 0; }
+  .lib-nav:not(.is-open) > :not(.lib-head) { display: none; }
+  .lib-nav.is-open .lib-head { padding-bottom: 16px; }
+  .wrap { padding: 20px max(16px, env(safe-area-inset-right, 0px)) 64px max(16px, env(safe-area-inset-left, 0px)); }
+}
 
-main .wrap { display: grid; gap: 40px; padding-block: 28px 64px; }
-section > h2 { margin: 0 0 4px; font-size: 22px; font-weight: 600; letter-spacing: -.01em; text-wrap: balance; }
+.lib-pages { display: grid; gap: 40px; }
+section > h2 { margin: 0 0 8px; font-size: 28px; line-height: 1.25; font-weight: 600; letter-spacing: -.01em; text-wrap: balance; }
 section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .group { display: grid; gap: 10px; margin-top: 22px; }
 .group h3 { margin: 0; display: flex; align-items: baseline; gap: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
@@ -115,7 +170,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
 .comp { display: grid; gap: 14px; } /* без карточки: всё по одной левой линии с шапкой */
 .comp-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
-.comp-head h3 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -.01em; } /* заголовок раздела — выбранный компонент */
+.comp-head h3 { margin: 0; font-size: 28px; line-height: 1.25; font-weight: 600; letter-spacing: -.01em; } /* заголовок раздела — выбранный компонент */
 .comp-head code { font: 400 12px var(--mono); color: var(--muted); }
 .comp p { margin: 0; max-width: 65ch; }
 .stage { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; aspect-ratio: 16 / 9; max-width: 100%; background: var(--bg); }
@@ -152,7 +207,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 #widget-body { display: grid; gap: 32px; }
 #property-editor-body, #pe-snaps { display: grid; gap: 32px; }
 /* Редакторы PropertyGrid: облачко с редакторами и образец, к которому применяются значения */
-.pg-demo { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px; padding-top: 72px; } /* место сверху под окно цвета */
+.pg-demo { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px; padding: 72px 24px 24px; border-radius: 8px; background: var(--bg); } /* место сверху под окно цвета */
 .pg-stack { display: flex; flex-direction: column; gap: var(--offset-offset_2xs); width: 342px; max-width: 100%; } /* облачка окна: зазор 4 */
 .pg-card { width: 342px; max-width: 100%; padding: var(--offset-offset_s) var(--offset-offset_m); border-radius: var(--border-radius-border-radius_s); background: var(--surface); } /* ширина облачка в окне 350 — нет токена */
 .pg-preview { width: 320px; max-width: 100%; height: 260px; overflow: hidden; box-sizing: border-box; } /* невидимый родитель образца: от него считаются «заполнить», % и внешние отступы */
@@ -195,9 +250,43 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="wrap">
-    <div class="brand"><h1>ui-kit</h1><span class="ver">1.15.0</span></div>
+<div class="lib">
+  <aside class="lib-nav" id="lib-nav">
+    <div class="lib-head">
+      <a class="lib-logo" href="#all"><span class="lib-logo-mark">UI</span><span>ui-kit<span class="lib-logo-sub ver">1.16.0</span></span></a>
+      <button type="button" class="lib-menu-btn" id="lib-menu" aria-controls="lib-nav" aria-expanded="false">Меню</button>
+    </div>
+    <a class="lib-item lib-item-all" href="#all">Все компоненты</a>
+    <nav class="lib-group" aria-label="Основы">
+      <button type="button" class="lib-group-title" aria-expanded="true">Основы</button>
+      <a class="lib-item" href="#colors">Цвета</a>
+      <a class="lib-item" href="#sizes">Размеры</a>
+      <a class="lib-item" href="#shadows">Тени</a>
+      <a class="lib-item" href="#icons">Иконки</a>
+    </nav>
+    <nav class="lib-group" aria-label="Конструктор">
+      <button type="button" class="lib-group-title" aria-expanded="true">Конструктор</button>
+      <a class="lib-item" href="#widget">Виджет</a>
+      <a class="lib-item" href="#toolbar">Тулбар</a>
+      <a class="lib-item" href="#demo-frame">Вспомогательная область</a>
+    </nav>
+    <nav class="lib-group" aria-label="Свойства виджета">
+      <button type="button" class="lib-group-title" aria-expanded="true">Свойства виджета</button>
+      <a class="lib-item" href="#property-editor">Окно редактора свойств</a>
+      <a class="lib-item" href="#pg-editors">PropertyGrid</a>
+    </nav>
+    <nav class="lib-group" aria-label="Стандартные">
+      <button type="button" class="lib-group-title" aria-expanded="true">Стандартные</button>
+      <a class="lib-item" href="#button">Кнопка</a>
+      <a class="lib-item" href="#checkbox">Чекбокс</a>
+      <a class="lib-item" href="#chips">Чипсы</a>
+      <a class="lib-item" href="#input">Поля ввода</a>
+      <a class="lib-item" href="#master-list">Мастер-список</a>
+    </nav>
+    <nav class="lib-group" aria-label="SabyDoc">
+      <button type="button" class="lib-group-title" aria-expanded="true">SabyDoc</button>
+      <a class="lib-item" href="#text-editor">Окно текстового редактора</a>
+    </nav>
     <div class="controls">
       <label for="theme">Тема
         <select id="theme">
@@ -212,46 +301,39 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
           <option value="gray">Серая</option>
         </select>
       </label>
+    </div>
+  </aside>
+
+<main class="lib-main">
+  <div class="wrap">
+    <div class="lib-toolbar" id="lib-toolbar" hidden>
       <label for="size">Размер
-        <select id="size">
-          <option value="">default</option>
-          <option value="mobile">mobile</option>
-        </select>
-      </label>
-      <input type="search" id="q" placeholder="Найти токен" aria-label="Найти токен">
-    </div>
-  </div>
-  <nav class="toc wrap" aria-label="Разделы">
-    <div class="toc-main">
-      <a href="#components" data-group="components">Компоненты</a><a href="#tokens" data-group="tokens">Переменные</a>
-    </div>
-    <label class="toc-sub toc-pick" data-group="components" for="comp-pick">Компонент
-      <select id="comp-pick">
-        <optgroup label="Конструктор">
-          <option value="widget">Виджет</option>
-          <option value="toolbar">Тулбар</option>
-          <option value="demo-frame">Вспом. обл.</option>
-        </optgroup>
-        <optgroup label="Свойства виджета">
-          <option value="property-editor">Окно редактора свойств</option>
-          <option value="pg-editors">PropertyGrid</option>
-        </optgroup>
-        <optgroup label="Стандартные">
-          <option value="button">Кнопка</option>
-          <option value="checkbox">Чекбокс</option>
-          <option value="chips">Чипсы</option>
-          <option value="input">Поля ввода</option>
-          <option value="text-editor">Окно текстового редактора</option>
-          <option value="master-list">Мастер-список</option>
-        </optgroup>
+      <select id="size">
+        <option value="">default</option>
+        <option value="mobile">mobile</option>
       </select>
     </label>
-    <div class="toc-sub" data-group="tokens"><a href="#colors">Цвета</a><a href="#sizes">Размеры</a><a href="#shadows">Тени</a></div>
-  </nav>
-</header>
-
-<main>
-  <div class="wrap">
+      <input type="search" id="q" placeholder="Найти токен" aria-label="Найти токен"></div>
+    <a class="lib-back" id="lib-back" href="#all" hidden>Все компоненты</a>
+    <div class="lib-pages">
+    <section id="icons" data-group="icons">
+      <h2>Иконки</h2>
+      <p class="lead">Глифы шрифтов <code>cbuc-icons</code> и <code>cbuc-icons24</code> из <code>fonts/</code> кита. Нажмите на иконку, чтобы скопировать её символ, например <code>&amp;#xe9e2;</code>: его вставляют в разметку компонента.</p>
+      <div class="ico-toolbar">
+        <input type="search" id="ico-q" placeholder="Найти иконку, например Plus" aria-label="Найти иконку">
+        <label for="ico-size">Размер
+          <select id="ico-size"><option value="16" selected>16 · cbuc-icons</option><option value="24">24 · cbuc-icons24</option><option value="32">32 · cbuc-icons</option></select>
+        </label>
+        <span class="ico-count" id="ico-count" aria-live="polite"></span>
+      </div>
+      <div class="ico-grid" id="ico-grid" data-size="16"></div>
+      <button type="button" class="ico-more" id="ico-more" hidden></button>
+    </section>
+    <section id="all" data-group="all">
+      <h2>Все компоненты</h2>
+      <p class="lead">Компоненты кита по группам. Нажмите на плитку, чтобы открыть страницу компонента.</p>
+      <div id="all-body"></div>
+    </section>
     <section id="components" data-group="components">
       <article class="comp" id="button">
         <div class="comp-head"><h3>Кнопка</h3><code>components/button</code>
@@ -384,8 +466,10 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       <p class="lead">Из коллекции globalShadow библиотеки <a href="https://www.figma.com/design/mcpY3I5yWjkPfnk1IdEiqw/" target="_blank" rel="noopener">«🌍 Global Variables»</a>: размытие и цвет. Смещение в Figma токеном не задано, в превью тень без смещения.</p>
       <div id="shadows-body"></div>
     </section>
+    </div>
   </div>
 </main>
+</div>
 <div id="toast" role="status" hidden></div>
 
 <script>
@@ -1021,55 +1105,151 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     cell.appendChild(tray); document.getElementById('te-states').appendChild(cell);
   });
 
-  var ROUTES = { components: 'components', button: 'components', checkbox: 'components', chips: 'components', input: 'components', toolbar: 'components', widget: 'components', 'property-editor': 'components', 'pg-editors': 'components', 'text-editor': 'components', 'master-list': 'components', 'demo-frame': 'components',
+  var ROUTES = { all: 'all', icons: 'icons', components: 'components', button: 'components', checkbox: 'components', chips: 'components', input: 'components', toolbar: 'components', widget: 'components', 'property-editor': 'components', 'pg-editors': 'components', 'text-editor': 'components', 'master-list': 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
   var COMPS = ['button', 'checkbox', 'chips', 'input', 'toolbar', 'widget', 'property-editor', 'pg-editors', 'text-editor', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
-  var header = document.querySelector('header.top'), group = null, comp = 'button';
+  var group = null, comp = 'button', libNav = document.getElementById('lib-nav'), menuBtn = document.getElementById('lib-menu');
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
-  function markSub(id) { nav('.toc-sub a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + id); }); }
-  function scrollToId(id) { // к началу блока, под липкой шапкой
-    var top = document.getElementById(id).getBoundingClientRect().top + window.scrollY;
-    window.scrollTo(0, Math.max(0, top - header.offsetHeight - 16));
-  }
+  function setMenu(open) { libNav.classList.toggle('is-open', open); menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+  // Каждая страница — один компонент или один раздел токенов; пункт меню слева подсвечен
   function go(id, scroll) {
     var g = ROUTES[id]; if (!g) return false;
+    if (id === 'components') id = comp;
+    if (id === 'tokens') id = TOKEN_SECTIONS[0];
     group = g;
-    nav('main section[data-group]').forEach(function (s) { s.hidden = s.getAttribute('data-group') !== g; });
-    nav('.toc-sub').forEach(function (s) { s.hidden = s.getAttribute('data-group') !== g; });
-    nav('.toc-main a').forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('data-group') === g); });
-    document.getElementById('q').hidden = g !== 'tokens'; // поиск — только по переменным
-    // Переключатель размера — только в «Переменных»: компоненты показаны в default, выбор вернётся вместе с разделом
-    sizeSel.parentNode.hidden = g === 'components';
+    nav('main section[data-group]').forEach(function (s) { s.hidden = s.id !== (g === 'components' ? 'components' : id); });
+    if (g === 'components') { comp = id; COMPS.forEach(function (c) { document.getElementById(c).hidden = c !== comp; }); }
+    nav('.lib-item').forEach(function (a) { var on = a.getAttribute('href') === '#' + id; a.classList.toggle('is-on', on); if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+    document.getElementById('lib-toolbar').hidden = g !== 'tokens'; // поиск — только по переменным
+    document.getElementById('lib-back').hidden = g !== 'components'; // «назад» к плитке — со страницы компонента
+    nav('.lib-item.is-on').forEach(function (a) { var box = a.closest('.lib-group'); if (box) setGroup(box, false); }); // группа выбранного пункта раскрыта
     applySize();
-    if (g === 'components') {
-      if (COMPS.indexOf(id) >= 0) comp = id;
-      COMPS.forEach(function (c) { document.getElementById(c).hidden = c !== comp; });
-      document.getElementById('comp-pick').value = comp;
-      if (scroll) scrollToId('components');
-    } else {
-      var target = TOKEN_SECTIONS.indexOf(id) >= 0 ? id : 'colors';
-      if (scroll) scrollToId(target);
-      markSub(target);
-    }
+    setMenu(false);
+    if (scroll) window.scrollTo(0, 0);
     return true;
   }
-  function spy() { // в «Переменных» подсвечен блок, который сейчас под шапкой
-    if (group !== 'tokens') return;
-    var line = header.offsetHeight + 40, cur = TOKEN_SECTIONS[0];
-    TOKEN_SECTIONS.forEach(function (s) { if (document.getElementById(s).getBoundingClientRect().top <= line) cur = s; });
-    markSub(cur);
-  }
-  nav('nav.toc a').forEach(function (a) { // пункт меню: перейти и прокрутить, даже если адрес не изменился
-    a.addEventListener('click', function (e) { e.preventDefault(); var id = a.getAttribute('href').slice(1); history.replaceState(null, '', '#' + id); go(id, true); });
+  // Ссылки на страницы каталога (меню, плитки, «назад») открываем сами: иначе браузер прокрутит к якорю.
+  // pushState — чтобы «Назад» в браузере возвращал на прошлую страницу каталога.
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null; if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    var id = a.getAttribute('href').slice(1); if (!ROUTES[id]) return;
+    e.preventDefault();
+    if (location.hash !== '#' + id) history.pushState(null, '', '#' + id);
+    go(id, true);
   });
-  document.getElementById('comp-pick').addEventListener('change', function () { history.replaceState(null, '', '#' + this.value); go(this.value, true); });
+  // Группы меню сворачиваются по заголовку; свёрнутые запоминаются в этом браузере
+  var NAV_KEY = 'ui-kit-nav-collapsed';
+  function setGroup(box, collapsed) {
+    box.classList.toggle('is-collapsed', collapsed);
+    box.querySelector('.lib-group-title').setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    try { localStorage.setItem(NAV_KEY, JSON.stringify(nav('.lib-group.is-collapsed').map(function (g) { return g.getAttribute('aria-label'); }))); } catch (e) {}
+  }
+  try { var saved = JSON.parse(localStorage.getItem(NAV_KEY) || '[]'); nav('.lib-group').forEach(function (g) { if (saved.indexOf(g.getAttribute('aria-label')) >= 0) setGroup(g, true); }); } catch (e) {}
+  nav('.lib-group-title').forEach(function (b) { b.addEventListener('click', function () { var box = b.parentNode; setGroup(box, !box.classList.contains('is-collapsed')); }); });
+  menuBtn.addEventListener('click', function () { setMenu(!libNav.classList.contains('is-open')); });
   window.addEventListener('hashchange', function () { go(location.hash.slice(1), true); });
-  window.addEventListener('scroll', spy, { passive: true });
+
+  // Плитка «Все компоненты». Превью — копия готового примера со страницы компонента:
+  // cells — ячейки таблицы примеров [строка, столбец], nodes — блоки целиком, w — ширина копии до уменьшения.
+  var TILES = [
+    ['Конструктор', [
+      { id: 'widget', title: 'Виджет', sum: 'Рамка при наведении и выделении, кружки-плюсы на сторонах, слот для тулбара, пустое состояние.', table: '#widget-body .wg-grid', cells: [[1, 2]] },
+      { id: 'toolbar', title: 'Тулбар', sum: 'Стили default, info и success, кнопки-иконки, удаление, подтверждение, подпись со стрелкой.', table: '#toolbar-body table', cells: [[1, 1]] },
+      { id: 'demo-frame', title: 'Вспомогательная область', sum: 'Рамка прототипа: шапка, сцена и панель сценариев.', nodes: '#frame-demo', wrap: 'stage', w: 720 }
+    ]],
+    ['Свойства виджета', [
+      { id: 'property-editor', title: 'Окно редактора свойств', sum: 'Шапка с названием, облачка, строки «метка + редактор», выбор цвета, окно тени.', nodes: '#pe-live' },
+      { id: 'pg-editors', title: 'PropertyGrid', sum: 'Редакторы свойств: размер, фон, тень, скругления, границы, отступы.', nodes: '#pg-editors .pg-stack' }
+    ]],
+    ['Стандартные', [
+      { id: 'button', title: 'Кнопка', sum: '8 видов, стили, размеры m, xl и 5xl, кнопка-иконка.', table: '#button-body table', cells: [[1, 1], [2, 1], [7, 1]] },
+      { id: 'checkbox', title: 'Чекбокс', sum: 'Outlined, filled и ghost, третье состояние, подпись слева или справа.', table: '#checkbox-body table', cells: [[1, 1], [2, 1]] },
+      { id: 'chips', title: 'Чипсы', sum: 'Контрастные и обычные, круглые, с иконкой и счётчиком, размеры m, l, xl и 5xl.', table: '#chips-body table', cells: [[1, 1], [2, 1]] },
+      { id: 'input', title: 'Поля ввода', sum: 'Однострочное, многострочное, дата и время; метка слева, сверху или прыгающая.', table: '#input-body table', cells: [[1, 1], [1, 2]] },
+      { id: 'master-list', title: 'Мастер-список', sum: '«Список» и «Навигация», счётчики, дерево до 3 уровней, заголовок группы.', nodes: '#master-list-body .ml-tree > .ml__group, #master-list-body .ml-tree > .ml', wrap: 'ml-tree' }
+    ]],
+    ['SabyDoc', [
+      { id: 'text-editor', title: 'Окно текстового редактора', sum: 'Шапка, боковые панели, верхний тулбар и область документа.', nodes: '#te-demo', w: 720 }
+    ]]
+  ];
+  function tileClone(node) { // копия без id: на странице они уже заняты оригиналом
+    var c = node.cloneNode(true);
+    [c].concat([].slice.call(c.querySelectorAll('[id], [for]'))).forEach(function (n) { n.removeAttribute('id'); n.removeAttribute('for'); });
+    return c;
+  }
+  function tileContent(t) {
+    var content = el('div', 'gal-content'), box = content;
+    if (t.w) content.style.width = t.w + 'px';
+    if (t.table) {
+      var src = document.querySelector(t.table); if (!src) return content;
+      var table = document.createElement('table'), row = table.createTBody().insertRow();
+      table.className = src.className; // те же правила размеров, что на странице компонента
+      t.cells.forEach(function (rc) { var r = src.rows[rc[0]], cell = r && r.cells[rc[1]]; if (cell) row.appendChild(tileClone(cell)); });
+      content.appendChild(table);
+    } else {
+      if (t.wrap) { box = el('div', t.wrap); content.appendChild(box); }
+      nav(t.nodes).forEach(function (n) { box.appendChild(tileClone(n)); });
+    }
+    return content;
+  }
+  function fitTile(frame) { // пример в натуральную величину уменьшается до размеров плитки, крупнее 1:1 не становится
+    var c = frame.firstChild, pad = 32;
+    if (!c || !frame.clientWidth || !c.offsetWidth || !c.offsetHeight) return;
+    c.style.transform = 'scale(' + Math.min(1, (frame.clientWidth - pad) / c.offsetWidth, (frame.clientHeight - pad) / c.offsetHeight) + ')';
+  }
+  function buildTiles() {
+    var body = document.getElementById('all-body');
+    var ro = 'ResizeObserver' in window ? new ResizeObserver(function (entries) { entries.forEach(function (e) { fitTile(e.target.classList.contains('gal-preview') ? e.target : e.target.parentNode); }); }) : null;
+    TILES.forEach(function (g) {
+      var group = el('div', 'gal-group'); group.appendChild(el('h3', '', g[0]));
+      var grid = el('div', 'gal');
+      g[1].forEach(function (t) {
+        var tile = el('div', 'gal-tile'), frame = el('div', 'gal-preview'), info = el('div', 'gal-body'), title = el('div', 'gal-title'), link = el('a', 'gal-link', t.title);
+        frame.setAttribute('inert', ''); frame.setAttribute('aria-hidden', 'true'); // превью не кликается: по плитке открывается страница
+        frame.appendChild(tileContent(t));
+        link.href = '#' + t.id; title.appendChild(link);
+        info.appendChild(title); info.appendChild(el('div', 'gal-sum', t.sum));
+        tile.appendChild(frame); tile.appendChild(info); grid.appendChild(tile);
+        if (ro) { ro.observe(frame); ro.observe(frame.firstChild); } else fitTile(frame);
+      });
+      group.appendChild(grid); body.appendChild(group);
+    });
+    nav('.gal-preview').forEach(fitTile); // сразу, не дожидаясь наблюдателя
+  }
+
+  // Иконки. Список собирает tools/icons/build.js: «Имя код шрифты» (1 — cbuc-icons, 2 — cbuc-icons24, 3 — оба)
+  var ICON_DATA = '1c e71f 3,1CBitrix eaf4 3,AbstrShape ec22 1,AccordionArrowDown e9d7 3,AccordionArrowUp e9d8 3,Actor eb29 3,Add e677 3,AddArea ec25 1,AddButton e694 3,AddButtonNew e95d 3,AddCaption ea5b 3,AddContact eb6b 3,AddForSectoinOfAccordion eb25 3,AddHost eafc 3,AddImage ebd2 1,Addition eae9 3,AdditionalConditions e72b 3,AddMapMarker eacd 3,AddNote e76e 3,Admin e676 3,Admin2 e760 3,Admin2off e906 3,AdminInfo ea4a 3,AdminOff ec48 1,AdvertisingArrow ea5d 3,AfterScrolling ec15 1,AfterScrollingNull ec16 1,Agent ea43 3,Agreed ea26 3,Album e90a 3,Alert e675 3,AlertNull ec42 1,AlignmentBottom e6ef 3,AlignmentCenter e6bf 3,AlignmentLeft e6c0 3,AlignmentMiddle e6f0 3,AlignmentRight e6c1 3,AlignmentTop e6f1 3,AlignmentWidth e6c2 3,AlignmentWidth2 e9fb 3,AllSeason ec07 1,AllSides ebce 1,AllSides2 ebff 1,AmoCrm eb1f 3,And e9ef 3,Android e769 3,Annul eac2 3,AnotherSignatureCenter e674 3,Answers e9ec 3,Antiseptic eb7f 3,ApplyChangesL eaf0 3,ApplyChangesR eaef 3,Arbitrarily eaae 3,Archive e6ec 3,AreaBlur eade 3,AreaGeom eb28 3,ArrangeColumns e6da 3,ArrangeLargeIcons1 e6db 3,ArrangeLargeIcons2 e6dc 3,ArrangeList e708 3,ArrangeList03 e995 3,ArrangeList04 e994 3,ArrangeList1 e6dd 3,ArrangeList2 e6de 3,ArrangeList3 e9c8 3,ArrangePreview e6df 3,ArrangeSmallIconsPreview e720 3,Arrow1730 e692 3,Arrow1730Null e715 3,ArrowBack eb9e 3,ArrowBig e9f3 3,ArrowDown e673 3,ArrowDownNull e716 3,ArrowTimeBackward e9d6 3,ArrowTimeDown eb95 3,ArrowTimeForward e9d5 3,ArrowTimeUp eb94 3,ArrowUp e672 3,ArrowUpNull e717 3,Asterisk eae0 3,Attach e671 3,Attach2 eb6c 3,AttentionProcessing ea55 3,Author e6f2 3,AutoIndent e9e3 3,AutoIndent2 eac1 3,Autonomcash ea2b 3,AutoNumbering ec2e 1,AutoTuning e9fa 3,Avito eafd 3,babyBoy eb9c 3,Back e69c 3,Back2 e97f 3,BackArrow eaf7 3,BAD eb92 3,Badge ea4c 3,Badges eb4d 3,BadToGood e670 3,Ball ec02 1,Bank ea93 3,Bankrupt ec6a 1,Barcode e925 3,Barcode2 ea99 3,BarcodeNon ea81 3,Baseline ebcf 1,Beauty ebac 3,bed ec1c 1,BeforeScrolling ec13 1,BeforeScrollingNull ec14 1,Bell e69b 3,BellCross eb4e 3,Bids e68c 3,BidUp e97b 3,BigRemark e9ea 3,BigRemarkNull e9f2 3,Bike eafe 3,Bill e66f 3,Birthday e6a4 3,Bluetooth ec74 1,Blur ec08 1,Bold e6c3 3,Bonus eb57 3,Bonus-EN eba8 3,Boolean eab0 3,Bottle eb4f 3,BringOneStepToBack ec2c 1,BringOneStepToFront ec2b 1,BtArrow eb60 3,Bug ea92 3,Bug-Fill ebf3 1,Bulb ea05 3,Burger ea90 3,Button eb7e 3,Calc e981 3,Calendar e6c4 3,Calendar2 e75f 3,Call eadf 3,CallButton ec78 1,CallGroup ead5 3,CallIncoming e68e 3,CallOutgoing e65f 3,CallSaby e99f 3,Cameras eaff 3,CapitalInvestment e74b 3,CarryDiscount e9bb 3,Cashbox e9cf 3,Cashbox2 ea3c 3,CashboxNon eab6 3,Catalog ea9a 3,Cause ea59 3,CbPlus e959 3,Celebration ea57 3,Certificate ebed 1,Champagne ea2c 3,Change ebd1 1,ChangeAccount e916 3,ChangeOfOwners ec64 1,ChangeSize eb2b 3,Chat e90f 3,ChatGPT ec17 1,Check e66e 3,Check2 e644 3,Check3 e76f 3,CheckDoc e66d 3,Checkreport eb5e 3,Chest e76b 3,Chibbis ec7a 1,Circle ec21 1,CircleGeom eb2c 3,CircleWIthGap ec23 1,Classifications e918 3,Client ea44 3,Client2 ea9b 3,ClientChat eb80 3,Clients ea9c 3,Close e66c 3,CloseCheck eb8e 3,CloseNew ea27 3,Cloud eb84 3,CloudControl e9f4 3,CloudKey2 e9b0 3,CloudKey2None e9af 3,CloudOff eb7a 3,CloudUser e9f9 3,CollapseExpand ea2f 3,CollapseLight e9a8 3,Colorize e664 3,ColorizeNone e907 3,ColorMarker ebb8 1,Column1 e9c7 3,Column2 e9c6 3,CommaSign eadc 3,CommercialSignature e66b 3,Company e66a 3,Company2 e91e 3,Compare ea3d 3,Confluence eb96 3,ConnectionPeriod e9eb 3,ConnectionPeriodNon ea94 3,ContactSearch e704 3,Contrast e9a4 3,Copy e669 3,CopyPhoto eac4 3,Courses eb7b 3,CreateFolder e668 3,CreateFolder2 eb61 3,Crop e6e0 3,CropPic ea1d 3,CrossBold ec36 1,CrossCircle ec38 1,CrossCircleFill ec37 1,Crown e9ee 3,CrownFill eb38 3,CrownNull eaba 3,CrownOff eabe 3,CurlyBrace ec24 1,currency-KZ eba4 3,currency-RU e6a3 3,currency-TM ec00 1,currency-UZ eba6 3,currencyNone-KZ eba5 3,currencyNone-RU e9cd 3,currencyNone-TM ec01 1,currencyNone-UZ eba7 3,currentCurrency e6a3 3,currentCurrencyNone e9cd 3,Curtail e67b 3,CurtailList e658 3,CurtailMessage e6f3 3,Cutlery ea1f 3,CZN eb2d 3,Date ebbc 1,DayBackward e667 3,DayBackwardNull e718 3,DayForward e666 3,DayForwardBsLine e770 3,DayForwardNull e719 3,Decline e665 3,DeepSeek ec19 1,Degradation e94d 3,Delete e663 3,Delete02 e92a 3,DeliveryClub eb58 3,DemonstrationScreen ead0 3,Desktop e90d 3,DesktopComplete e90b 3,DesktopOff e917 3,Detailed eb49 3,DetailList e71a 3,Dinner ec6f 1,Direction ec43 1,Directory e919 3,Discount e703 3,Discount2 ea9d 3,DiscountCard e71b 3,DiscountCardSale e98e 3,Discrepancies eb21 3,Division eae6 3,DK e691 3,DKEng e9e0 3,DKNone e640 3,DKNoneEng e9de 3,DkOff e800 3,Docsvision ea23 3,Document e661 3,DocumentBase e967 3,DocumentBaseNull eb59 3,DocumentNo eb51 3,DocumentP e6ff 3,DocumentTerm e67a 3,DocumentUnknownType e700 3,DocumentW e6e1 3,DocumentX e6e2 3,DocumentXml e6e3 3,DocumentXmlEdit e900 3,DocumentZip e6e4 3,Dollar e6d6 3,Dolyame ec7d 1,DoubleLeftArrow ebfa 1,DoubleRightArrow ebfb 1,Down e996 3,Download ec34 1,DownloadNew ea30 3,DownloadWithSignatures ec3e 1,dragHandle eba3 3,Drop ea51 3,Dwg ea36 3,EdaSakhalin ec7c 1,Edit e660 3,EditComment e60d 3,Edo e679 3,Edo2 e689 3,Egais e905 3,eGov ec0b 1,ElectronicSignature ec3f 1,Email e65e 3,EmailMark ea89 3,EmailNew ea32 3,Embed ebda 1,Eml eaad 3,EmoiconAngry e6a9 3,EmoiconAngryInvert e92d 3,EmoiconAnnoyed e6aa 3,EmoiconAnnoyedInvert eb91 3,EmoiconBlind e6ab 3,EmoiconCool e6ac 3,EmoiconCry e6ad 3,EmoiconDevil e6ae 3,EmoiconDumb e6af 3,EmoiconFacepalm e926 3,EmoiconInlove e6b0 3,EmoiconKiss e6b1 3,EmoiconLaugh e6b2 3,EmoiconLaughInvert e92f 3,EmoiconMoney e6b3 3,EmoiconNerd e6b4 3,EmoiconNeutral e6b5 3,EmoiconNeutralInvert eb90 3,EmoiconPuzzled e6b6 3,EmoiconRofl e6b7 3,EmoiconSad e6b8 3,EmoiconShocked e6b9 3,EmoiconShockedInvert e92e 3,EmoiconSmile e6ba 3,EmoiconSmileInvert eb8f 3,EmoiconSnooze e6bb 3,EmoiconTongue e6bc 3,EmoiconWink e6bd 3,EmoiconYawn e6be 3,EmptyFolderClosed e96c 3,EmptyFolderOpen e96b 3,EmptyMessage e65d 3,EmptyVideoMessage e6fb 3,Enter e927 3,EnterRight ea04 3,Eo e688 3,Eo2 e687 3,Equally eae8 3,Erase e65c 3,Erase1 eaeb 3,Eraser eaca 3,Euro e6d7 3,Evening ec67 1,Examined e946 3,Exclamation e65b 3,ExclamationCircle eb56 3,ExclamationNarrow ea67 3,Executor eaf8 3,Exit ec35 1,ExitAccount ea16 3,ExitMan eb88 3,Expand e686 3,ExpandDown e802 3,ExpandLight e9aa 3,ExpandList e67d 3,ExpandMessage e6f4 3,ExpandTable eb62 3,ExpandUp e801 3,eye eab9 3,EyeHide ec4a 1,EyeShow ec49 1,FaceID ec75 1,Favorite e65a 3,FavoriteHalf eb44 3,FileAccess eb6d 3,Fill e659 3,FillintheInformation ea0f 3,Filter e64f 3,FilterBig ea2d 3,FilterNew e94c 3,FilterSmall e9ac 3,Finger ea4d 3,Fire e657 3,First e980 3,Flag e656 3,FlipHorizontal ec27 1,FlipVertical ec28 1,Flower ec03 1,FNS eb2e 3,Folder e655 3,FolderClosed e96e 3,folderClosedMin eb8b 3,FolderIOS e99a 3,FolderOpen e96d 3,folderOpenMin eb8c 3,Food ec04 1,Footwear eb00 3,Forward e97e 3,ForwardBaseLine eac5 3,FromArchive e69d 3,FSRAR eb2f 3,FSS eb30 3,Fuel ec4f 1,FuelCard ec51 1,FullScrin e95f 3,FurCoat eb01 3,Fx e9f1 3,gasStation ea17 3,GenderM ec60 1,GenderW ec5f 1,GeoCluster e947 3,GeoMarker e948 3,GeoTags ec4e 1,GIF eb1b 3,Gif2 eb42 3,Gift eb7c 3,GigaChat ec79 1,Girl ec58 1,Gmail ea3b 3,GooglePlus e763 3,GoTo eb1c 3,Gradient eb9d 3,Group e92b 3,GroupCall ebb5 3,Groups e654 3,GroupTabsDown e9e6 3,GroupTabsLeft e9e4 3,GroupTabsRight e9e5 3,GroupTabsUp e9e7 3,Guy eb9a 3,Hand e721 3,HandHouse ec65 1,Handshake ea7f 3,Handwrite1 e653 3,Handwrite2 e652 3,HangUp eb52 3,HardDrive e705 3,HashSign eae4 3,Header1 ebd3 1,Header2 ebd4 1,Header3 ebd5 1,Header4 ebd6 1,Header5 ebd7 1,Header6 ebd8 1,HeaderBottom e922 3,HeaderColumn ebec 1,HeaderRow ebeb 1,HeaderTop e923 3,HeadHunter e9ae 3,Headphone ec4c 1,Headstone e76c 3,Health ebaf 3,HHNon ea14 3,Hide e651 3,HierarchyView e650 3,Hipster ec5c 1,Home e64e 3,Home2 e64c 3,Home3 e920 3,Home3BsLine eac6 3,HorizontalDirection ebcc 1,Html e6c5 3,HyperLink ebdc 1,Icq e64d 3,Iiko eaf3 3,Implementation ebad 3,IncomingCall ea60 3,IncomingCallNull ea8c 3,IncomingMail ea64 3,Info e64b 3,InGroup e99e 3,InputHistory e6a8 3,InSales eaf2 3,insertCellAfter e9b6 3,insertCellBefore e9b5 3,InsertCode ea88 3,insertRowNumber e9b8 3,InsertSpoiler ea47 3,insertTable e9b9 3,InsideBorders eaf5 3,Instagram ea56 3,InstagramLine eb3b 3,IntangibleAssets e74c 3,InternationalArrow ea5c 3,Interview e9a6 3,Inventory ec3b 1,Invoice e9f5 3,invoiceLinear ec52 1,invoiceLinearOff ec53 1,iOS e76a 3,IPmask e64a 3,Italic e6c6 3,Jira ebea 1,Kanban eb8d 3,Key e9c5 3,keyWord ec2f 1,Kitchen ebaa 3,Knowledge ebb2 3,KnowledgeBase eb81 3,KPI eb82 3,Kuper ec7b 1,labelJumping ec10 1,labelLeft ec0e 1,labelTop ec0f 1,Languages eba0 3,Last e97d 3,Layers ebf9 1,Layout ebba 1,Ldap ea11 3,LDAPnew ea50 3,Lead e6f5 3,LeftSidebar ebbe 1,Lenta eb45 3,LessButton e6d4 3,LetterA e678 3,LetterN e979 3,LetterNull eab8 3,LetterP eabb 3,LetterY eabc 3,LevelAverage ea73 3,LevelCritical ea75 3,LevelHigh ea74 3,LevelLow ea72 3,Library ebb1 3,LightIndustry eb02 3,Lightning ea0b 3,Line e999 3,lineGraph ec0d 1,Link e6a7 3,Linked e649 3,Listbox e6d8 3,ListboxNull ea3a 3,ListboxrRflection e9db 3,ListMarked e6c7 3,ListNumbered e6c8 3,ListView e648 3,ListViewNew ea28 3,LLink ebdf 1,Location eb31 3,Lock e647 3,LockIn ea1b 3,LockOK e95c 3,LogoFacebook e722 3,LogoGosUslugi ea0e 3,LogoLinkedIn e723 3,logoMax ec0c 1,LogoMoiKrug e724 3,LogoMoiMir e725 3,LogoOk e728 3,LogoTelegram eb3a 3,LogoVk e727 3,LogoX e726 3,LongList e961 3,Lotus ec69 1,Love ea83 3,LoveHalf ebd0 1,LoveNull ea82 3,Lunch eb87 3,MagicWand e998 3,Mail e646 3,MailIncoming e6e5 3,MailLetter eace 3,MailOutgoing e6e6 3,Man ec59 1,ManWithHat ec5a 1,ManyDocuments ea39 3,Map e645 3,MapMarker e928 3,MapMarkerBig ea95 3,MapMarkerNull ea52 3,MarkCLeftLight e9a9 3,MarkCollapseBold e9bf 3,MarkCRightLight e9ab 3,MarkExpandBold e9c1 3,MarkExpandBoldMin eb8a 3,Marking eaf6 3,MarkLeftBold e9c0 3,markList1 ebe2 1,markList2 ebe3 1,markList3 ebe4 1,markList4 ebe5 1,markList5 ebe6 1,markList6 ebe7 1,markList7 ebe8 1,markList8 ebe9 1,MarkRightBold e9c2 3,MarkRightBoldMin eb89 3,Master e643 3,MedicalCase e72d 3,MedicalDevice eb93 3,Medicines eb03 3,Megaphone e69a 3,MegaphoneMan e699 3,MegaphoneNull e95a 3,MegaphoneOff e99b 3,Megaplan eb20 3,MenuAk ea98 3,Mercury ea34 3,MergeCells eb0d 3,MergeCells2 e9b2 3,Message2 e642 3,MessageWithArrow ec44 1,Microphone e706 3,Microphone1 eae1 3,MicrophoneNull e9b1 3,MicrophoneOff e90c 3,MilkProducts eb04 3,Minus eb6e 3,MixPayment ea0d 3,MixPayment1 ea9f 3,MixPaymentButton ea9e 3,MLink ebde 1,Model ec5d 1,Money e641 3,MoneyOk e95b 3,MoneyPrice ea38 3,MoreButton e6d5 3,Morning ec66 1,Motion e96f 3,MotivationCup ec72 1,Move e63f 3,Move2 e63e 3,MoveCellAbove eb17 3,MoveCellBelow eb18 3,MoveCellLeft eb19 3,MoveCellRight eb1a 3,MoveTableCell eb16 3,MP4 eb1d 3,multiline ec12 1,Multiplication eaec 3,MVD eb32 3,Nail ec70 1,NewCategory e63d 3,newChat ec45 1,News eb33 3,NewSmile eb6f 3,NewTab e63c 3,NewTask ec3c 1,Next e6d9 3,NextStep ebf5 1,NFC ebf0 1,Night ec68 1,NodeCurtailed e6d3 3,NodeExpanded e6d2 3,NoDocument e991 3,NoMoney ea35 3,Noone ec5e 1,NoPlan eb63 3,NoteIncluded ea87 3,NoteOff ea86 3,Notes e91f 3,NotesDoc ea42 3,NotesFill e9ce 3,NotForPrint eb39 3,NotificationBig ea5a 3,NotUpdatable ea4f 3,Number eaaf 3,Numbering ec2d 1,ObscureArea eac8 3,OCR e803 3,Odometer ec50 1,Offline e9bc 3,OnAgreement ea25 3,OpenedFolder e63a 3,Opening eb85 3,Or e9f0 3,osChrome eb46 3,osFirefox eb47 3,osJava eb48 3,osLinux eb4a 3,osMac eb4b 3,osWindows eb4c 3,OutgoingCall ea61 3,OutgoingCallNull ea8d 3,OutgoingMail ea65 3,OutGroup e99d 3,OutHotel e765 3,Oval e960 3,Pacifier e63b 3,PacifierCross eb05 3,Pack e6f6 3,Pack2 e91c 3,Pack3 eb1e 3,Package ea96 3,Packages ec55 1,PageBreaks e921 3,PageNumber ea49 3,pAlignCenter ea7a 3,pAlignLeft ea76 3,pAlignRight ea7b 3,pAlignWidth ebb7 1,paperBox ec54 1,PartiallyReady e72c 3,Paste e6fd 3,PasteAsText e71e 3,PasteBtr e9a1 3,PasteCodeBtr e9a2 3,PasteQuotesBtr e9a0 3,PasteStyle e768 3,PasteTextLetter e6e7 3,Patent ec3d 1,PatternsPoints e91a 3,Pause e639 3,Pause1 eae2 3,PauseCall ebb6 3,Pay eaa0 3,Payment e696 3,PaymentCard eaa2 3,PaymentCardButton eaa1 3,PaymentCash eaa4 3,PaymentCashButton eaa3 3,PaymentPart e695 3,PaymentPart2 ea2a 3,PaymentPartSend ea06 3,PaymentSalary eaa6 3,PaymentSalaryButton eaa5 3,pBringToFront ea7d 3,PDF e67c 3,Pedicure ec71 1,Pencil eac7 3,Percent eae7 3,Perfume eb06 3,Periodicity ebb3 3,PermittedBuyers e684 3,PermittedGoods e683 3,PermittedRegions e682 3,Pets ec6b 1,PF eb34 3,pGrid ea80 3,Phone e638 3,PhoneCAM e98f 3,PhoneCell e637 3,PhoneCellHorizontal ebf8 1,PhoneCompany ea29 3,PhoneContact e978 3,PhoneCrash e966 3,PhoneDial eacc 3,PhoneDown e914 3,PhoneFax e977 3,PhoneGetAutomatically e624 3,PhoneGetManually e615 3,PhoneHome e976 3,PhoneMes e975 3,PhoneMissed e965 3,PhoneNull e636 3,PhoneNumber e974 3,PhonePause e973 3,PhoneUnanswered e964 3,PhoneVariable e971 3,PhoneWork e635 3,PhoneWWW e990 3,Photo e6ed 3,PicAlignJustify ec09 1,PicAlignLeft ec05 1,PicAlignRight ec06 1,PicBtr e9a3 3,PicCenter e9ff 3,PicInTheText ea53 3,PicLeft e9fe 3,PicLeftT e9fd 3,PicOverTheText ea54 3,PicRight e9fc 3,Picture e6c9 3,Pin e630 3,Pin2 e930 3,PinCode e9c4 3,PinNull e97c 3,PinOff ea09 3,Pipe eb53 3,Pizza ec6e 1,placeholder ec11 1,PlayBack eac0 3,PlayForward eabf 3,PlaySound e99c 3,Plus ea48 3,Plus2 eb64 3,Polyline ec1e 1,Preferment e634 3,Presto e701 3,Preview eab3 3,Price e9d4 3,Print e633 3,PrintForm e9f8 3,Process eba2 3,Processing eb83 3,ProductsDownload ea20 3,Profile e632 3,Profile2 e91d 3,Promokod eb7d 3,Property e74d 3,pSendToBack ea7c 3,pTable ea77 3,pToPave ea78 3,pToStretch ea79 3,Publish2 e631 3,PublishedForMe ebb4 3,PUnanswered e972 3,Purchases ead9 3,QR e915 3,Question eb3c 3,Question2 e68b 3,QuestionNew e9c9 3,Queue eb3d 3,Quote e6e8 3,QuoteWidget ebd9 1,Qwen ec1a 1,R e9ed 3,RebuildWithDebugging eb22 3,Rec e9da 3,RecalculationOfPrices ea10 3,Received e62e 3,Received2 e62d 3,Rectangle e94e 3,Redirect eae3 3,Redo e6a1 3,Redo2 e6ca 3,ReduceButton e702 3,Refresh e62c 3,RefusedAgency e72e 3,RefusedOperator e72f 3,RelatedDocumentsDown ea07 3,RelatedDocumentsUp ea08 3,Remark e9be 3,RemarkNull e9bd 3,RemoteConnection ead7 3,RemoveAdd e766 3,removeCell e9b7 3,Rename e698 3,Reply ea2e 3,Report e62b 3,Reports eba9 3,RequestScreen eacf 3,Resend e62a 3,Resources e74e 3,Responsible e6f7 3,Responsible2 e767 3,Restore e629 3,RightAngle ec1f 1,RightSidebar ebbf 1,Ring eb78 3,Roaming e707 3,Robot eb74 3,RotateLeft ec2a 1,RotateRight ec29 1,RoundAngle ec20 1,RoundPlus eadd 3,RPN eb35 3,Ruler ec6d 1,Russian eb86 3,Saby e98c 3,SabyBird e9e2 3,SabyCloud e9dd 3,SabyCloudInside eb97 3,SabyCloudOutside eb98 3,SabyCloudRefresh eb99 3,SabyDisk e901 3,Sabydoc ebf1 1,SabyEng e9e1 3,Sabyscheme ebf2 1,Safari ec73 1,Safe ec57 1,Salary e9e9 3,Salepoint eab2 3,Sandclock e68f 3,SAP e904 3,Save e628 3,SaveAs e627 3,SaveAs2 ebf4 1,Scale e94f 3,ScaleOriginal eacb 3,Scan e626 3,ScanerAddPhoto ec4b 1,Scanner ea00 3,ScanSave e625 3,Scissors e969 3,ScrollToTop eb75 3,Search e623 3,Search2 e662 3,Search3 eaa7 3,Seen e622 3,SelectArea ea1e 3,SelectGeotag eb65 3,SelfPin e621 3,SelfVacation e620 3,Sell eaa8 3,Send e61f 3,SendLetter eb50 3,Sent e61e 3,Sent2 e61d 3,Sent3 e908 3,SentBig eaac 3,SentNot ea63 3,SentOff ead6 3,separateHorizontal e9b4 3,separateVertical e9b3 3,ServerKey e61c 3,Service ea4e 3,ServiceArrow ea5e 3,ServiceDuble ea71 3,ServiceHorizontal ebee 1,Settings e61b 3,Settings2 eaa9 3,SettingsNew e9d9 3,Shadow e9a5 3,Share e61a 3,shareMobile ec31 1,Shield eb76 3,Ship e9ca 3,Shipment e9f6 3,ShipmentPartial e9f7 3,Shop ea5f 3,ShortList e962 3,Show e619 3,ShowBig ea19 3,ShowControl e968 3,showVideo ec62 1,showVideoOff ec63 1,Shteker ea58 3,Sick e618 3,SickAuto eb3e 3,Signature e68a 3,SignatureBird ea85 3,SignatureBirdNone ea84 3,SignatureGosKey eb9f 3,SignatureNone e74a 3,SignaturePhone eb26 3,SignaturePhoneNone eb27 3,SignChange eaea 3,SJNon ea15 3,Skeleton e76d 3,Skype e617 3,SLink ebdd 1,SmileBtr e9a7 3,SMS ec46 1,Snow e970 3,SortByAmount ea97 3,SortByDiv eb3f 3,SortByOrder eb40 3,Sorting e909 3,SortingEng e9df 3,SortingNumber ea66 3,SortingStandard eb66 3,SoundMax e90e 3,SoundMidi e910 3,SoundMini e911 3,SoundOff e912 3,SoundOff1 eb67 3,SoundOn eb68 3,Space ea33 3,SplitCellHorizontally eb13 3,SplitCellVertically eb10 3,Square ea12 3,Squarefilled ea13 3,SquareGeom eb36 3,StandardAlgorithm ebf6 1,STAT eb37 3,Statement ea7e 3,Statistics e91b 3,statusAffairs e940 3,statusCars e945 3,statusCatches e935 3,statusCaution e943 3,statusCoffee e936 3,statusConnected e94a 3,statusConsultant e942 3,statusDeparted e94b 3,statusDictates e93c 3,statusDisease e93b 3,statusDisturb e949 3,statusDraws e932 3,statusDrips e944 3,statusFarmer e933 3,statusGymnast e931 3,statusMeditation e941 3,statusPlan e93f 3,statusPresident e93a 3,statusPromenade e938 3,statusSleeps e93e 3,statusStretching ec61 1,statusSun e937 3,statusTable e93d 3,statusThinks e934 3,statusTime e939 3,Sticker eb43 3,Stroked e6cb 3,Style ebbb 1,Subjects eba1 3,Subscribe e9d2 3,SubtractArea ec26 1,Subtraction eae5 3,Successful e616 3,Successful2 e92c 3,SuccessfulDocument ea45 3,Successfully ea46 3,SuccessfulNon eab1 3,Sum e614 3,Superjob e9ad 3,Support ebb0 3,Surveyor e613 3,Surveyors e612 3,SvMax ea40 3,SvMini ea41 3,SvNarrow ea3f 3,SvWide ea3e 3,SwipeMenu eab4 3,SystemAlgorithm ebf7 1,Table e6cc 3,TableAddLeft e953 3,TableAddRight e952 3,TableArrowLeft ec32 1,TableArrowRight ec33 1,TableCell eb0c 3,TableColumn eb0a 3,TableContourLeft ec39 1,TableContourRight ec3a 1,TableCreate e958 3,TableDelete e957 3,TableDeleteCell eb14 3,TableDeleteColumn e951 3,TableDeleteRow e954 3,TableFullLeft ec40 1,TableFullRight ec41 1,TableInsertAbove e956 3,TableInsertBelow e955 3,TableMoveAbove eb12 3,TableMoveBelow eb0f 3,TableMoveLeft eb11 3,TableMoveRight eb0e 3,TableRow eb0b 3,TableRowSettings eb15 3,TableScheme eb5a 3,TableSetting e950 3,Tablet ebbd 1,TabsWidget ebdb 1,Tag ea18 3,TakePhoto eb77 3,Target ebab 3,Telecommunications eb70 3,Telegram ea03 3,TelephoneNull ea8e 3,TemplateNews1 e985 3,TemplateNews2 e993 3,TemplateNews3 e992 3,TemplateNews4 e987 3,TemplateNews5 e986 3,TemplateNews6 e988 3,TemplateNews7 e98b 3,TemplateNews8 e98a 3,TemplateNews9 e989 3,Text eac9 3,TextColor e6cd 3,TextSettings e761 3,TFAdjustmentReport e729 3,TFAttach e74f 3,TFCloudKey e750 3,TFComputer e730 3,TFComputerCross eb54 3,TFComputerPlagin eb55 3,TFCurtailRTE e751 3,TFCurtailRTE2 e764 3,TFDelete e752 3,TFDesktop e731 3,TFDialogue e75c 3,TFDocStamp ea8f 3,TFDocument e732 3,TFDocumentINI eaf9 3,TFDocumentLnk eb23 3,TFDocumentMP4 e9cb 3,TFDocumentNon e9dc 3,TFDocumentODS e9cc 3,TFDocumentP e733 3,TFDocumentPDF e734 3,TFDocumentPY eafa 3,TFDocumentSQL eafb 3,TFDocumentUnknownType e735 3,TFDocumentVsdx e9d0 3,TFDocumentW e736 3,TFDocumentX e737 3,TFDocumentXML eab7 3,TFDocumentXML2 e738 3,TFDownload e739 3,TFEmployees e753 3,TFEmployees-Fill ebef 1,TFExpand e73a 3,TFExpandRTE e754 3,TFFavorite e73b 3,TFFileAudio e73c 3,TFFileVideo e73d 3,TFFolder e73e 3,TFFolder2 e73f 3,TFFolder2Opened eb41 3,TFFollow e740 3,TFForward e755 3,TFImage e72a 3,TFList e741 3,TFList2 e742 3,TFlist3 eac3 3,TFLocalDrive e743 3,TFMessage e756 3,TFMyDocuments e757 3,TFNetwork e744 3,TFNetworkDrive e745 3,TFNewTab e746 3,TFPreview e747 3,TFPreview2 e748 3,TFSettings e75d 3,TFTask e758 3,TFUSBDrive e759 3,TFUSBKey e75a 3,TFVideoMessage e75b 3,TFZip e749 3,TheBordersBottom ead1 3,TheBordersLeft ead4 3,TheBordersOnTop ead3 3,TheBordersRight ead2 3,TheNote e9d3 3,ThreeColumns eaed 3,ThresholdConditions e680 3,ThumbDown e611 3,ThumbDown2 e610 3,ThumbDownBig ea22 3,ThumbUp e60f 3,ThumbUp2 e60e 3,ThumbUpBig ea21 3,ThumbUpPlus ea0c 3,TileDownSide ebc4 1,TileHorizontalCenter ebc5 1,TileHorizontalStretch ebca 1,TileLeftSide ebc2 1,TileRightSide ebc1 1,TileSpaceAround ebc8 1,TileSpaceBetween ebc7 1,TileSpaceEvenly ebc9 1,TileUpSide ebc3 1,TileVerticalCenter ebc6 1,TileVerticalSpaceAround ebfd 1,TileVerticalSpaceBetween ebfc 1,TileVerticalSpaceEvenly ebfe 1,TileVerticalStretch ebcb 1,Time e68d 3,TimeFill ec47 1,TimeHistory e9c3 3,TimeHistoryMirror ea1a 3,TimeOff e963 3,TimeOK e9ba 3,TimeSkinny eb5b 3,Tires eb07 3,ToApprove ea24 3,ToArchive e697 3,Tobacco eb08 3,ToTheBegining ea0a 3,Trade e60c 3,Trade2 eb71 3,TransitionFrom e982 3,TransitionTo e983 3,Trash-bucket eb72 3,TreeClosed ea8b 3,TreeOpen ea8a 3,TreeView e60b 3,TrendDown e71c 3,TrendUp e71d 3,Tribunal ebae 3,Truck e6a5 3,Truck2 eb73 3,TruckHalf e690 3,TurnL e60a 3,TurnList e97a 3,TurnR e609 3,TurnstileIn e6f8 3,TurnstileOut e6f9 3,TwoColumns eaee 3,TwoForOne eb69 3,TypeApi ec0a 1,TypeArray ea6d 3,TypeBool ea6a 3,TypeDate ea68 3,TypeNum ea6c 3,TypeObject ea6e 3,TypeStr ea6b 3,TypeVoid ea69 3,UDS eb24 3,Underline e6ce 3,Undo e608 3,Undo2 e6cf 3,Unfavorite e607 3,UnFullScrin e95e 3,Unite e6fa 3,Unlink e6d0 3,Unloading ec30 1,UnloadNew ea31 3,Unlock e606 3,UnPublish e62f 3,UnSubscribe e9d1 3,Unsuccess e605 3,Up e997 3,UpDown ea62 3,Upload e604 3,UploadYourself ea6f 3,UsbKey e603 3,USBKey2 eab5 3,UseCase eb2a 3,Vacation e602 3,VacationNull e96a 3,ValidityPeriod e67f 3,Vape eb79 3,VerticalDirection ebcd 1,Viber ea02 3,VideoCall e693 3,VideoCall2 e929 3,VideoCallIncoming e69f 3,VideoCallNull e6a0 3,VideoCallOff e913 3,VideoCallOutgoing e69e 3,VideoGroup e98d 3,VideoLink e924 3,VideoMeeting ec1b 1,VideoMessage e6fc 3,View e6a2 3,ViewBack e789 3,Vkrugu e762 3,VoiceMenu e984 3,Volume ec56 1,WaitingSignature ea37 3,Wallet e601 3,WaterSign ead8 3,Way ea70 3,Web eb5c 3,Webasyst eaf1 3,WebCamera e6ee 3,WeekBackward e685 3,WeekDown e903 3,WeekForward e681 3,WeekUp e902 3,WeigherOff eadb 3,WeigherOn eada 3,Weight ec6c 1,WhatsUp ea01 3,Wheelchair eb09 3,Whiteboard eabd 3,Wi e6a6 3,WideArrow ec1d 1,Widget ebb9 1,WidgetShop ea91 3,WiFi e600 3,WifiOff ec4d 1,Woman eb9b 3,WomanWithHat ec5b 1,Work e9e8 3,Workers eaaa 3,WorkForAll ea1c 3,WorkInFocus e67e 3,WorkRead e6eb 3,WorkRussia eb6a 3,Writemessage eb5f 3,WWW e6d1 3,XLLink ebe0 1,XLLinkHeader ebe1 1,Yandex ea4b 3,YandexEda eb5d 3,YandexGPT ec18 1,Yes e75e 3,You e6fe 3,Youtube eaab 3,ZodiacSignAquarius e709 3,ZodiacSignAries e70a 3,ZodiacSignCancer e70b 3,ZodiacSignCapricorn e70c 3,ZodiacSignGemini e70d 3,ZodiacSignLeo e70e 3,ZodiacSignLibra e70f 3,ZodiacSignPisces e710 3,ZodiacSignSagittarius e711 3,ZodiacSignScorpio e712 3,ZodiacSignTaurus e713 3,ZodiacSignVirgo e714 3,ZoomIn e6e9 3,ZoomOut e6ea 3';
+  var ICONS = ICON_DATA ? ICON_DATA.split(',').map(function (r) { r = r.split(' '); return { name: r[0], low: r[0].toLowerCase(), code: r[1], fonts: +r[2] }; }) : [];
+  var ICON_LIMIT = 300, iconsAll = false; // сначала первые 300: вся сетка — больше тысячи кнопок
+  function buildIcons() {
+    var grid = document.getElementById('ico-grid'), more = document.getElementById('ico-more'), count = document.getElementById('ico-count');
+    var q = document.getElementById('ico-q').value.trim().toLowerCase(), size = document.getElementById('ico-size').value, bit = size === '24' ? 2 : 1;
+    var found = ICONS.filter(function (i) { return (i.fonts & bit) && (!q || i.low.indexOf(q) >= 0); });
+    var shown = iconsAll || q ? found : found.slice(0, ICON_LIMIT);
+    grid.setAttribute('data-size', size); grid.textContent = '';
+    var frag = document.createDocumentFragment();
+    shown.forEach(function (i) {
+      var b = el('button', 'ico'); b.type = 'button'; b.title = i.name + ' · ' + i.code;
+      b.setAttribute('data-copy', '&#x' + i.code + ';');
+      var g = el('span', 'ico-glyph', String.fromCharCode(parseInt(i.code, 16))); g.setAttribute('aria-hidden', 'true');
+      b.appendChild(g); b.appendChild(el('span', 'ico-name', i.name));
+      frag.appendChild(b);
+    });
+    grid.appendChild(frag);
+    count.textContent = found.length ? found.length + ' ' + plural(found.length, 'иконка', 'иконки', 'иконок') : 'Ничего не найдено';
+    more.hidden = shown.length === found.length; more.textContent = 'Показать все ' + found.length;
+  }
+  function plural(n, one, few, many) { var d = n % 10, h = n % 100; return d === 1 && h !== 11 ? one : d >= 2 && d <= 4 && (h < 12 || h > 14) ? few : many; }
+  document.getElementById('ico-q').addEventListener('input', buildIcons);
+  document.getElementById('ico-size').addEventListener('change', buildIcons);
+  document.getElementById('ico-more').addEventListener('click', function () { iconsAll = true; buildIcons(); });
+  document.getElementById('ico-grid').addEventListener('click', function (e) { var b = e.target.closest('.ico'); if (b) copy(b.getAttribute('data-copy')); });
 
   function refresh() {
     items.forEach(function (it) { it.v.textContent = it.pair ? val(it.pair[0]) + ' · ' + val(it.pair[1]) : val(it.n); });
-    var f = document.getElementById('frame-demo');
-    try { var d = f.contentDocument && f.contentDocument.documentElement; if (d) { setAttr(d, 'data-ui-theme', root.getAttribute('data-ui-theme')); } } catch (e) {}
+    nav('#frame-demo, .gal-preview iframe').forEach(function (f) {
+      try { var d = f.contentDocument && f.contentDocument.documentElement; if (d) { setAttr(d, 'data-ui-theme', root.getAttribute('data-ui-theme')); } } catch (e) {}
+    });
   }
   function setAttr(node, a, v) { if (v) node.setAttribute(a, v); else node.removeAttribute(a); }
 
@@ -1091,7 +1271,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   function applyTheme() { setAttr(root, 'data-ui-theme', themeSel.value); refresh(); }
   themeSel.value = '';
   themeSel.addEventListener('change', applyTheme);
-  function applySize() { setAttr(root, 'data-ui-size', sizeSel.parentNode.hidden ? '' : sizeSel.value); refresh(); }
+  // Размер — только в «Основах» (переключатель на их страницах): компоненты показаны в default, выбор вернётся вместе с разделом
+  function applySize() { setAttr(root, 'data-ui-size', group === 'tokens' ? sizeSel.value : ''); refresh(); }
   sizeSel.addEventListener('change', applySize);
   document.getElementById('frame-demo').addEventListener('load', refresh);
   document.getElementById('q').addEventListener('input', filter);
@@ -1106,12 +1287,17 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   ['ml-layout', 'ml-align', 'ml-style'].forEach(function (id) { document.getElementById(id).addEventListener('change', buildMlGroup); });
 
   var start = location.hash.slice(1);
-  if (!go(start, false)) go('button', false);
+  if (!go(start, false)) go('all', false);
   buildButtons(); buildCheckboxes(); buildChips(); buildInputs(); buildToolbars(); buildWidgets(); buildPropertyEditor(); buildPgEditors(); buildMasterList(); buildColors(); buildSizes(); buildShadows();
-  if (ROUTES[start]) { // открыт по адресу раздела — прокрутить к нему, когда всё построено
+  buildTiles(); buildIcons();
+  if (ROUTES[start]) { // открыт по адресу страницы: браузер прокрутил бы к якорю, а страница начинается с начала.
+    // На время загрузки убираем якорь из адреса, после неё возвращаем и встаём в начало
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-    go(start, true);
-    window.addEventListener('load', function () { go(start, true); }); // браузер мог сам прокрутить к якорю после нас
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+    window.addEventListener('load', function () {
+      try { history.replaceState(null, '', '#' + start); } catch (e) {}
+      window.scrollTo(0, 0); setTimeout(function () { window.scrollTo(0, 0); }, 0);
+    });
   }
   if (!names.length) document.getElementById('colors-body').appendChild(el('p', 'empty', 'Не удалось прочитать tokens.css. Откройте каталог через локальный сервер, а не как файл.'));
   applyTheme();
