@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>left-sidebar — пример</title>
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../../button/button.css"> <!-- слоты кнопок -->
+  <link rel="stylesheet" href="../../property-editor/property-editor.css"> <!-- окно настройки страницы -->
+  <link rel="stylesheet" href="../../input/input.css">
+  <link rel="stylesheet" href="../../switch/switch.css">
+  <link rel="stylesheet" href="../../chips/chips.css">
+  <link rel="stylesheet" href="../left-sidebar.css">
+  <style>
+    html, body { height: 100%; }
+    body { margin: 0; display: flex; padding-top: 8px; box-sizing: border-box; font-family: var(--font-font-family-default), sans-serif; font-size: 14px;
+      background: var(--components-constructor-constructor_background-color); color: var(--text-text-color); } /* фон конструктора */
+    main { flex: 1 1 auto; padding: 16px 24px; }
+    main p { margin: 0 0 12px; max-width: 520px; color: var(--text-label_text-color); }
+    main b { color: var(--text-text-color); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <aside class="lsb" id="sidebar" aria-label="Страницы">
+    <div class="lsb__lines" aria-hidden="true"></div>
+    <div class="lsb__panel">
+      <header class="lsb__head">
+        <div class="lsb__title">
+          <h3 class="lsb__name">Страницы</h3>
+          <button type="button" class="btn btn--filled btn--style-pale btn--size-m" data-lsb-add aria-label="Добавить страницу"><span class="btn__icon">&#xEADD;</span></button>
+        </div>
+        <div class="lsb__toggle">
+          <button type="button" class="btn btn--filled btn--style-pale btn--icon"><span class="btn__icon"></span></button>
+        </div>
+      </header>
+      <div class="lsb__list"></div>
+    </div>
+
+    <div class="lsb__menu" role="menu" aria-label="Действия" hidden>
+      <div class="lsb__menu-top"><div class="lsb__menu-head">Действия</div><button type="button" class="lsb__menu-close" aria-label="Закрыть"></button></div>
+      <button type="button" class="lsb__menu-item" role="menuitem" data-lsb-act="home"><span class="lsb__menu-icon">&#xE64C;</span><span class="lsb__menu-text">Сделать главной</span></button>
+      <button type="button" class="lsb__menu-item" role="menuitem" data-lsb-act="settings"><span class="lsb__menu-icon">&#xE61B;</span><span class="lsb__menu-text">Настроить</span></button>
+      <button type="button" class="lsb__menu-item" role="menuitem" data-lsb-act="link"><span class="lsb__menu-icon">&#xE6A7;</span><span class="lsb__menu-text">Скопировать ссылку</span></button>
+      <button type="button" class="lsb__menu-item" role="menuitem" data-lsb-act="duplicate"><span class="lsb__menu-icon">&#xE669;</span><span class="lsb__menu-text">Дублировать</span></button>
+      <button type="button" class="lsb__menu-item" role="menuitem" data-lsb-act="hide"><span class="lsb__menu-icon">&#xE651;</span><span class="lsb__menu-text">Скрыть</span></button>
+      <button type="button" class="lsb__menu-item lsb__menu-item--danger" role="menuitem" data-lsb-act="delete"><span class="lsb__menu-icon">&#xEB72;</span><span class="lsb__menu-text">Удалить</span></button>
+    </div>
+
+    <section class="pe lsb__settings" aria-label="Настройки страницы" hidden>
+      <header class="pe__head">
+        <label class="pe__name"><input class="pe__name-input" aria-label="Название страницы"></label>
+        <div class="pe__cmds">
+          <button type="button" class="pe__reset" aria-label="Сбросить настройки">&#xe629;</button>
+          <button type="button" class="pe__done" aria-label="Сохранить">&#xe75e;</button>
+          <button type="button" class="pe__close" aria-label="Закрыть">&#xe66c;</button>
+        </div>
+      </header>
+      <div class="pe__body">
+        <div class="pe__card">
+          <div class="pe__rows">
+            <div class="pe__row">
+              <span class="pe__label">Адрес</span>
+              <span class="lsb__addr">/<label class="input input--size-l"><span class="input__body"><span class="input__field"><input class="input__control" data-lsb-field="addr" aria-label="Адрес страницы"></span></span></label></span>
+            </div>
+            <div class="pe__row">
+              <span class="pe__label">Доступ</span>
+              <button type="button" class="btn btn--link btn--style-link btn--size-m lsb__value" data-lsb-pick="access" aria-haspopup="menu" aria-expanded="false"></button>
+            </div>
+          </div>
+          <label class="switch switch--caption-start lsb__index"><input class="switch__input" type="checkbox" role="switch" data-lsb-field="noindex"><span class="switch__button"></span><span class="switch__caption">Запретить поисковую индексацию</span></label>
+        </div>
+        <div class="pe__card">
+          <div class="pe__rows">
+            <div class="pe__row">
+              <span class="pe__label">Способ отображения</span>
+              <button type="button" class="btn btn--link btn--style-link btn--size-m lsb__value" data-lsb-pick="mode" aria-haspopup="menu" aria-expanded="false"></button>
+            </div>
+          </div>
+        </div>
+        <div class="pe__card" data-pe-row="seo">
+          <div class="lsb__seo">
+            <div class="pe__title">SEO<button type="button" class="pe__x" data-pe-clear aria-label="Убрать SEO">&#xe66c;</button></div>
+            <div class="lsb__seo-fields">
+              <label class="input input--label-top"><span class="input__label">Заголовок</span><span class="input__body"><span class="input__field"><input class="input__control" data-lsb-field="seo"></span></span></label>
+              <button type="button" class="btn btn--filled btn--style-pale btn--size-m" data-lsb-description-add aria-expanded="false">Описание</button>
+              <label class="input input--label-top input--textarea" data-lsb-description hidden><span class="input__label">Описание</span><span class="input__body"><span class="input__field"><textarea class="input__control" rows="3" data-lsb-field="seoDescription" aria-label="SEO-описание"></textarea></span></span></label>
+            </div>
+          </div>
+        </div>
+        <div class="pe__chips"><button type="button" class="chips chips--optional" data-pe-chip="seo"><span class="chips__caption">SEO</span></button></div>
+      </div>
+
+      <div class="lsb__pick" data-lsb-pick-menu="access" role="menu" aria-label="Доступ" hidden>
+        <div class="lsb__pick-list">
+          <div class="lsb__pick-head">Доступ</div>
+          <button type="button" class="lsb__pick-item" role="menuitemradio" aria-checked="false" data-value="public"><span class="lsb__pick-text">Без авторизации</span></button>
+          <button type="button" class="lsb__pick-item" role="menuitemradio" aria-checked="false" data-value="authorized"><span class="lsb__pick-text">Только авторизованным</span></button>
+        </div>
+        <button type="button" class="lsb__pick-close" aria-label="Закрыть"></button>
+      </div>
+      <div class="lsb__pick" data-lsb-pick-menu="mode" role="menu" aria-label="Способ отображения" hidden>
+        <div class="lsb__pick-list">
+          <button type="button" class="lsb__pick-item" role="menuitemradio" aria-checked="false" data-value="page"><span class="lsb__pick-text">На странице</span></button>
+          <button type="button" class="lsb__pick-item" role="menuitemradio" aria-checked="false" data-value="window"><span class="lsb__pick-text">В новом окне</span></button>
+          <button type="button" class="lsb__pick-item" role="menuitemradio" aria-checked="false" data-value="both"><span class="lsb__pick-text">В окне и на странице</span></button>
+        </div>
+        <button type="button" class="lsb__pick-close" aria-label="Закрыть"></button>
+      </div>
+    </section>
+  </aside>
+
+  <main>
+    <p>Открыта страница: <b id="current"></b></p>
+    <p>Клик по строке открывает страницу, двойной клик — переименование. «⋮» — меню действий, «Настроить» и «+» — окно настройки.</p>
+    <p>Кнопка справа в шапке сворачивает сайдбар в линии. Наведение на линии открывает панель поверх страницы, кнопка в её шапке закрепляет сайдбар обратно.</p>
+  </main>
+
+  <script src="../left-sidebar.js"></script>
+  <script>
+    const current = document.getElementById('current');
+    const sidebar = LeftSidebar.mount(document.getElementById('sidebar'), {
+      pages: [
+        { id: 1, name: 'Главная', home: true },
+        { id: 2, name: 'Меню' },
+        { id: 3, name: 'О нас', off: true },
+        { id: 4, name: 'Вход' },
+        { id: 5, name: 'Профиль' }
+      ],
+      active: 2,
+      onSelect: function (page) { current.textContent = page.name; }
+    });
+    current.textContent = sidebar.pages.find(function (p) { return p.id === sidebar.active; }).name;
+  </script>
+</body>
+</html>

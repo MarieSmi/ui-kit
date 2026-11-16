@@ -19,13 +19,13 @@
 Файлы раздаёт jsDelivr прямо из GitHub по тегу:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.18.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.18.0/components/<имя>/<имя>.css">
-<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.18.0/components/<имя>/<имя>.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/components/<имя>/<имя>.css">
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/components/<имя>/<имя>.js"></script>
 ```
 
 - `tokens.css` подключается **первым**: компоненты берут значения из его переменных.
-- Версия в адресе (`@1.18.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
+- Версия в адресе (`@1.19.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
 - Во всех адресах одного прототипа должна стоять одна и та же версия.
 - В артефактах Claude адреса `cdn.jsdelivr.net/gh/` не работают: там код кита вшивается в файл.
 
@@ -35,7 +35,7 @@
 прототип подключает сам, отдельным файлом:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.18.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/fonts/fonts.css">
 ```
 
 | Шрифт | Файлы | Где используется |
@@ -101,6 +101,7 @@ Figma: он обновит файлы в `tools/tokens/`, запустит `pyth
 | Тумблер: 2–4 варианта на общей подложке, подписи, иконки, счётчик, контрастная подложка, размеры xs … 5xl, вертикальный | [`components/tumbler`](components/tumbler/) | `nuC4KFMiS36uDWDUp9wKGl` · `tumblerHorizontal` (из кода Saby, не сверено) | 1.17.0 |
 | Вкладки: стили primary / secondary / unaccented, иконки и счётчики, главная вкладка, выравнивание, линия снизу | [`components/tabs`](components/tabs/) | `nuC4KFMiS36uDWDUp9wKGl` · `tabs/horizontal` (из кода Saby, не сверено) | 1.17.0 |
 | Аккордеон и сайдбар: разделы с иконками, подразделы, группы, свёрнутый вид, шапка с логотипом и кнопкой сворачивания | [`components/accordion`](components/accordion/) | «Аккордеон [30.07.26]» (из кода Saby, не сверено) | 1.17.0 |
+| Левый сайдбар конструктора «Страницы»: список страниц, переименование, меню «⋮», окно настройки страницы; вписан, по ховеру, закреплён | [`components/left-sidebar`](components/left-sidebar/) | `rHabzni5OI5D4fxBLQdj2m` · `5:28393` (перенесён из прототипа, не сверено) | 1.19.0 |
 | Правый сайдбар конструктора: тулбар с пунктами, панели вкладок, шапка панели, строки полей и слоёв; вписан, по ховеру, закреплён | [`components/right-sidebar`](components/right-sidebar/) | `rHabzni5OI5D4fxBLQdj2m` · `5:28859` | 1.18.0 |
 | Магазин виджетов: виджеты small / medium / big, разделы с превью, расширенный вид с деревом категорий | [`components/shop`](components/shop/) | `rHabzni5OI5D4fxBLQdj2m` · `1517:69549` | 1.18.0 |
 

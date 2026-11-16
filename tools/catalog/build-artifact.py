@@ -38,6 +38,8 @@ page = page.replace('<link rel="stylesheet" href="../components/accordion/accord
 page = page.replace('<link rel="stylesheet" href="../components/input/input.css" data-kit="input">', '<style data-kit="input">' + read('components/input/input.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">', '<style data-kit="toolbar">' + read('components/toolbar/toolbar.css') + '</style>')
 page = page.replace('<link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">', '<style data-kit="widget">' + read('components/widget/widget.css') + '</style>')
+page = page.replace('<link rel="stylesheet" href="../components/left-sidebar/left-sidebar.css" data-kit="left-sidebar">', '<style data-kit="left-sidebar">' + read('components/left-sidebar/left-sidebar.css') + '</style>')
+page = page.replace('<script src="../components/left-sidebar/left-sidebar.js" data-kit="left-sidebar"></script>', '<script data-kit="left-sidebar">' + read('components/left-sidebar/left-sidebar.js') + '</script>')
 page = page.replace('<link rel="stylesheet" href="../components/right-sidebar/right-sidebar.css" data-kit="right-sidebar">', '<style data-kit="right-sidebar">' + read('components/right-sidebar/right-sidebar.css') + '</style>')
 page = page.replace('<script src="../components/right-sidebar/right-sidebar.js" data-kit="right-sidebar"></script>', '<script data-kit="right-sidebar">' + read('components/right-sidebar/right-sidebar.js') + '</script>')
 page = page.replace('<link rel="stylesheet" href="../components/shop/shop.css" data-kit="shop">', '<style data-kit="shop">' + read('components/shop/shop.css') + '</style>')

@@ -25,6 +25,8 @@
 <link rel="stylesheet" href="../components/input/input.css" data-kit="input">
 <link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">
 <link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">
+<link rel="stylesheet" href="../components/left-sidebar/left-sidebar.css" data-kit="left-sidebar">
+<script src="../components/left-sidebar/left-sidebar.js" data-kit="left-sidebar"></script>
 <link rel="stylesheet" href="../components/right-sidebar/right-sidebar.css" data-kit="right-sidebar">
 <script src="../components/right-sidebar/right-sidebar.js" data-kit="right-sidebar"></script>
 <link rel="stylesheet" href="../components/shop/shop.css" data-kit="shop">
@@ -247,6 +249,14 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .tb.tb-bare { background: none; box-shadow: none; overflow: visible; }
 .tb.tb-bare::after { content: none; }
 #widget-body { display: grid; gap: 32px; }
+#left-sidebar-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+/* сцена левого сайдбара: фон конструктора, сайдбар прижат влево; справа — «страница» */
+.lsb-stage { position: relative; display: flex; height: 460px; padding-top: 8px; background: var(--components-constructor-constructor_background-color); }
+.lsb-stage > p { align-self: center; margin: 0 0 0 24px; max-width: 260px; font-size: 12px; color: var(--muted); }
+.lsb-stage--static { height: auto; min-height: 0; padding: 8px 0 0; overflow-x: auto; }
+.lsb-stage--static > .lsb { flex: 1 1 auto; min-width: 0; flex-wrap: wrap; row-gap: 24px; padding-bottom: 8px; }
+.lsb-stage--static .lsb__panel { height: auto; }
+.lsb-stage .lsb__menu.is-demo, .lsb-stage .lsb__settings.is-demo, .lsb-stage .lsb__pick.is-demo { position: relative; left: auto; top: auto; }
 #right-sidebar-body { display: grid; gap: 32px; }
 /* сцена сайдбара: фон страницы конструктора, сайдбар прижат вправо и занимает высоту сцены */
 .rsb-stage { display: flex; justify-content: flex-end; height: 420px; padding-right: 8px; background: var(--components-constructor-constructor_background-color); } /* фон конструктора, как у набора в макете */
@@ -306,7 +316,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <div class="lib">
   <aside class="lib-nav" id="lib-nav">
     <div class="lib-head">
-      <a class="lib-logo" href="#all"><span class="lib-logo-mark">UI</span><span>ui-kit<span class="lib-logo-sub ver">1.18.0</span></span></a>
+      <a class="lib-logo" href="#all"><span class="lib-logo-mark">UI</span><span>ui-kit<span class="lib-logo-sub ver">1.19.0</span></span></a>
       <button type="button" class="lib-menu-btn" id="lib-menu" aria-controls="lib-nav" aria-expanded="false">Меню</button>
     </div>
     <a class="lib-item lib-item-all" href="#all">Все компоненты</a>
@@ -321,6 +331,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       <button type="button" class="lib-group-title" aria-expanded="true">Конструктор</button>
       <a class="lib-item" href="#widget">Виджет</a>
       <a class="lib-item" href="#toolbar">Тулбар</a>
+      <a class="lib-item" href="#left-sidebar">Левый сайдбар</a>
       <a class="lib-item" href="#right-sidebar">Правый сайдбар</a>
       <a class="lib-item" href="#shop">Магазин</a>
       <a class="lib-item" href="#demo-frame">Вспомогательная область</a>
@@ -536,6 +547,10 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
           </label>
         </div>
         <div id="widget-body"></div>
+      </article>
+      <article class="comp" id="left-sidebar">
+        <div class="comp-head"><h3>Левый сайдбар</h3><code>components/left-sidebar</code></div>
+        <div id="left-sidebar-body"></div>
       </article>
       <article class="comp" id="right-sidebar">
         <div class="comp-head"><h3>Правый сайдбар</h3><code>components/right-sidebar</code></div>
@@ -955,6 +970,79 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       set('Разделы карточки: справа, без линии', '.tabs--no-border', ' tabs-demo--wide tabs-demo--gray', tabs(' tabs--no-border', [
         'space', [cap('Страница')], [cap('Данные')], [cap('Статистика')], [cap('Посетители')], [cap('Заявки')]], 0)) +
       set('Без отступа от края', '.tabs--padding-null', '', tabs(' tabs--padding-null', three, 0));
+  }
+
+  // Левый сайдбар «Страницы»: рабочие сайдбары на left-sidebar.js, дальше состояния строк, меню «⋮» и окно настройки.
+  // Глифы: «+» U+EADD, разворот U+EBFA / U+EBFB, «⋮» U+E9D9; иконки меню — cbuc-icons24
+  function buildLeftSidebar() {
+    var host = document.getElementById('left-sidebar-body');
+    function set(title, code, node, note, html) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code>' + (node ? ' <span>' + node + '</span>' : '') + '</h4>' +
+        (note ? '<p class="btn-note">' + note + '</p>' : '') + html + '</div>';
+    }
+    var MORE = '<span class="lsb__cmds"><button type="button" class="btn btn--link btn--style-label btn--size-m btn--icon" aria-label="Ещё"><span class="btn__icon" aria-hidden="true">&#xe9d9;</span></button></span>';
+    function head(toggle) {
+      return '<header class="lsb__head"><div class="lsb__title"><h3 class="lsb__name">Страницы</h3>' +
+        '<button type="button" class="btn btn--filled btn--style-pale btn--size-m" data-lsb-add aria-label="Добавить страницу"><span class="btn__icon" aria-hidden="true">&#xeadd;</span></button></div>' +
+        '<div class="lsb__toggle"><button type="button" class="btn btn--filled btn--style-pale btn--icon" aria-label="Свернуть панель"><span class="btn__icon" aria-hidden="true">' + (toggle || '&#xebfa;') + '</span></button></div></header>';
+    }
+    function page(name, cls) { return '<div class="lsb__page' + (cls || '') + '"><span class="lsb__marker"></span><span class="lsb__page-name">' + name + '</span>' + MORE + '</div>'; }
+    var ACTS = [['home', 'e64c', 'Сделать главной'], ['settings', 'e61b', 'Настроить'], ['link', 'e6a7', 'Скопировать ссылку'], ['duplicate', 'e669', 'Дублировать'], ['hide', 'e651', 'Скрыть'], ['delete', 'eb72', 'Удалить']];
+    function menu(cls, hover) {
+      return '<div class="lsb__menu' + cls + '" role="menu" aria-label="Действия"' + (cls ? '' : ' hidden') + '><div class="lsb__menu-top"><div class="lsb__menu-head">Действия</div><button type="button" class="lsb__menu-close" aria-label="Закрыть"></button></div>' +
+        ACTS.map(function (a) {
+          return '<button type="button" class="lsb__menu-item' + (a[0] === 'delete' ? ' lsb__menu-item--danger' : '') + (a[0] === hover ? ' is-hover' : '') + '" role="menuitem" data-lsb-act="' + a[0] + '">' +
+            '<span class="lsb__menu-icon" aria-hidden="true">&#x' + a[1] + ';</span><span class="lsb__menu-text">' + a[2] + '</span></button>';
+        }).join('') + '</div>';
+    }
+    function pick(key, title, items, cls, hover) {
+      return '<div class="lsb__pick' + cls + '" data-lsb-pick-menu="' + key + '" role="menu" aria-label="' + title + '"' + (cls ? '' : ' hidden') + '><div class="lsb__pick-list">' +
+        (key === 'access' ? '<div class="lsb__pick-head">' + title + '</div>' : '') +
+        items.map(function (it, i) {
+          return '<button type="button" class="lsb__pick-item' + (i === hover ? ' is-hover' : '') + '" role="menuitemradio" aria-checked="' + (i === 0) + '" data-value="' + it[0] + '"><span class="lsb__pick-text">' + it[1] + '</span></button>';
+        }).join('') + '</div><button type="button" class="lsb__pick-close" aria-label="Закрыть"></button></div>';
+    }
+    var ACCESS = [['public', 'Без авторизации'], ['authorized', 'Только авторизованным']];
+    var MODES = [['page', 'На странице'], ['window', 'В новом окне'], ['both', 'В окне и на странице']];
+    function settings(cls) {
+      var demo = !!cls;
+      return '<section class="pe lsb__settings' + cls + '" aria-label="Настройки страницы"' + (demo ? '' : ' hidden') + '>' +
+        '<header class="pe__head"><label class="pe__name"><input class="pe__name-input" aria-label="Название страницы"' + (demo ? ' value="Меню"' : '') + '></label><div class="pe__cmds">' +
+        '<button type="button" class="pe__reset" aria-label="Сбросить настройки">&#xe629;</button><button type="button" class="pe__done" aria-label="Сохранить">&#xe75e;</button><button type="button" class="pe__close" aria-label="Закрыть">&#xe66c;</button></div></header>' +
+        '<div class="pe__body"><div class="pe__card"><div class="pe__rows">' +
+        '<div class="pe__row"><span class="pe__label">Адрес</span><span class="lsb__addr">/<label class="input input--size-l"><span class="input__body"><span class="input__field"><input class="input__control" data-lsb-field="addr" aria-label="Адрес страницы"' + (demo ? ' placeholder="menu"' : '') + '></span></span></label></span></div>' +
+        '<div class="pe__row"><span class="pe__label">Доступ</span><button type="button" class="btn btn--link btn--style-link btn--size-m lsb__value" data-lsb-pick="access" aria-haspopup="menu" aria-expanded="false">' + (demo ? 'Без авторизации' : '') + '</button></div></div>' +
+        '<label class="switch switch--caption-start lsb__index"><input class="switch__input" type="checkbox" role="switch" data-lsb-field="noindex"><span class="switch__button"></span><span class="switch__caption">Запретить поисковую индексацию</span></label></div>' +
+        '<div class="pe__card"><div class="pe__rows"><div class="pe__row"><span class="pe__label">Способ отображения</span><button type="button" class="btn btn--link btn--style-link btn--size-m lsb__value" data-lsb-pick="mode" aria-haspopup="menu" aria-expanded="false">' + (demo ? 'На странице' : '') + '</button></div></div></div>' +
+        '<div class="pe__card" data-pe-row="seo"' + (demo ? '' : ' hidden') + '><div class="lsb__seo"><div class="pe__title">SEO<button type="button" class="pe__x" data-pe-clear aria-label="Убрать SEO">&#xe66c;</button></div><div class="lsb__seo-fields">' +
+        '<label class="input input--label-top"><span class="input__label">Заголовок</span><span class="input__body"><span class="input__field"><input class="input__control" data-lsb-field="seo"' + (demo ? ' value="Меню"' : '') + '></span></span></label>' +
+        '<button type="button" class="btn btn--filled btn--style-pale btn--size-m" data-lsb-description-add aria-expanded="false">Описание</button>' +
+        '<label class="input input--label-top input--textarea" data-lsb-description hidden><span class="input__label">Описание</span><span class="input__body"><span class="input__field"><textarea class="input__control" rows="3" data-lsb-field="seoDescription" aria-label="SEO-описание"></textarea></span></span></label></div></div></div>' +
+        (demo ? '' : '<div class="pe__chips"><button type="button" class="chips chips--optional" data-pe-chip="seo"><span class="chips__caption">SEO</span></button></div>') + '</div>' +
+        (demo ? '' : pick('access', 'Доступ', ACCESS, '') + pick('mode', 'Способ отображения', MODES, '')) + '</section>';
+    }
+    function live(cls) {
+      return '<aside class="lsb' + cls + '" aria-label="Страницы"><div class="lsb__lines" aria-hidden="true"></div><div class="lsb__panel">' + head() + '<div class="lsb__list"></div></div>' + menu('') + settings('') + '</aside>';
+    }
+    var PAGES = [{ id: 1, name: 'Главная', home: true }, { id: 2, name: 'Меню' }, { id: 3, name: 'О нас', off: true }, { id: 4, name: 'Контакты' }, { id: 5, name: 'Доставка' }];
+    function staticBox(html) { return '<div class="lsb-stage lsb-stage--static"><div class="lsb"><div class="lsb__panel">' + html + '</div></div></div>'; }
+    host.innerHTML =
+      set('Вписан', '.lsb', '5:28393', 'Рабочий сайдбар на left-sidebar.js: клик по строке открывает страницу, двойной клик — переименование, «⋮» — меню действий, «+» и «Настроить» — окно настройки. Кнопка справа в шапке сворачивает сайдбар в линии.',
+        '<div class="lsb-stage" data-lsb-live></div>') +
+      set('По ховеру', '.lsb--hover, .lsb--pinned', '5:28427', 'Сайдбар свёрнут в линии — по одной на страницу, открытая длиннее. Наведение на линии открывает панель поверх страницы, кнопка в её шапке возвращает вписанный вид. «Закреплен» ставится из кода: pin().',
+        '<div class="lsb-stage" data-lsb-live="hover"></div>') +
+      set('Строки', '.lsb__page', '5:28133', 'Сверху вниз: обычная, наведение, открытая, скрытая, с открытым меню, переименование (Edit=on).',
+        '<div class="rsb-row">' + staticBox(head() + '<div class="lsb__list">' + page('Главная') + page('Наведение', ' is-hover') + page('Открытая', ' is-active') + page('Скрытая', ' is-off') + page('Меню открыто', ' is-menu') +
+          '<div class="lsb__page is-edit"><span class="lsb__marker"></span><input class="lsb__input" value="Переименование" aria-label="Название страницы"><span class="lsb__save">' +
+          '<button type="button" class="btn btn--filled btn--style-pale btn--size-m btn--icon lsb__save-ok" aria-label="Сохранить"><span class="btn__icon" aria-hidden="true">&#xe75e;</span></button>' +
+          '<button type="button" class="btn btn--ghost btn--style-label btn--size-m btn--icon lsb__save-cancel" aria-label="Отменить"><span class="btn__icon" aria-hidden="true">&#xe66c;</span></button></span></div></div>') + '</div>') +
+      set('Меню «⋮»', '.lsb__menu', '17009:434390', 'Макет — файл «Расширенный конструктор». Крестик меню встаёт на место «⋮». Второй пункт — наведение.',
+        '<div class="lsb-stage lsb-stage--static"><div class="lsb">' + menu(' is-demo', 'settings') + '</div></div>') +
+      set('Окно настройки страницы', '.pe.lsb__settings, .lsb__pick', '30037:38001', 'Окно редактора свойств кита со строками страницы; оно же — окно новой страницы. Рядом — меню значения «Доступ»: выбранный пункт с точкой, второй — наведение.',
+        '<div class="lsb-stage lsb-stage--static"><div class="lsb" style="gap:24px;align-items:flex-start">' + settings(' is-demo') + '<div style="position:relative;padding-right:14px">' + pick('access', 'Доступ', ACCESS, ' is-demo', 1) + '</div></div></div>');
+    host.querySelector('[data-lsb-live=""]').innerHTML = live('') + '<p>Страница справа от сайдбара.</p>';
+    host.querySelector('[data-lsb-live="hover"]').innerHTML = live(' lsb--hover') + '<p>Страница под панелью: сайдбар занимает только колонку линий.</p>';
+    [].forEach.call(host.querySelectorAll('[data-lsb-live] > .lsb'), function (el) { LeftSidebar.mount(el, { pages: PAGES, active: 2 }); });
   }
 
   // Правый сайдбар конструктора: рабочие сайдбары на right-sidebar.js, дальше состояния частей.
@@ -1637,9 +1725,9 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     cell.appendChild(tray); document.getElementById('te-states').appendChild(cell);
   });
 
-  var ROUTES = { all: 'all', icons: 'icons', components: 'components', button: 'components', checkbox: 'components', chips: 'components', 'close-button': 'components', 'arrow-button': 'components', back: 'components', breadcrumbs: 'components', combobox: 'components', 'switch': 'components', tumbler: 'components', tabs: 'components', accordion: 'components', input: 'components', toolbar: 'components', widget: 'components', 'right-sidebar': 'components', shop: 'components', 'property-editor': 'components', 'pg-editors': 'components', 'text-editor': 'components', 'master-list': 'components', 'demo-frame': 'components',
+  var ROUTES = { all: 'all', icons: 'icons', components: 'components', button: 'components', checkbox: 'components', chips: 'components', 'close-button': 'components', 'arrow-button': 'components', back: 'components', breadcrumbs: 'components', combobox: 'components', 'switch': 'components', tumbler: 'components', tabs: 'components', accordion: 'components', input: 'components', toolbar: 'components', widget: 'components', 'left-sidebar': 'components', 'right-sidebar': 'components', shop: 'components', 'property-editor': 'components', 'pg-editors': 'components', 'text-editor': 'components', 'master-list': 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
-  var COMPS = ['button', 'checkbox', 'chips', 'close-button', 'arrow-button', 'back', 'breadcrumbs', 'combobox', 'switch', 'tumbler', 'tabs', 'accordion', 'input', 'toolbar', 'widget', 'right-sidebar', 'shop', 'property-editor', 'pg-editors', 'text-editor', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
+  var COMPS = ['button', 'checkbox', 'chips', 'close-button', 'arrow-button', 'back', 'breadcrumbs', 'combobox', 'switch', 'tumbler', 'tabs', 'accordion', 'input', 'toolbar', 'widget', 'left-sidebar', 'right-sidebar', 'shop', 'property-editor', 'pg-editors', 'text-editor', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
   var group = null, comp = 'button', libNav = document.getElementById('lib-nav'), menuBtn = document.getElementById('lib-menu');
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
   function setMenu(open) { libNav.classList.toggle('is-open', open); menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
@@ -1689,6 +1777,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     ['Конструктор', [
       { id: 'widget', title: 'Виджет', sum: 'Рамка при наведении и выделении, кружки-плюсы на сторонах, слот для тулбара, пустое состояние.', table: '#widget-body .wg-grid', cells: [[1, 2]] },
       { id: 'toolbar', title: 'Тулбар', sum: 'Стили default, info и success, кнопки-иконки, удаление, подтверждение, подпись со стрелкой.', table: '#toolbar-body table', cells: [[1, 1]] },
+      { id: 'left-sidebar', title: 'Левый сайдбар', sum: 'Панель «Страницы»: список страниц, переименование, меню «⋮», окно настройки; вписан или свёрнут в линии.', nodes: '#left-sidebar-body .btn-set:nth-child(1) .lsb-stage', w: 480 },
       { id: 'right-sidebar', title: 'Правый сайдбар', sum: 'Тулбар с пунктами, панели «Данные» и «Слои», шапка панели; вписан, по ховеру или закреплён.', nodes: '#right-sidebar-body .btn-set:nth-child(1) .rsb-stage', w: 480 },
       { id: 'shop', title: 'Магазин', sum: 'Виджеты трёх размеров, разделы с превью, расширенный вид с деревом категорий.', nodes: '#shop-body .btn-set:nth-child(1) .shop-stage', w: 480 },
       { id: 'demo-frame', title: 'Вспомогательная область', sum: 'Рамка прототипа: шапка, сцена и панель сценариев.', nodes: '#frame-demo', wrap: 'stage', w: 720 }
@@ -1843,7 +1932,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
   var start = location.hash.slice(1);
   if (!go(start, false)) go('all', false);
-  buildButtons(); buildCheckboxes(); buildChips(); buildCloseButtons(); buildArrowButtons(); buildBack(); buildBreadcrumbs(); buildCombobox(); buildSwitch(); buildTumbler(); buildTabs(); buildAccordion(); buildInputs(); buildToolbars(); buildWidgets(); buildRightSidebar(); buildShop(); buildPropertyEditor(); buildPgEditors(); buildMasterList(); buildColors(); buildSizes(); buildShadows();
+  buildButtons(); buildCheckboxes(); buildChips(); buildCloseButtons(); buildArrowButtons(); buildBack(); buildBreadcrumbs(); buildCombobox(); buildSwitch(); buildTumbler(); buildTabs(); buildAccordion(); buildInputs(); buildToolbars(); buildWidgets(); buildLeftSidebar(); buildRightSidebar(); buildShop(); buildPropertyEditor(); buildPgEditors(); buildMasterList(); buildColors(); buildSizes(); buildShadows();
   buildTiles(); buildIcons();
   if (ROUTES[start]) { // открыт по адресу страницы: браузер прокрутил бы к якорю, а страница начинается с начала.
     // На время загрузки убираем якорь из адреса, после неё возвращаем и встаём в начало

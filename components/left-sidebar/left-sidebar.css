@@ -1,0 +1,351 @@
+/*!
+ * left-sidebar — левый сайдбар конструктора: панель «Страницы» (Figma rHabzni5OI5D4fxBLQdj2m 5:28393).
+ * Строка страницы — «Пункт списка» 5:28133, переименование — Edit=on 635:6957, линии свёрнутого сайдбара — 5:28427.
+ * Перенесено из прототипа «Компоненты» (popups); значения сверены по нему, а не по макету.
+ * Состояние — как у right-sidebar: Вписан — без класса, По ховеру → .lsb--hover, Закреплен → .lsb--pinned.
+ * Панель поверх страницы открыта — .is-open у .lsb. Наведение → .is-hover (и :hover).
+ * Цвета и размеры — токены ui-kit (tokens.css подключается раньше). Поведение — left-sidebar.js.
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/left-sidebar
+ *
+ * Устройство: .lsb — колонка у левого края страницы. Вписанная панель стоит в потоке. При .lsb--hover и .lsb--pinned
+ * сайдбар занимает только колонку линий (52), а панель висит поверх страницы, с тенью, на всю высоту сайдбара.
+ */
+
+.lsb {
+  --lsb-group-indent: 30px; /* при группах название страницы выровнено по тексту заголовков групп: 8 + иконка 24 + 6 − 3 − 5 — нет токена */
+
+  position: relative; box-sizing: border-box; flex: none;
+  display: flex; align-items: stretch;
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--font-font-size-font-size_m); font-weight: var(--font-font-weight-regular);
+  color: var(--text-text-color);
+}
+/* ---------- Панель ---------- */
+.lsb__panel {
+  box-sizing: border-box;
+  display: flex; flex-direction: column;
+  width: 350px; /* нет токена */
+  margin: 0 0 var(--offset-offset_s) var(--offset-offset_s);
+  border-radius: var(--border-radius-border-radius_s);
+  background: var(--background-background-color);
+}
+
+/* По ховеру и Закреплен: колонка линий, панель поверх страницы */
+:is(.lsb--hover, .lsb--pinned) > .lsb__panel {
+  position: absolute; z-index: 1; left: 0; top: 0; bottom: var(--offset-offset_s);
+  margin: 0 0 0 var(--offset-offset_s);
+  display: none;
+  /* стиль shadow_a из макета; смещение 0 0 — нет токена */
+  box-shadow: 0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a), 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a);
+}
+:is(.lsb--hover, .lsb--pinned).is-open > .lsb__panel { display: flex; }
+
+/* ---------- Шапка ---------- */
+.lsb__head {
+  box-sizing: border-box; flex: none;
+  display: flex; align-items: center;
+  gap: var(--offset-offset_m);
+  padding: var(--offset-offset_m) var(--offset-offset_s) var(--offset-offset_s) var(--offset-none);
+}
+/* Название и слот кнопки «+» (.btn.btn--filled.btn--style-pale.btn--size-m) */
+.lsb__title {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: center;
+  gap: var(--offset-offset_s);
+  height: var(--inline_height-inline_height_m);
+  padding-left: var(--offset-offset_m);
+}
+.lsb__name {
+  margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 18px; /* в макете без переменной */
+  font-weight: var(--font-font-weight-bold); line-height: normal;
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  color: var(--text-text-color);
+}
+/* Слот кнопки разворота (.btn.btn--filled.btn--style-pale.btn--icon, 32px): шапка 24, поэтому поля −4 */
+.lsb__toggle { flex: none; display: flex; margin: calc(-1 * var(--offset-offset_2xs)) 0; }
+
+/* ---------- Список страниц ---------- */
+.lsb__list {
+  flex: 1 1 auto; min-height: 0; overflow: hidden auto;
+  display: flex; flex-direction: column;
+  gap: var(--offset-offset_3xs);
+  padding: var(--offset-none) var(--offset-offset_2xs);
+}
+
+/* Строка страницы («Пункт списка»): наведение, выбранная и с открытым меню — один фон, команды по наведению */
+.lsb__page {
+  position: relative; box-sizing: border-box; flex: none;
+  display: flex; align-items: center;
+  gap: 5px; /* нет токена */
+  min-height: var(--components-list-master-master_item_min-height);
+  padding-right: var(--offset-offset_s);
+  border-radius: var(--border-radius-border-radius_2xs);
+  cursor: pointer;
+}
+.lsb__page[hidden] { display: none; }
+.lsb__page:is(:hover, .is-hover, .is-active, [aria-selected="true"], .is-menu, .is-edit) {
+  background: var(--components-list-master_item_hover_background-color_list);
+}
+/* Маркер: виден у выбранной страницы */
+.lsb__marker {
+  flex: none;
+  width: 3px; /* нет токена */
+  height: var(--inline_height-inline_height_xs);
+  border-radius: var(--border-radius-border-radius_2xs);
+}
+.lsb__page:is(.is-active, [aria-selected="true"]) > .lsb__marker { background: var(--extra-marker_color); }
+.lsb__list.has-groups .lsb__marker { margin-right: var(--lsb-group-indent); }
+
+.lsb__page-name {
+  flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: var(--font-font-size-font-size_l); line-height: normal;
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  color: var(--text-text-color);
+}
+.lsb__page:is(.is-active, [aria-selected="true"]) > .lsb__page-name { font-weight: var(--font-font-weight-bold); }
+/* Скрытая страница */
+.lsb__page.is-off > .lsb__page-name { color: var(--text-unaccented_text-color); }
+
+/* Команды строки: слот для кнопок «⋮» (.btn.btn--link.btn--style-label.btn--size-m.btn--icon), лежат поверх названия */
+.lsb__cmds {
+  position: absolute; right: var(--offset-offset_s); top: 50%; transform: translateY(-50%);
+  display: none; align-items: center;
+  gap: var(--offset-offset_xs);
+  padding-left: var(--offset-offset_2xs);
+  background: var(--components-list-master_item_hover_background-color_list);
+}
+.lsb__page:is(:hover, .is-hover, .is-menu):not(.is-edit) > .lsb__cmds { display: flex; }
+
+/* Переименование (Edit=on): поле с линией снизу, слоты ✓ и ✕ */
+.lsb__page.is-edit { cursor: default; }
+.lsb .lsb__input {
+  -webkit-appearance: none; appearance: none; box-sizing: border-box;
+  flex: 1 1 auto; min-width: 0; width: auto; height: 18px; /* нет токена */
+  margin: 0; padding: 0; border: 0;
+  border-bottom: 1px solid var(--border-unaccented_border-color); /* 1px — нет токена */
+  border-radius: 0; outline: 0; box-shadow: none; background: none;
+  font: inherit; font-size: var(--font-font-size-font-size_l);
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  color: var(--text-text-color);
+}
+.lsb__save {
+  flex: none; display: flex; align-items: center;
+  gap: var(--offset-offset_xs);
+  padding-left: var(--offset-offset_3xs);
+}
+/* ✓ — кнопка pale с зелёной иконкой, ✕ — глиф 24 из cbuc-icons24, как в макете */
+.lsb .lsb__save > .lsb__save-ok { --btn-ic-r: var(--icon-success_icon-color); }
+.lsb .lsb__save > .lsb__save-cancel { --btn-is: var(--icon-icon_size-icon-size_m); --btn-if: var(--icon-font-family-m_icon_font-family); }
+
+/* Группа страниц: иконка 24 (слот img) и название, без наведения; со стрелкой — сворачивается */
+.lsb__group {
+  box-sizing: border-box; flex: none;
+  display: flex; align-items: center;
+  gap: var(--offset-offset_xs);
+  min-height: var(--components-list-master-master_item_min-height);
+  margin-top: var(--offset-offset_xs);
+  padding: 0 var(--offset-offset_s);
+  cursor: default;
+}
+.lsb__group[aria-expanded] { cursor: pointer; }
+.lsb__group-icon {
+  flex: none; display: block;
+  width: var(--icon-icon_size-icon-size_m); height: var(--icon-icon_size-icon-size_m);
+  object-fit: contain;
+}
+.lsb__group-name {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: var(--font-font-size-font-size_l); font-weight: var(--font-font-weight-bold); line-height: normal;
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  color: var(--text-text-color);
+}
+/* Стрелка группы: есть только при aria-expanded */
+.lsb__group[aria-expanded]::after {
+  content: "\eb89"; flex: none;
+  font-family: var(--icon-font-family-2xs_icon_font-family); font-size: var(--icon-icon_size-icon-size_2xs);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--icon-label_icon-color);
+}
+.lsb__group[aria-expanded="true"]::after { content: "\eb8a"; }
+
+/* ---------- Линии свёрнутого сайдбара ---------- */
+.lsb__lines {
+  box-sizing: border-box; flex: none;
+  display: none; flex-direction: column; align-items: flex-start;
+  gap: var(--offset-offset_l);
+  width: 52px; /* нет токена */
+  padding: 100px var(--offset-offset_l) 0; /* 100px — нет токена */
+}
+:is(.lsb--hover, .lsb--pinned) > .lsb__lines { display: flex; }
+.lsb__line {
+  flex: none;
+  width: var(--offset-offset_l); height: 2px; /* 2px — нет токена */
+  background: var(--icon-unaccented_icon-color);
+}
+.lsb__line.is-active { width: var(--offset-offset_xl); background: var(--extra-marker_color); }
+
+/* ---------- Меню «⋮» страницы (Figma G3QPR5r3X5ox6DmPwj6rJ7 17009:434390) ----------
+   Лежит внутри .lsb и висит поверх страницы; положение ставит JS: крестик в заголовке — на месте «⋮» */
+.lsb__menu {
+  position: absolute; z-index: 2; left: 0; top: 0;
+  box-sizing: border-box;
+  width: 240px; /* нет токена */
+  display: flex; flex-direction: column;
+  gap: var(--offset-offset_xs);
+  padding: var(--offset-offset_s);
+  border: 2px solid transparent; /* рамка 2px — из макета, нет токена */
+  border-radius: var(--border-radius-border-radius_s);
+  background: var(--background-background-color) padding-box;
+  /* стиль shadow_a из макета; смещение 0 0 — нет токена */
+  box-shadow: 0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a), 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a);
+}
+.lsb__menu[hidden] { display: none; }
+.lsb__menu :where(.lsb__menu-close, .lsb__menu-item) { /* :where — сброс слабее правил ниже */
+  margin: 0; border: 0; background: none;
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.lsb__menu-top { display: flex; align-items: flex-start; gap: var(--offset-offset_st); }
+.lsb__menu-head {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: center;
+  min-height: var(--components-popup-menu-header_min-height_sticky);
+  padding-left: var(--offset-offset_m);
+  font-size: var(--font-font-size-font-size_m);
+  letter-spacing: 1.25px; /* нет токена */
+  text-transform: uppercase;
+  color: var(--text-label_text-color);
+}
+/* Крестик: глиф 16 в квадрате 24 */
+.lsb .lsb__menu-close {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  width: var(--icon-icon_size-icon-size_m); height: var(--icon-icon_size-icon-size_m);
+  margin: var(--offset-offset_3xs) var(--offset-offset_2xs) 0 0;
+  padding: 0;
+  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--icon-secondary_icon-color);
+}
+.lsb__menu-close::before { content: "\e66c"; }
+/* Пункт: иконка 24 (глиф в .lsb__menu-icon) и подпись */
+.lsb .lsb__menu-item {
+  display: flex; align-items: flex-start;
+  padding: 0 var(--offset-offset_l) 0 var(--offset-offset_m);
+  border-radius: var(--components-popup-menu-item_border-radius);
+}
+.lsb__menu-item[hidden] { display: none; }
+.lsb__menu-item:is(:hover, .is-hover) { background: var(--components-dropdownpopup-item_hover_background-color_menu); }
+.lsb__menu-icon {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  width: var(--icon-icon_size-icon-size_m); height: var(--components-popup-menu-item_height_menu);
+  margin-right: var(--offset-offset_2xs);
+  font-family: var(--icon-font-family-m_icon_font-family); font-size: var(--icon-icon_size-icon-size_m);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--icon-secondary_icon-color);
+}
+.lsb__menu-item--danger > .lsb__menu-icon { color: var(--icon-danger_icon-color); }
+.lsb__menu-text {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: center;
+  min-height: var(--components-popup-menu-item_height_menu);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: var(--font-font-size-font-size_xl);
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  color: var(--text-text-color);
+}
+
+/* ---------- Окно настройки страницы (Figma G3QPR5r3X5ox6DmPwj6rJ7 30037:38001) ----------
+   Окно — .pe кита (property-editor), здесь только ширина, положение и свои строки. Оно же — окно новой страницы.
+   Слоты внутри: поле адреса и SEO — input, «Доступ» и «Способ отображения» — button (link), индексация — switch,
+   «Описание» — button (pale), чипс SEO — chips. Положение ставит JS */
+.lsb__settings.pe { position: absolute; z-index: 3; left: 0; top: 0; width: 400px; /* нет токена */ }
+.lsb__settings .pe__card:first-child { gap: var(--offset-offset_s); }
+/* Адрес: «/» и поле */
+.lsb__addr { min-width: 0; display: flex; align-items: baseline; }
+.lsb__addr > .input { flex: 1 1 auto; min-width: 0; }
+/* Ссылка-значение строки (доступ, способ отображения) — по левому краю колонки */
+.lsb__settings .lsb__value { justify-self: start; }
+/* Индексация: подпись слева от переключателя, цветом метки */
+.lsb__index { align-self: flex-start; }
+.lsb__index .switch__caption { color: var(--text-label_text-color); }
+/* SEO: заголовок с крестиком, поле заголовка, кнопка «Описание» или поле описания */
+.lsb__seo { display: flex; flex-direction: column; gap: var(--offset-offset_2xs); }
+.lsb__seo .pe__x { margin-left: 0; } /* в ките поправка под зазор строки, в заголовке зазора нет */
+.lsb__seo-fields { display: flex; flex-direction: column; align-items: flex-start; gap: var(--offset-offset_s); }
+.lsb__seo-fields > .input { align-self: stretch; }
+
+/* Меню выбора значения (Доступ, Способ отображения; Figma WHZ4ZSm4wRMrxQPWqEk5Wk 2406:20980): радиопункты
+   с точкой, круглый крестик за правым краем. Лежит в окне; положение ставит JS — пункт на месте ссылки */
+.lsb__pick {
+  position: absolute; z-index: 1; left: 0; top: 0;
+  width: max-content; min-width: 200px; /* по самому длинному пункту; 200 — нет токена */
+}
+.lsb__pick[hidden] { display: none; }
+.lsb__pick-list {
+  display: flex; flex-direction: column;
+  gap: var(--offset-offset_xs);
+  padding: var(--offset-offset_s);
+  border-radius: var(--border-radius-border-radius_s);
+  background: var(--background-background-color);
+  /* стиль shadow_a из макета; смещение 0 0 — нет токена */
+  box-shadow: 0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a), 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a);
+}
+.lsb__pick-head {
+  display: flex; align-items: center;
+  min-height: var(--components-popup-menu-header_min-height_sticky);
+  padding-left: 22px; /* 8 отступ пункта + 14 место точки: заголовок по тексту — нет токена */
+  font-size: var(--font-font-size-font-size_m);
+  letter-spacing: 1.25px; /* нет токена */
+  text-transform: uppercase;
+  color: var(--text-label_text-color);
+}
+.lsb__pick :where(.lsb__pick-item, .lsb__pick-close) { /* :where — сброс слабее правил ниже */
+  margin: 0; padding: 0; border: 0; background: none;
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.lsb__pick-item {
+  display: flex; align-items: center;
+  padding: 0 var(--offset-offset_l) 0 var(--offset-offset_s);
+  border-radius: var(--components-popup-menu-item_border-radius);
+}
+.lsb__pick-item:is(:hover, .is-hover) { background: var(--components-dropdownpopup-item_hover_background-color_menu); }
+/* Точка: при наведении — пустой кружок, у выбранного — залитый цветом маркера */
+.lsb__pick-item::before {
+  content: ""; flex: none; box-sizing: border-box;
+  width: 7px; height: 7px; /* нет токена */
+  margin: 0 7px 0 0; /* место точки 14 — нет токена */
+  border-radius: 50%;
+  visibility: hidden;
+}
+.lsb__pick-item:is(:hover, .is-hover)::before {
+  visibility: visible;
+  border: 1px solid var(--border-border-color); /* 1px — нет токена */
+  background: var(--background-background-color);
+}
+.lsb__pick-item:is(.is-selected, [aria-checked="true"])::before { visibility: visible; border: 0; background: var(--extra-marker_color); }
+.lsb__pick-text {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: center;
+  min-height: var(--components-popup-menu-item_height_menu);
+  white-space: nowrap;
+  font-size: var(--font-font-size-font-size_xl);
+  letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
+  color: var(--text-text-color);
+}
+/* Круглый крестик за правым краем меню */
+.lsb__pick-close {
+  position: absolute; right: -14px; top: var(--offset-offset_s); /* −14: половина кнопки — нет токена */
+  display: flex; align-items: center; justify-content: center;
+  width: var(--inline_height-inline_height_l); height: var(--inline_height-inline_height_l);
+  border-radius: 50%;
+  background: var(--background-contrast-unaccented_hover_contrast_background-color);
+  font-family: var(--icon-font-family-2xs_icon_font-family); font-size: var(--icon-icon_size-icon-size_2xs);
+  font-weight: normal; font-style: normal; line-height: 1;
+  color: var(--icon-contrast_icon-color);
+}
+.lsb__pick-close::before { content: "\e66c"; }
+.lsb__pick-close:is(:hover, .is-hover) { background: #aaaaaad9; } /* нет токена: в макете темнее покоя */
