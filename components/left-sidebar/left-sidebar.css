@@ -278,8 +278,8 @@
 .lsb__seo-fields > .input { align-self: stretch; }
 
 /* Меню выбора значения (Доступ, Способ отображения; Figma WHZ4ZSm4wRMrxQPWqEk5Wk 2406:20980): радиопункты
-   с точкой. Крестик — слот с кнопкой кита close-button (linkButton): в шапке — справа в её строке, без шапки —
-   в правом верхнем углу меню. Лежит в окне; положение ставит JS — текст выбранного пункта на тексте ссылки */
+   с точкой. Крестик — слот с кнопкой кита close-button: с шапкой — linkButton справа в её строке, без шапки —
+   плавающий external за правым краем меню. Лежит в окне; положение ставит JS — текст выбранного пункта на тексте ссылки */
 .lsb__pick {
   position: absolute; z-index: 1; left: 0; top: 0;
   width: max-content; min-width: 200px; /* по самому длинному пункту; 200 — нет токена */
@@ -338,6 +338,8 @@
   letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
   color: var(--text-text-color);
 }
-/* Крестик без шапки — в правом верхнем углу меню, первый пункт оставляет под него место справа */
-.lsb__pick-list > .lsb__pick-close { position: absolute; right: var(--offset-offset_s); top: var(--offset-offset_s); }
-.lsb__pick-list > .lsb__pick-close + .lsb__pick-item { margin-right: var(--components-popup-inline_height_closebutton); }
+/* Крестик без шапки — плавающий (external) за правым краем меню: центр на краю, сверху на отступе меню */
+.lsb__pick-list > .lsb__pick-close {
+  position: absolute; z-index: 1; top: var(--offset-offset_s);
+  right: calc(var(--inline_height-inline_height_l) / -2); /* половина кнопки размера m */
+}

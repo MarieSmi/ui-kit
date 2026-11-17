@@ -144,7 +144,7 @@
 
 **Меню значения** — `.lsb__pick`: радиопункты `.lsb__pick-item[data-value]` с подписью `.lsb__pick-text`
 в `.lsb__pick-list`. Крестик — слот `.lsb__pick-close` с кнопкой кита `close-button` (подключите `close-button.css`).
-С шапкой крестик стоит в ней справа, без шапки — первым в списке, в правом верхнем углу меню:
+С шапкой крестик стоит в ней справа, без шапки — первым в списке, плавающей кнопкой `close-button--external` за правым краем меню:
 
 ```html
 <!-- с шапкой -->
@@ -157,7 +157,7 @@
 </div>
 <!-- без шапки -->
 <div class="lsb__pick-list">
-  <button type="button" class="close-button close-button--link-button lsb__pick-close" aria-label="Закрыть"></button>
+  <button type="button" class="close-button close-button--external lsb__pick-close" aria-label="Закрыть"></button>
   <button type="button" class="lsb__pick-item" …>…</button>
 </div>
 ```
