@@ -6,6 +6,9 @@
   <title>builder-header — пример</title>
   <link rel="stylesheet" href="../../../tokens.css">
   <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../../button/button.css">
+  <link rel="stylesheet" href="../../tumbler/tumbler.css">
+  <link rel="stylesheet" href="../../close-button/close-button.css">
   <link rel="stylesheet" href="../builder-header.css">
   <style>
     body { margin: 0; font-family: var(--font-font-family-default), sans-serif; color: var(--text-text-color);
@@ -19,68 +22,29 @@
 <body>
   <section class="demo">
     <p>Чтение</p>
-    <header class="bhd" aria-label="Шапка конструктора">
-      <div class="bhd__title"><span class="bhd__icon bhd__icon--24" aria-hidden="true">&#xeb5f;</span><span class="bhd__name">Онлайн-сервис доставки еды</span></div>
-      <div class="bhd__center">
-        <div class="bhd__devices" role="group" aria-label="Размер экрана">
-          <button type="button" class="bhd__btn bhd__device" aria-label="Компьютер" aria-pressed="true"><span class="bhd__icon bhd__icon--14" aria-hidden="true">&#xe730;</span></button>
-          <button type="button" class="bhd__btn bhd__device" aria-label="Планшет" aria-pressed="false"><span class="bhd__icon bhd__icon--14" aria-hidden="true">&#xe637;</span></button>
-          <button type="button" class="bhd__btn bhd__device" aria-label="Другие размеры" aria-pressed="false"><span class="bhd__icon bhd__icon--14" aria-hidden="true">&#xeab4;</span></button>
-        </div>
-      </div>
-      <div class="bhd__actions">
-        <div class="bhd__zoom">
-          <button type="button" class="bhd__btn" aria-label="Уменьшить масштаб"><span class="bhd__icon bhd__icon--24" aria-hidden="true">&#xe6ea;</span></button>
-          <button type="button" class="bhd__zoom-value">100%</button>
-          <button type="button" class="bhd__btn" aria-label="Увеличить масштаб"><span class="bhd__icon bhd__icon--24" aria-hidden="true">&#xe6e9;</span></button>
-        </div>
-        <div class="bhd__revision"><span class="bhd__revision-image" aria-hidden="true"></span><span>15 окт</span></div>
-        <button type="button" class="bhd__pill bhd__pill--edit">Изменить <span class="bhd__icon" aria-hidden="true">&#xe660;</span></button>
-        <button type="button" class="bhd__close" aria-label="Закрыть"></button>
-      </div>
-    </header>
+    <header id="read" aria-label="Шапка конструктора"></header>
   </section>
 
   <section class="demo demo--editing">
     <p>Редактирование</p>
-    <header class="bhd bhd--editing" aria-label="Шапка конструктора">
-      <div class="bhd__title"><span class="bhd__icon bhd__icon--24" aria-hidden="true">&#xeb5f;</span><span class="bhd__name">Онлайн-сервис доставки еды</span></div>
-      <div class="bhd__center">
-        <div class="bhd__devices" role="group" aria-label="Размер экрана">
-          <button type="button" class="bhd__btn bhd__device" aria-label="Компьютер" aria-pressed="true"><span class="bhd__icon bhd__icon--14" aria-hidden="true">&#xe730;</span></button>
-          <button type="button" class="bhd__btn bhd__device" aria-label="Планшет" aria-pressed="false"><span class="bhd__icon bhd__icon--14" aria-hidden="true">&#xe637;</span></button>
-          <button type="button" class="bhd__btn bhd__device" aria-label="Другие размеры" aria-pressed="false"><span class="bhd__icon bhd__icon--14" aria-hidden="true">&#xeab4;</span></button>
-        </div>
-      </div>
-      <div class="bhd__actions">
-        <div class="bhd__history">
-          <button type="button" class="bhd__btn" aria-label="Отменить"><span class="bhd__icon bhd__icon--20" aria-hidden="true">&#xe6cf;</span></button>
-          <button type="button" class="bhd__btn" aria-label="Повторить"><span class="bhd__icon bhd__icon--20" aria-hidden="true">&#xe6ca;</span></button>
-          <button type="button" class="bhd__btn" aria-label="Сбросить" disabled><span class="bhd__icon bhd__icon--20" aria-hidden="true">&#xe629;</span></button>
-          <button type="button" class="bhd__btn" aria-label="Предпросмотр"><span class="bhd__icon bhd__icon--20" aria-hidden="true">&#xeab9;</span></button>
-        </div>
-        <div class="bhd__zoom">
-          <button type="button" class="bhd__btn" aria-label="Уменьшить масштаб"><span class="bhd__icon bhd__icon--24" aria-hidden="true">&#xe6ea;</span></button>
-          <button type="button" class="bhd__zoom-value">100%</button>
-          <button type="button" class="bhd__btn" aria-label="Увеличить масштаб"><span class="bhd__icon bhd__icon--24" aria-hidden="true">&#xe6e9;</span></button>
-        </div>
-        <button type="button" class="bhd__pill bhd__pill--save">Сохранить <span class="bhd__pill-check"><span class="bhd__icon" aria-hidden="true">&#xe75e;</span></span></button>
-        <button type="button" class="bhd__close" aria-label="Закрыть"></button>
-      </div>
-    </header>
+    <header id="edit" aria-label="Шапка конструктора"></header>
   </section>
 
   <section class="demo" id="live-box">
-    <p>Живая шапка (builder-header.js): «Изменить» и «Сохранить» переключают режим, масштаб и размер экрана меняются. <span id="log"></span></p>
+    <p>Живая шапка: «Изменить» и «Сохранить» переключают режим, масштаб и размер экрана меняются. <span id="log"></span></p>
     <header id="live" aria-label="Шапка конструктора"></header>
   </section>
 
   <script src="../builder-header.js"></script>
   <script>
+    const title = 'Онлайн-сервис доставки еды';
+    BuilderHeader.mount(document.getElementById('read'), { title, revision: { date: '15 окт' } });
+    BuilderHeader.mount(document.getElementById('edit'), { title, mode: 'edit' });
+
     const log = document.getElementById('log');
     const box = document.getElementById('live-box');
     BuilderHeader.mount(document.getElementById('live'), {
-      title: 'Онлайн-сервис доставки еды',
+      title,
       revision: { date: '15 окт' },
       onMode(m) { box.classList.toggle('demo--editing', m === 'edit'); log.textContent = 'режим: ' + m; },
       onDevice(id) { log.textContent = 'размер экрана: ' + id; },

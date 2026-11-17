@@ -1,7 +1,7 @@
 /*!
  * builder-header — поведение шапки окна конструктора: строит разметку по параметрам, переключает чтение
  * и редактирование, выбирает размер экрана, меняет масштаб и сообщает о командах прототипу.
- * Без зависимостей, CSS компонента подключается отдельно. Сохранение, закрытие, отмену и предпросмотр
+ * Без зависимостей в JS. Разметка — из компонентов кита button, tumbler и close-button: их CSS подключается отдельно. Сохранение, закрытие, отмену и предпросмотр
  * реализует прототип в обработчиках.
  * https://github.com/MarieSmi/ui-kit/tree/main/components/builder-header
  *
@@ -26,11 +26,10 @@
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
   }
-  function icon(glyph, size) {
-    return '<span class="bhd__icon' + (size ? ' bhd__icon--' + size : '') + '" aria-hidden="true">&#x' + glyph + ';</span>';
-  }
-  function btn(cmd, label, inner, cls, extra) {
-    return '<button type="button" class="bhd__btn' + (cls ? ' ' + cls : '') + '" data-bhd-cmd="' + cmd + '" aria-label="' + esc(label) + '" title="' + esc(label) + '"' + (extra || '') + '>' + inner + '</button>';
+  function glyph(code, cls) { return '<span class="' + cls + '" aria-hidden="true">&#x' + code + ';</span>'; }
+  // Кнопка-иконка кита: view — 'ghost' (история) или 'link' (масштаб), size — 'xl' или 'm'
+  function iconBtn(cmd, label, code, view, size, extra) {
+    return '<button type="button" class="btn btn--' + view + ' btn--style-secondary btn--size-' + size + ' btn--icon" data-bhd-cmd="' + cmd + '" aria-label="' + esc(label) + '" title="' + esc(label) + '"' + (extra || '') + '>' + glyph(code, 'btn__icon') + '</button>';
   }
 
   function mount(root, options) {
@@ -56,11 +55,11 @@
       root.classList.add('bhd');
       root.classList.toggle('bhd--editing', editing);
       const devices = o.devices === true ? DEVICES : (o.devices || []);
-      let html = '<div class="bhd__title">' + (o.icon ? icon(o.icon, 24) : '') + '<span class="bhd__name">' + esc(o.title) + '</span></div>';
+      let html = '<div class="bhd__title">' + (o.icon ? glyph(o.icon, 'bhd__title-icon') : '') + '<span class="bhd__name">' + esc(o.title) + '</span></div>';
       html += '<div class="bhd__center">';
       if (devices.length) {
-        html += '<div class="bhd__devices" role="group" aria-label="Размер экрана">' + devices.map(function (d) {
-          return btn('device', d.label, icon(d.glyph, 14), 'bhd__device', ' data-bhd-device="' + d.id + '" aria-pressed="' + (d.id === device) + '"');
+        html += '<div class="tumbler tumbler--size-m" role="radiogroup" aria-label="Размер экрана">' + devices.map(function (d) {
+          return '<button type="button" class="tumbler__item" role="radio" data-bhd-cmd="device" data-bhd-device="' + d.id + '" aria-checked="' + (d.id === device) + '" aria-label="' + esc(d.label) + '" title="' + esc(d.label) + '">' + glyph(d.glyph, 'tumbler__icon') + '</button>';
         }).join('') + '</div>';
       }
       html += '</div><div class="bhd__actions">';
@@ -68,14 +67,14 @@
         const items = HISTORY.filter(function (h) { return history[h.id] !== undefined && history[h.id] !== null; });
         if (items.length) {
           html += '<div class="bhd__history">' + items.map(function (h) {
-            return btn(h.id, h.label, icon(h.glyph, 20), '', history[h.id] ? '' : ' disabled');
+            return iconBtn(h.id, h.label, h.glyph, 'ghost', 'xl', history[h.id] ? '' : ' disabled');
           }).join('') + '</div>';
         }
       }
       if (o.zoom !== null && o.zoom !== false) {
-        html += '<div class="bhd__zoom">' + btn('zoom-out', 'Уменьшить масштаб', icon('E6EA', 24)) +
-          '<button type="button" class="bhd__zoom-value" data-bhd-cmd="zoom-reset" aria-label="Масштаб ' + zoom + '%">' + zoom + '%</button>' +
-          btn('zoom-in', 'Увеличить масштаб', icon('E6E9', 24)) + '</div>';
+        html += '<div class="bhd__zoom">' + iconBtn('zoom-out', 'Уменьшить масштаб', 'E6EA', 'link', 'm') +
+          '<button type="button" class="btn btn--link btn--style-secondary btn--size-m bhd__zoom-value" data-bhd-cmd="zoom-reset" aria-label="Масштаб ' + zoom + '%">' + zoom + '%</button>' +
+          iconBtn('zoom-in', 'Увеличить масштаб', 'E6E9', 'link', 'm') + '</div>';
       }
       if (o.revision && (!editing || o.revision.editing)) {
         const r = o.revision;
@@ -83,11 +82,11 @@
           '<span>' + esc(r.date || '') + '</span></div>';
       }
       if (editing) {
-        html += '<button type="button" class="bhd__pill bhd__pill--save" data-bhd-cmd="save">Сохранить <span class="bhd__pill-check">' + icon('E75E') + '</span></button>';
+        html += '<button type="button" class="btn btn--same-outlined btn--style-success btn--size-m bhd__pill bhd__pill--save" data-bhd-cmd="save">Сохранить' + glyph('E75E', 'bhd__save-check') + '</button>';
       } else if (o.editable) {
-        html += '<button type="button" class="bhd__pill bhd__pill--edit" data-bhd-cmd="edit">Изменить ' + icon('E660') + '</button>';
+        html += '<button type="button" class="btn btn--same-outlined btn--style-secondary btn--size-m bhd__pill bhd__pill--edit" data-bhd-cmd="edit">Изменить' + glyph('E660', 'btn__icon') + '</button>';
       }
-      if (o.close) html += '<button type="button" class="bhd__close" data-bhd-cmd="close" aria-label="Закрыть"></button>';
+      if (o.close) html += '<button type="button" class="close-button close-button--functional-button close-button--size-l" data-bhd-cmd="close" aria-label="Закрыть"></button>';
       html += '</div>';
       root.innerHTML = html;
     }
@@ -102,7 +101,7 @@
     function setDevice(id) {
       if (id === device) return;
       device = id;
-      root.querySelectorAll('[data-bhd-device]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.bhdDevice === id)); });
+      root.querySelectorAll('[data-bhd-device]').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.bhdDevice === id)); });
       emit('onDevice', id);
     }
     function setZoom(v) {

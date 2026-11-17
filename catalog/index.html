@@ -263,7 +263,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .bhd-stage--editing { background: var(--components-constructor-constructor_background-color); } /* фон окна в редакторе */
 .bhd-stage > .bhd { min-width: 1100px; }
 .bhd-tile { display: flex; align-items: center; gap: var(--offset-offset_m); width: max-content; padding: 0 12px; } /* плитка: только правая часть шапки */
-.bhd-states { display: grid; grid-template-columns: max-content repeat(4, max-content); align-items: center; justify-items: start; gap: 10px 24px; padding: 12px 16px; width: max-content; background: var(--background-unaccented_background-color); }
+.bhd-states { display: grid; grid-template-columns: max-content max-content repeat(4, max-content); align-items: center; justify-items: start; gap: 10px 24px; padding: 12px 16px; width: max-content; background: var(--background-unaccented_background-color); }
 .bhd-states > span { font: 400 12px var(--mono); color: var(--muted); }
 .bhd-states > .bhd { display: block; height: auto; padding: 0; }
 #left-sidebar-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
@@ -998,55 +998,43 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         'space', [cap('Страница')], [cap('Данные')], [cap('Статистика')], [cap('Посетители')], [cap('Заявки')]], 0));
   }
 
-  // Шапка конструктора: живая на builder-header.js, дальше статичные режимы и состояния кнопок.
-  // Глифы: сайт U+EB5F (cbuc-icons24), размеры U+E730 / U+E637 / U+EAB4, история U+E6CF / U+E6CA / U+E629 / U+EAB9,
-  // масштаб U+E6EA / U+E6E9 (cbuc-icons24), «Изменить» U+E660, галочка U+E75E
+  // Шапка конструктора: все примеры строит builder-header.js; кнопки — button, размеры экрана — tumbler, крестик — close-button.
+  // Глифы: «Изменить» U+E660, галочка U+E75E, история U+E6CF / U+E6CA / U+E629 / U+EAB9, масштаб U+E6EA / U+E6E9
   function buildBuilderHeader() {
     var host = document.getElementById('builder-header-body');
     function set(title, code, note, html) {
       return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code></h4>' + (note ? '<p class="btn-note">' + note + '</p>' : '') + html + '</div>';
     }
-    function ico(g, size) { return '<span class="bhd__icon' + (size ? ' bhd__icon--' + size : '') + '" aria-hidden="true">&#x' + g + ';</span>'; }
-    function b(cls, label, inner, extra) { return '<button type="button" class="bhd__btn' + (cls ? ' ' + cls : '') + '" aria-label="' + label + '"' + (extra || '') + '>' + inner + '</button>'; }
-    var title = '<div class="bhd__title">' + ico('eb5f', 24) + '<span class="bhd__name">Онлайн-сервис доставки еды</span></div>';
-    var devices = '<div class="bhd__center"><div class="bhd__devices" role="group" aria-label="Размер экрана">' +
-      b('bhd__device', 'Компьютер', ico('e730', 14), ' aria-pressed="true"') + b('bhd__device', 'Планшет', ico('e637', 14), ' aria-pressed="false"') +
-      b('bhd__device', 'Другие размеры', ico('eab4', 14), ' aria-pressed="false"') + '</div></div>';
-    var history = '<div class="bhd__history">' + b('', 'Отменить', ico('e6cf', 20)) + b('', 'Повторить', ico('e6ca', 20)) + b('', 'Сбросить', ico('e629', 20), ' disabled') + b('', 'Предпросмотр', ico('eab9', 20)) + '</div>';
-    function zoom(st) { return '<div class="bhd__zoom">' + b(st, 'Уменьшить масштаб', ico('e6ea', 24)) + '<button type="button" class="bhd__zoom-value' + (st ? ' ' + st : '') + '">100%</button>' + b(st, 'Увеличить масштаб', ico('e6e9', 24)) + '</div>'; }
-    var revision = '<div class="bhd__revision"><span class="bhd__revision-image" aria-hidden="true"></span><span>15 окт</span></div>';
-    function edit(st) { return '<button type="button" class="bhd__pill bhd__pill--edit' + (st ? ' ' + st : '') + '">Изменить ' + ico('e660') + '</button>'; }
-    function save(st) { return '<button type="button" class="bhd__pill bhd__pill--save' + (st ? ' ' + st : '') + '">Сохранить <span class="bhd__pill-check">' + ico('e75e') + '</span></button>'; }
-    function close(st) { return '<button type="button" class="bhd__close' + (st ? ' ' + st : '') + '" aria-label="Закрыть"></button>'; }
-
-    var html = set('Живая шапка', 'BuilderHeader.mount', '«Изменить» и «Сохранить» переключают режим, «+» и «−» меняют масштаб, клик по проценту сбрасывает его к 100, размер экрана выбирается.',
-      '<div class="bhd-stage" id="bhd-live-stage"><header id="bhd-live" aria-label="Шапка конструктора"></header></div>');
-    html += set('Чтение', '.bhd', 'Размеры экрана, масштаб, последняя редакция, «Изменить», крестик.',
-      '<div class="bhd-stage" id="bhd-read"><header class="bhd">' + title + devices + '<div class="bhd__actions">' + zoom('') + revision + edit('') + close('') + '</div></header></div>');
-    html += set('Редактирование', '.bhd--editing', 'История с разделителем, масштаб, «Сохранить», крестик. Фон окна задаёт прототип.',
-      '<div class="bhd-stage bhd-stage--editing"><header class="bhd bhd--editing">' + title + devices + '<div class="bhd__actions" id="bhd-edit-actions">' + history + zoom('') + save('') + close('') + '</div></header></div>');
-
+    function g(code, cls) { return '<span class="' + cls + '" aria-hidden="true">&#x' + code + ';</span>'; }
     var rows = [
-      ['«Изменить»', edit],
-      ['«Сохранить»', save],
-      ['Крестик', close],
-      ['История', function (st) { return '<div class="bhd__history">' + b(st, 'Отменить', ico('e6cf', 20)) + '</div>'; }],
-      ['Масштаб', zoom],
-      ['Размер экрана', function (st) { return '<div class="bhd__devices">' + b('bhd__device' + (st ? ' ' + st : ''), 'Планшет', ico('e637', 14), ' aria-pressed="false"') + '</div>'; }]
+      ['«Изменить»', 'btn--same-outlined secondary', function (st) { return '<button type="button" class="btn btn--same-outlined btn--style-secondary btn--size-m bhd__pill bhd__pill--edit' + st + '">Изменить' + g('e660', 'btn__icon') + '</button>'; }],
+      ['«Сохранить»', 'btn--same-outlined success', function (st) { return '<button type="button" class="btn btn--same-outlined btn--style-success btn--size-m bhd__pill bhd__pill--save' + st + '">Сохранить' + g('e75e', 'bhd__save-check') + '</button>'; }],
+      ['Крестик', 'close-button functional, l', function (st) { return '<button type="button" class="close-button close-button--functional-button close-button--size-l' + st + '" aria-label="Закрыть"></button>'; }],
+      ['История', 'btn--ghost secondary, xl', function (st, dis) { return '<button type="button" class="btn btn--ghost btn--style-secondary btn--size-xl btn--icon' + st + '" aria-label="Отменить"' + (dis ? ' disabled' : '') + '>' + g('e6cf', 'btn__icon') + '</button>'; }],
+      ['Масштаб', 'btn--link secondary, m', function (st) { return '<span class="bhd__zoom"><button type="button" class="btn btn--link btn--style-secondary btn--size-m btn--icon' + st + '" aria-label="Уменьшить масштаб">' + g('e6ea', 'btn__icon') + '</button><button type="button" class="btn btn--link btn--style-secondary btn--size-m' + st + '">100%</button></span>'; }]
     ];
-    var grid = '<span></span><span>default</span><span>.is-hover</span><span>.is-active</span><span>disabled</span>';
+    var grid = '<span></span><span></span><span>default</span><span>.is-hover</span><span>.is-active</span><span>disabled</span>';
     rows.forEach(function (r) {
-      grid += '<span>' + r[0] + '</span>';
-      ['', 'is-hover', 'is-active'].forEach(function (st) { grid += '<div class="bhd">' + r[1](st) + '</div>'; });
-      grid += r[0] === 'История' ? '<div class="bhd"><div class="bhd__history">' + b('', 'Сбросить', ico('e629', 20), ' disabled') + '</div></div>' : '<span>—</span>';
+      grid += '<span>' + r[0] + '</span><span>' + r[1] + '</span>';
+      ['', ' is-hover', ' is-active'].forEach(function (st) { grid += '<div class="bhd">' + r[2](st) + '</div>'; });
+      grid += r[0] === 'История' ? '<div class="bhd">' + r[2]('', true) + '</div>' : '<span>—</span>';
     });
-    html += set('Состояния', '.is-hover · .is-active · disabled', 'Перенесены из прототипа: в исходнике заданы только наведение, нажатие и неактивная кнопка истории.',
-      '<div class="btn-scroll"><div class="bhd-states">' + grid + '</div></div>');
-    host.innerHTML = html;
 
-    var stage = document.getElementById('bhd-live-stage');
+    host.innerHTML =
+      set('Живая шапка', 'BuilderHeader.mount', '«Изменить» и «Сохранить» переключают режим, «+» и «−» меняют масштаб, клик по проценту сбрасывает его к 100, размер экрана выбирается.',
+        '<div class="bhd-stage" id="bhd-live-stage"><header id="bhd-live" aria-label="Шапка конструктора"></header></div>') +
+      set('Чтение', '.bhd', 'Размеры экрана, масштаб, последняя редакция, «Изменить», крестик.',
+        '<div class="bhd-stage" id="bhd-read"><header id="bhd-read-head" aria-label="Шапка конструктора"></header></div>') +
+      set('Редактирование', '.bhd--editing', 'История с разделителем, масштаб, «Сохранить», крестик. Фон окна задаёт прототип.',
+        '<div class="bhd-stage bhd-stage--editing" id="bhd-edit"><header id="bhd-edit-head" aria-label="Шапка конструктора"></header></div>') +
+      set('Компоненты кита в шапке', 'button · tumbler · close-button', 'Состояния — у самих компонентов. Шапка задаёт только размер «Изменить» и «Сохранить» (116 × 26) и зелёный кружок галочки.',
+        '<div class="btn-scroll"><div class="bhd-states">' + grid + '</div></div>');
+
+    var title = 'Онлайн-сервис доставки еды', stage = document.getElementById('bhd-live-stage');
+    BuilderHeader.mount(document.getElementById('bhd-read-head'), { title: title, revision: { date: '15 окт' } });
+    BuilderHeader.mount(document.getElementById('bhd-edit-head'), { title: title, mode: 'edit' });
     BuilderHeader.mount(document.getElementById('bhd-live'), {
-      title: 'Онлайн-сервис доставки еды',
+      title: title,
       revision: { date: '15 окт' },
       onMode: function (m) { stage.classList.toggle('bhd-stage--editing', m === 'edit'); }
     });
@@ -1076,9 +1064,9 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         }).join('') + '</div>';
     }
     function pick(key, title, items, cls, hover) {
-      var close = '<button type="button" class="close-button close-button--link-button lsb__pick-close" aria-label="Закрыть"></button>';
+      function close(view) { return '<button type="button" class="close-button close-button--' + view + ' lsb__pick-close" aria-label="Закрыть"></button>'; }
       return '<div class="lsb__pick' + cls + '" data-lsb-pick-menu="' + key + '" role="menu" aria-label="' + title + '"' + (cls ? '' : ' hidden') + '><div class="lsb__pick-list">' +
-        (key === 'access' ? '<div class="lsb__pick-head"><span class="lsb__pick-title">' + title + '</span>' + close + '</div>' : close) +
+        (key === 'access' ? '<div class="lsb__pick-head"><span class="lsb__pick-title">' + title + '</span>' + close('link-button') + '</div>' : close('external')) +
         items.map(function (it, i) {
           return '<button type="button" class="lsb__pick-item' + (i === hover ? ' is-hover' : '') + '" role="menuitemradio" aria-checked="' + (i === 0) + '" data-value="' + it[0] + '"><span class="lsb__pick-text">' + it[1] + '</span></button>';
         }).join('') + '</div></div>';
@@ -1841,7 +1829,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     ['Конструктор', [
       { id: 'widget', title: 'Виджет', sum: 'Рамка при наведении и выделении, кружки-плюсы на сторонах, слот для тулбара, пустое состояние.', table: '#widget-body .wg-grid', cells: [[1, 2]] },
       { id: 'toolbar', title: 'Плавающий тулбар', sum: 'Стили default, info и success, кнопки-иконки, удаление, подтверждение, подпись со стрелкой.', table: '#toolbar-body table', cells: [[1, 1]] },
-      { id: 'builder-header', title: 'Шапка', sum: 'Шапка окна конструктора: название, размеры экрана, история, масштаб, «Изменить» и «Сохранить».', nodes: '#bhd-edit-actions > .bhd__zoom, #bhd-edit-actions > .bhd__pill--save, #bhd-edit-actions > .bhd__close', wrap: 'bhd bhd--editing bhd-tile' },
+      { id: 'builder-header', title: 'Шапка', sum: 'Шапка окна конструктора: название, размеры экрана, история, масштаб, «Изменить» и «Сохранить».', nodes: '#bhd-edit .bhd__zoom, #bhd-edit .bhd__pill--save, #bhd-edit .close-button', wrap: 'bhd bhd--editing bhd-tile' },
       { id: 'left-sidebar', title: 'Левый сайдбар', sum: 'Панель «Страницы»: список страниц, переименование, меню «⋮», окно настройки; вписан или свёрнут в линии.', nodes: '#left-sidebar-body .btn-set:nth-child(1) .lsb-stage', w: 480 },
       { id: 'right-sidebar', title: 'Правый сайдбар', sum: 'Тулбар с пунктами, панели «Магазин», «Данные» и «Слои»; вписан, по ховеру или закреплён.', nodes: '#right-sidebar-body .btn-set:nth-child(1) .rsb-stage', w: 480 },
       { id: 'shop', title: 'Магазин', sum: 'Виджеты трёх размеров, разделы с превью, расширенный вид с деревом категорий.', nodes: '#shop-body .btn-set:nth-child(1) .shop-stage', w: 480 },
