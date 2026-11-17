@@ -1,0 +1,170 @@
+/*!
+ * builder-header — шапка окна конструктора: режим чтения и режим редактирования файла.
+ * Перенесено из прототипа builder-file-standarts (app/viewer.js → header(), app/styles.css .viewer-header);
+ * с макетом Figma не сверено, ссылки на узел нет.
+ * Режим: чтение — .bhd (без класса), редактирование — .bhd--editing (фон окна конструктора задаёт прототип).
+ * Блоки независимы, лишние просто не выводятся: .bhd__title, .bhd__devices, .bhd__history, .bhd__zoom,
+ * .bhd__revision, .bhd__pill--edit / --save, .bhd__close. Наведение и нажатие → .is-hover / .is-active (и :hover / :active).
+ * Цвета и размеры — токены ui-kit (tokens.css подключается раньше). Поведение — builder-header.js (необязателен).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/builder-header
+ *
+ * Устройство: сетка из трёх колонок — название, пусто, действия справа; .bhd__center стоит по центру шапки
+ * абсолютно, чтобы переключатель размеров не сдвигался от ширины названия и кнопок.
+ */
+
+.bhd {
+  --bhd-devices-bg: #00000009;          /* подложка переключателя размеров — нет токена */
+  --bhd-device-hover: #eaeaea;          /* наведение на кнопку размера — нет токена */
+  --bhd-device-active: #dadce3;         /* нажатие на кнопку размера — нет токена */
+  --bhd-device-selected: #222222;       /* иконка выбранного размера — нет токена */
+  --bhd-revision-color: #364874;        /* дата последней редакции — нет токена */
+
+  position: relative; box-sizing: border-box; flex: none;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(min-content, 1fr); align-items: center;
+  height: var(--inline_height-inline_height_4xl);
+  padding: 0 var(--offset-offset_st) 0 var(--offset-offset_xl);
+  font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
+  font-size: var(--font-font-size-font-size_m); font-weight: var(--font-font-weight-regular);
+  color: var(--text-text-color);
+}
+.bhd button { font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.bhd button:disabled { cursor: default; }
+.bhd button:focus-visible { outline: 2px solid var(--extra-brand_color); outline-offset: -2px; } /* толщина — нет токена */
+
+/* Иконки — глифы cbuc-icons (16, 20, 14) и cbuc-icons24 (24); шрифты подключает проект */
+.bhd__icon { display: inline-block; flex: none; font: normal var(--bhd-icon-size, 16px)/1 var(--icon-font-family-s_icon_font-family); }
+.bhd__icon--24 { --bhd-icon-size: var(--inline_height-inline_height_m); font-family: var(--icon-font-family-m_icon_font-family); }
+.bhd__icon--20 { --bhd-icon-size: var(--inline_height-inline_height_s); }
+.bhd__icon--14 { --bhd-icon-size: 14px; } /* нет токена */
+
+/* Кнопка-иконка — общая основа для истории, масштаба и размеров */
+.bhd__btn {
+  box-sizing: border-box; flex: none;
+  display: inline-grid; place-items: center;
+  width: var(--inline_height-inline_height_xl); height: var(--inline_height-inline_height_xl);
+  margin: 0; padding: 0; border: 0;
+  border-radius: var(--components-button-border-radius_button);
+  color: var(--icon-secondary_icon-color); background: transparent;
+}
+
+/* ---------- Название ---------- */
+.bhd__title {
+  display: flex; align-items: center; gap: var(--offset-offset_m); min-width: 0;
+  padding-right: var(--offset-offset_s);
+  font-size: var(--font-font-size-font-size_l); letter-spacing: -.2115px; /* нет токена */
+}
+.bhd__title .bhd__icon { color: var(--icon-label_icon-color); }
+.bhd__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- Центр: переключатель размеров экрана ---------- */
+.bhd__center { position: absolute; left: 50%; translate: -50% 0; }
+.bhd__devices {
+  display: flex; align-items: center;
+  height: var(--inline_height-inline_height_m); padding: var(--offset-offset_3xs);
+  box-sizing: border-box;
+  border-radius: var(--border-radius-border-radius_xl);
+  background: var(--bhd-devices-bg);
+}
+.bhd__device { width: 39px; height: var(--inline_height-inline_height_s); border-radius: var(--border-radius-border-radius_m); } /* ширина — нет токена */
+.bhd__device:hover, .bhd__device.is-hover { background: var(--bhd-device-hover); }
+.bhd__device:active, .bhd__device.is-active { background: var(--bhd-device-active); }
+.bhd__device[aria-pressed="true"] { background: var(--background-background-color); color: var(--bhd-device-selected); }
+
+/* ---------- Справа ---------- */
+.bhd__actions { grid-column: 3; display: flex; align-items: center; justify-content: flex-end; gap: var(--offset-offset_m); flex: none; }
+
+/* История: отменить, повторить, сбросить, предпросмотр; справа разделитель */
+.bhd__history { position: relative; display: flex; align-items: center; flex: none; gap: var(--offset-offset_m); padding-right: 13px; } /* 12 + разделитель — нет токена */
+.bhd__history::after {
+  content: ""; position: absolute; right: 0; top: 50%; translate: 0 -50%;
+  width: 1px; height: var(--inline_height-inline_height_m); /* толщина — нет токена */
+  background: var(--extra-unaccented_separator_color);
+}
+.bhd__history .bhd__btn:hover, .bhd__history .bhd__btn.is-hover { background: var(--background-contrast-pale_color); color: var(--icon-secondary_hover_icon-color); }
+.bhd__history .bhd__btn:active, .bhd__history .bhd__btn.is-active { background: var(--background-contrast-pale_hover_color); color: var(--icon-secondary_hover_icon-color); }
+.bhd__history .bhd__btn:disabled, .bhd__history .bhd__btn.is-disabled { background: transparent; color: var(--icon-readonly_icon-color); }
+
+/* Масштаб: −, значение, + */
+.bhd__zoom { display: flex; align-items: center; flex: none; gap: var(--offset-offset_xs); color: var(--text-secondary_text-color); }
+.bhd__zoom .bhd__btn {
+  width: var(--inline_height-inline_height_m); height: var(--inline_height-inline_height_m);
+  color: var(--text-secondary_text-color);
+}
+.bhd__zoom .bhd__btn:is(:hover, :active, .is-hover, .is-active) { color: var(--text-secondary_hover_text-color); }
+.bhd__zoom-value {
+  height: var(--inline_height-inline_height_m); margin: 0; padding: 0; border: 0;
+  border-radius: var(--components-button-border-radius_button);
+  color: var(--text-secondary_text-color); background: transparent;
+  font-size: var(--font-font-size-font-size_m); letter-spacing: -.1974px; /* нет токена */
+}
+.bhd__zoom-value:is(:hover, :active, .is-hover, .is-active) {
+  color: var(--text-secondary_hover_text-color);
+  text-decoration: underline; text-underline-position: from-font;
+}
+
+/* Последняя редакция: миниатюра и дата; слева разделитель */
+.bhd__revision {
+  display: flex; align-items: center; flex: none; gap: var(--offset-offset_xs);
+  padding-left: var(--offset-offset_m);
+  border-left: 1px solid var(--extra-unaccented_separator_color); /* толщина — нет токена */
+  color: var(--bhd-revision-color); white-space: nowrap;
+}
+.bhd__revision-image {
+  display: block; flex: none;
+  width: var(--inline_height-inline_height_m); height: var(--inline_height-inline_height_m);
+  object-fit: cover; border-radius: var(--border-radius-border-radius_3xs);
+  background: var(--background-contrast-pale_color);
+}
+
+/* «Изменить» и «Сохранить» */
+.bhd__pill {
+  box-sizing: border-box; flex: none;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--offset-offset_xs);
+  width: 116px; height: 26px; /* нет токена */
+  margin: 0; padding: 0 0 0 var(--offset-offset_m);
+  border: 1px solid; /* толщина — нет токена */
+  border-radius: var(--components-button-border-radius_button);
+  white-space: nowrap; color: var(--text-text-color); background: var(--background-background-color);
+}
+.bhd__pill--edit {
+  padding-right: var(--offset-offset_m);
+  border-color: var(--components-button-outlined-same-border-secondary_outlined-same_border-color_button);
+}
+.bhd__pill--edit .bhd__icon { color: var(--icon-secondary_icon-color); }
+.bhd__pill--edit:is(:hover, :focus-visible, .is-hover) { border-color: var(--components-button-outlined-same-border-secondary_outlined-same_hover-border-color_button); }
+.bhd__pill--edit:is(:active, .is-active) {
+  border-color: var(--components-button-outlined-same-border-secondary_outlined-same_hover-border-color_button);
+  background: var(--background-secondary_background-color);
+}
+.bhd__pill--save {
+  gap: var(--offset-offset_3xs);
+  border-color: var(--components-button-outlined-same-border-success_outlined-same_border-color_button);
+}
+.bhd__pill--save:is(:hover, :focus-visible, .is-hover) { border-color: var(--components-button-outlined-same-border-success_outlined-same_hover-border-color_button); }
+.bhd__pill--save:is(:active, .is-active) {
+  border-color: var(--components-button-outlined-same-border-success_outlined-same_hover-border-color_button);
+  background: var(--background-success_background-color);
+}
+.bhd__pill-check {
+  display: grid; place-items: center; flex: none;
+  width: 26px; height: 26px; margin: -1px -1px -1px 0; /* поверх рамки — нет токена */
+  border-radius: var(--components-button-border-radius_button);
+  color: var(--icon-contrast_icon-color); background: var(--background-contrast-success_color);
+}
+
+/* Крестик: круг 32, крестик 12 (маска — как у components/close-button) */
+.bhd__close {
+  box-sizing: border-box; flex: none;
+  display: grid; place-items: center;
+  width: var(--inline_height-inline_height_xl); height: var(--inline_height-inline_height_xl);
+  margin: 0 0 0 var(--offset-offset_2xs); padding: 0; border: 0;
+  border-radius: var(--components-button-border-radius_button);
+  color: var(--icon-secondary_icon-color); background: var(--background-contrast-pale_color);
+}
+.bhd__close::before {
+  content: ""; width: var(--offset-offset_m); height: var(--offset-offset_m); background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M11.79 10.88a.62.62 0 0 1 0 .91.62.62 0 0 1-.92 0L6 6.96l-4.88 4.83a.62.62 0 0 1-.91 0 .62.62 0 0 1 0-.91L5.04 6 .21 1.13a.62.62 0 0 1 0-.92.62.62 0 0 1 .91 0L6 5.04 10.88.21a.62.62 0 0 1 .91 0 .62.62 0 0 1 0 .92L6.96 6z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M11.79 10.88a.62.62 0 0 1 0 .91.62.62 0 0 1-.92 0L6 6.96l-4.88 4.83a.62.62 0 0 1-.91 0 .62.62 0 0 1 0-.91L5.04 6 .21 1.13a.62.62 0 0 1 0-.92.62.62 0 0 1 .91 0L6 5.04 10.88.21a.62.62 0 0 1 .91 0 .62.62 0 0 1 0 .92L6.96 6z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.bhd__close:is(:hover, :focus-visible, .is-hover) { background: var(--background-contrast-pale_hover_color); color: var(--icon-secondary_hover_icon-color); }
+.bhd__close:is(:active, .is-active) { background: var(--background-contrast-pale_active_color); color: var(--icon-secondary_hover_icon-color); }

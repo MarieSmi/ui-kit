@@ -19,13 +19,13 @@
 Файлы раздаёт jsDelivr прямо из GitHub по тегу:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/components/<имя>/<имя>.css">
-<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/components/<имя>/<имя>.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/components/<имя>/<имя>.css">
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/components/<имя>/<имя>.js"></script>
 ```
 
 - `tokens.css` подключается **первым**: компоненты берут значения из его переменных.
-- Версия в адресе (`@1.19.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
+- Версия в адресе (`@1.20.0`) — git-тег. Подключённый прототип не меняется сам, новую версию нужно указать явно.
 - Во всех адресах одного прототипа должна стоять одна и та же версия.
 - В артефактах Claude адреса `cdn.jsdelivr.net/gh/` не работают: там код кита вшивается в файл.
 
@@ -35,7 +35,7 @@
 прототип подключает сам, отдельным файлом:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/fonts/fonts.css">
 ```
 
 | Шрифт | Файлы | Где используется |
@@ -86,7 +86,7 @@ Figma: он обновит файлы в `tools/tokens/`, запустит `pyth
 | Чекбокс: outlined / filled / ghost, resetValue, третье состояние, подпись слева | [`components/checkbox`](components/checkbox/) | `nuC4KFMiS36uDWDUp9wKGl` · `14613:12425` | 1.2.0 |
 | Чипсы: контрастные и неконтрастные, ghost, стили выбранного, размеры m / l / xl / 5xl, подпись, иконка и счётчик, круглые, кнопки «Добавление данных», опциональные свойства | [`components/chips`](components/chips/) | `nuC4KFMiS36uDWDUp9wKGl` · `20059:4296`, `20059:4457`, `18813:5910`; `rHabzni5OI5D4fxBLQdj2m` · `4608:8103` | 1.7.0 |
 | Поля ввода: однострочное, многострочное, дата (период, календарь), время; метка слева / сверху / прыгающая, размеры m / l / xl, контрастный фон, обязательность, иконка и счётчик | [`components/input`](components/input/) | `nuC4KFMiS36uDWDUp9wKGl` · `15786:3347`, `15769:14088`, `15769:13000`, `15769:13857` | 1.9.0 |
-| Тулбар: стили default / info / success, кнопки-иконки, удаление, подтверждение, подпись со стрелкой, разделитель | [`components/toolbar`](components/toolbar/) | `rHabzni5OI5D4fxBLQdj2m` · `854:7085` | 1.4.0 |
+| Плавающий тулбар: стили default / info / contrast / unaccented / success, кнопки-иконки, удаление, подтверждение, подпись со стрелкой, разделитель | [`components/toolbar`](components/toolbar/) | `xf4ot0TI7serEN9WyA5TVo` · `1592:91557` и код Saby PlatformToolbar (до 1.20.0 — `rHabzni5OI5D4fxBLQdj2m` · `854:7085`) | 1.4.0 |
 | Виджет: рамка при наведении и выделении, кружки-плюсы на сторонах, слот для тулбара, родитель (уровень 2), пустое состояние | [`components/widget`](components/widget/) | `rHabzni5OI5D4fxBLQdj2m` · `131:17349` | 1.5.0 |
 | Окно редактора свойств: шапка с названием, облачка, строки «метка + редактор», размер с меню величин и Min/Max, скругления, границы, тень и фон с раскрытием, выбор цвета, окно тени, чипсы и крестики; необязательный JS | [`components/property-editor`](components/property-editor/) | `rHabzni5OI5D4fxBLQdj2m` · `4625:846`, `4608:7879`, `4629:3533`, `4629:3606`, `4629:2697` | 1.12.0 |
 | Редакторы PropertyGrid из прототипа STV: размер с меню величин и Min/Max, тень (окно цвета тени, готовые тени, окно «Тень»), отступы, скругления, фон с окном цвета, границы с типом линии; по сторонам и углам, отдельное окно цвета | [`components/pg-editors`](components/pg-editors/) | `lw5BTOhkhczQmdiTvlnhnG` · `23882:236259` (не сверено, перенесено из STV) | 1.14.0 |
@@ -101,9 +101,11 @@ Figma: он обновит файлы в `tools/tokens/`, запустит `pyth
 | Тумблер: 2–4 варианта на общей подложке, подписи, иконки, счётчик, контрастная подложка, размеры xs … 5xl, вертикальный | [`components/tumbler`](components/tumbler/) | `nuC4KFMiS36uDWDUp9wKGl` · `tumblerHorizontal` (из кода Saby, не сверено) | 1.17.0 |
 | Вкладки: стили primary / secondary / unaccented, иконки и счётчики, главная вкладка, выравнивание, линия снизу | [`components/tabs`](components/tabs/) | `nuC4KFMiS36uDWDUp9wKGl` · `tabs/horizontal` (из кода Saby, не сверено) | 1.17.0 |
 | Аккордеон и сайдбар: разделы с иконками, подразделы, группы, свёрнутый вид, шапка с логотипом и кнопкой сворачивания | [`components/accordion`](components/accordion/) | «Аккордеон [30.07.26]» (из кода Saby, не сверено) | 1.17.0 |
-| Левый сайдбар конструктора «Страницы»: список страниц, переименование, меню «⋮», окно настройки страницы; вписан, по ховеру, закреплён | [`components/left-sidebar`](components/left-sidebar/) | `rHabzni5OI5D4fxBLQdj2m` · `5:28393` (перенесён из прототипа, не сверено) | 1.19.0 |
+| Шапка окна конструктора: чтение и редактирование, название, размеры экрана, история, масштаб, последняя редакция, «Изменить» / «Сохранить», крестик | [`components/builder-header`](components/builder-header/) | нет макета (перенесена из прототипа builder-file-standarts, не сверено) | 1.20.0 |
+| Левый сайдбар конструктора «Страницы»: список страниц, переименование, меню «⋮», окно настройки страницы; вписан, по ховеру, закреплён | [`components/left-sidebar`](components/left-sidebar/) | `rHabzni5OI5D4fxBLQdj2m` · `5:28393` (перенесён из прототипа, не сверено) | 1.20.0 |
 | Правый сайдбар конструктора: тулбар с пунктами, панели вкладок, шапка панели, строки полей и слоёв; вписан, по ховеру, закреплён | [`components/right-sidebar`](components/right-sidebar/) | `rHabzni5OI5D4fxBLQdj2m` · `5:28859` | 1.18.0 |
-| Магазин виджетов: виджеты small / medium / big, разделы с превью, расширенный вид с деревом категорий | [`components/shop`](components/shop/) | `rHabzni5OI5D4fxBLQdj2m` · `1517:69549` | 1.18.0 |
+| Магазин виджетов: виджеты small / medium / big, разделы с превью, расширенный вид с деревом категорий; нужен `scroll-shadow` | [`components/shop`](components/shop/) | `rHabzni5OI5D4fxBLQdj2m` · `1517:69549` | 1.18.0 |
+| Тень прокрутки: полоса 8px сверху и снизу прокручиваемого блока; общая для всех компонентов с прокруткой | [`components/scroll-shadow`](components/scroll-shadow/) | `nuC4KFMiS36uDWDUp9wKGl` · `15499:1120`, `15499:1122` | 1.20.0 |
 
 Связь компонентов Figma с классами кита — в [`figma-map.json`](figma-map.json): ключи component set и
 соответствие их свойств классам. По ней инстанс из макета переводится в разметку кита.

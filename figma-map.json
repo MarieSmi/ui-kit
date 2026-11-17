@@ -384,10 +384,40 @@
     "toolbar": {
       "kit": "components/toolbar",
       "since": "1.4.0",
+      "updated": "1.20.0",
+      "source": {
+        "repository": "saby-components",
+        "files": ["packages/controls/ExtControls/_floatingToolbar/PlatformToolbar/_View.less", "packages/controls/ExtControls/_floatingToolbar/PlatformToolbar/ButtonTemplates/_ButtonTemplates.less"],
+        "note": "С 1.20.0 вид сверен по коду PlatformToolbar и макету «Круглый плавающий (Сайты)»; взято то, где информации больше. default и success — из кода, unaccented и select + hover — из макета."
+      },
+      "figmaCurrent": {
+        "fileKey": "xf4ot0TI7serEN9WyA5TVo",
+        "file": "Тулбар в конструкторах",
+        "sets": [
+          { "name": "Круглый плавающий (Сайты)", "node": "1592:91557", "key": "9497f52206de1b6588301f5365efcaabc040ecf3", "class": "tb",
+            "note": "свойство «Виджет» — набор кнопок (Блок, Секция, Изображение, Заголовок 2, Основной текст, Текст+фото, Стек), в кит как класс не переносится" },
+          { "name": "Кнопка тулбара", "node": "154:83822", "key": "3d1ca386b686e86d26e1853789c434be88287665", "class": "tb__btn" }
+        ],
+        "palettes": {
+          "about": "Коллекция «Тулбар | Палитра» (локальная, значения — ссылки на 🌍 Global Variables)",
+          "Бледная фиолетовая": "tb--style-info",
+          "Акцентная фиолетовая": "tb--style-contrast",
+          "Серая": "tb--style-unaccented",
+          "Редактор по месту": "не входит в кит"
+        },
+        "properties": {
+          "Кнопка тулбара.hover": { "true": "is-hover", "false": null, "alt": ":hover" },
+          "Кнопка тулбара.click": { "true": "is-selected", "false": null, "alt": "aria-pressed=\"true\"" },
+          "Кнопка тулбара.text#14825:10": { "true": "есть .tb__caption", "false": null },
+          "Кнопка тулбара.name#14825:15": { "kit": "текст в .tb__caption" },
+          "Кнопка тулбара.arrow#14825:5": { "true": "есть .tb__arrow", "false": null }
+        }
+      },
       "figma": {
         "fileKey": "rHabzni5OI5D4fxBLQdj2m",
         "file": "⚙️Builder-components",
-        "page": "854:7085"
+        "page": "854:7085",
+        "note": "прежний макет (до 1.20.0); ключи наборов ниже по-прежнему сопоставляются с классами кита"
       },
       "element": "<div class=\"tb …\" role=\"toolbar\"><button class=\"tb__btn …\"><span class=\"tb__icon\">…</span></button>…</div>",
       "base": "tb",
@@ -402,7 +432,7 @@
         { "name": "_Bricks/toobar/backButton", "node": "854:7139", "key": "d3ceccd47f583e3cae701eeeec4a2cccbe10ca14", "class": null, "note": "не входит в кит: в тулбаре «назад» — инстанс Bricks/button" }
       ],
       "properties": {
-        "toolbar.style": { "default": null, "info": "tb--style-info", "success": "tb--style-success" },
+        "toolbar.style": { "default": null, "info": "tb--style-info", "success": "tb--style-success", "note": "с 1.20.0 есть ещё tb--style-contrast и tb--style-unaccented" },
         "toolbar.back#1560:0": { "true": "первая .tb__btn с глифом «назад» (U+E9A9)", "false": null },
         "toolbar.delete#1863:0": { "true": "есть .tb__btn--delete", "false": null },
         "toolbar.drag#1547:0": { "true": "не входит в кит", "false": null },

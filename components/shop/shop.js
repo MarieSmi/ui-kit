@@ -64,6 +64,11 @@
       widget.click();
     }
 
+    // Тень прокрутки у списка и дерева категорий — компонент кита scroll-shadow
+    root.querySelectorAll('.shop__list, .shop__master').forEach(function (el) { el.classList.add('scroll-shadow'); });
+    const shadow = window.ScrollShadow ? window.ScrollShadow.mount(root) : null;
+    if (!shadow && window.console) console.warn('Shop: подключите components/scroll-shadow — без него нет тени прокрутки');
+
     root.addEventListener('click', onClick);
     root.addEventListener('keydown', onKey);
     root.querySelectorAll('.shop__master .ml').forEach(syncTree);
@@ -76,6 +81,7 @@
       destroy: function () {
         root.removeEventListener('click', onClick);
         root.removeEventListener('keydown', onKey);
+        if (shadow) shadow.destroy();
       }
     };
   }

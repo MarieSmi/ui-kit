@@ -15,12 +15,14 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/tokens.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/fonts/fonts.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/components/button/button.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/components/close-button/close-button.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/components/left-sidebar/left-sidebar.css">
 <script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.19.0/components/left-sidebar/left-sidebar.js"></script>
 ```
 
 `tokens.css` подключается первым. `fonts.css` нужен для Inter и глифов иконок (cbuc-icons, cbuc-icons24).
-`button.css` — для кнопок в слотах: «+», разворот, «⋮», ✓ и ✕ переименования.
+`button.css` — для кнопок в слотах: «+», разворот, «⋮», ✓ и ✕ переименования. `close-button.css` — для крестиков
+меню «⋮» и меню значений в окне настройки.
 
 Для окна настройки страницы подключите ещё `property-editor.css`, `input.css`, `switch.css` и `chips.css`:
 окно — это `.pe` кита, его строки — компоненты кита. Сайдбар их только расставляет. JS этих компонентов не нужен.
@@ -69,7 +71,9 @@
 | По ховеру | `.lsb--hover` | Сайдбар — колонка линий (52). Наведение на линии открывает панель поверх страницы, с тенью. |
 | Закреплен | `.lsb--pinned` | То же, но панель не закрывается при уходе курсора. Ставится только из кода: `pin()`. |
 
-Висящая панель открыта — `.is-open` у `.lsb`. Линии — по одной на страницу, у открытой длиннее и цветом маркера.
+Висящая панель открыта — `.is-open` у `.lsb`. Она выезжает слева и уезжает обратно за 0.25s (`transform`, ease —
+как плавающие панели Saby); закрытая скрыта через `visibility`. Смена режима кнопкой разворота — мгновенно: на один
+кадр JS ставит `.is-switching`. При `prefers-reduced-motion: reduce` анимации нет. Линии — по одной на страницу, у открытой длиннее и цветом маркера.
 
 **Кнопка разворота** — слот `.lsb__toggle` с кнопкой кита. Глиф, `aria-label` и `title` ставит JS:
 
@@ -105,7 +109,7 @@
 
 ```html
 <div class="lsb__menu" role="menu" aria-label="Действия" hidden>
-  <div class="lsb__menu-top"><div class="lsb__menu-head">Действия</div><button type="button" class="lsb__menu-close" aria-label="Закрыть"></button></div>
+  <div class="lsb__menu-top"><div class="lsb__menu-head">Действия</div><button type="button" class="close-button close-button--link-button lsb__menu-close" aria-label="Закрыть"></button></div>
   <button type="button" class="lsb__menu-item" role="menuitem" data-lsb-act="settings"><span class="lsb__menu-icon">&#xE61B;</span><span class="lsb__menu-text">Настроить</span></button>
   <button type="button" class="lsb__menu-item lsb__menu-item--danger" role="menuitem" data-lsb-act="delete"><span class="lsb__menu-icon">&#xEB72;</span><span class="lsb__menu-text">Удалить</span></button>
 </div>
@@ -138,9 +142,28 @@
 | SEO | карточка `[data-pe-row="seo"]` с `.lsb__seo`: поле `[data-lsb-field="seo"]`, кнопка `[data-lsb-description-add]`, поле `[data-lsb-description]` с `textarea[data-lsb-field="seoDescription"]` |
 | Чипс SEO | `.chips[data-pe-chip="seo"]` в `.pe__chips` |
 
-**Меню значения** — `.lsb__pick`: заголовок `.lsb__pick-head`, радиопункты `.lsb__pick-item[data-value]`
-с подписью `.lsb__pick-text`, круглый крестик `.lsb__pick-close`. Выбранный пункт — `aria-checked="true"`
-(или `.is-selected`), наведение — `.is-hover`. Меню встаёт выбранным пунктом на место ссылки.
+**Меню значения** — `.lsb__pick`: радиопункты `.lsb__pick-item[data-value]` с подписью `.lsb__pick-text`
+в `.lsb__pick-list`. Крестик — слот `.lsb__pick-close` с кнопкой кита `close-button` (подключите `close-button.css`).
+С шапкой крестик стоит в ней справа, без шапки — первым в списке, в правом верхнем углу меню:
+
+```html
+<!-- с шапкой -->
+<div class="lsb__pick" data-lsb-pick-menu="access" role="menu" aria-label="Доступ" hidden>
+  <div class="lsb__pick-list">
+    <div class="lsb__pick-head"><span class="lsb__pick-title">Доступ</span>
+      <button type="button" class="close-button close-button--link-button lsb__pick-close" aria-label="Закрыть"></button></div>
+    <button type="button" class="lsb__pick-item" role="menuitemradio" aria-checked="true" data-value="public"><span class="lsb__pick-text">Без авторизации</span></button>
+  </div>
+</div>
+<!-- без шапки -->
+<div class="lsb__pick-list">
+  <button type="button" class="close-button close-button--link-button lsb__pick-close" aria-label="Закрыть"></button>
+  <button type="button" class="lsb__pick-item" …>…</button>
+</div>
+```
+
+Выбранный пункт — `aria-checked="true"` (или `.is-selected`), наведение — `.is-hover`. Меню встаёт так, что текст
+выбранного пункта лежит на тексте ссылки.
 
 Поведение окна:
 

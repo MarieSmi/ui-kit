@@ -136,8 +136,12 @@
       if (on === !floating()) return;
       clearTimeout(timer);
       closeMenu(); closeSettings();
+      // Смена режима без анимации: выезд панели — только при открытии и закрытии
+      root.classList.add('is-switching');
       root.classList.remove('lsb--pinned', 'is-open');
       root.classList.toggle('lsb--hover', !on);
+      void root.offsetWidth; // применить новое положение панели до снятия .is-switching
+      root.classList.remove('is-switching');
       byHover = !on;
       syncToggle();
       if (opts.onDock) opts.onDock(on);
@@ -286,7 +290,15 @@
       Array.prototype.forEach.call(win.querySelectorAll('[data-lsb-pick-menu]'), function (m) { m.hidden = true; });
       Array.prototype.forEach.call(win.querySelectorAll('[data-lsb-pick]'), function (b) { b.setAttribute('aria-expanded', 'false'); });
     }
-    // Меню значения: выбранный пункт — на месте ссылки (30px левее, по центру строки)
+    // Прямоугольник текста узла, без отступов: у ссылки значения текст лежит прямо в кнопке
+    function textRect(node, box) {
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      const r = range.getBoundingClientRect();
+      const b = box.getBoundingClientRect();
+      return { left: r.left - b.left, top: r.top - b.top, width: r.width, height: r.height };
+    }
+    // Меню значения: текст выбранного пункта ложится на текст ссылки
     function openPick(btn) {
       const m = q('[data-lsb-pick-menu="' + btn.dataset.lsbPick + '"]', win);
       const open = m && m.hidden;
@@ -294,10 +306,10 @@
       if (!open) return;
       m.hidden = false;
       btn.setAttribute('aria-expanded', 'true');
-      const r = relRect(btn, win);
+      const r = textRect(btn, win);
       const sel = q('[aria-checked="true"]', m) || q('[data-value]', m);
-      const s = relRect(sel, m);
-      m.style.left = Math.round(r.left - 30) + 'px';
+      const s = textRect(q('.lsb__pick-text', sel) || sel, m);
+      m.style.left = Math.round(r.left - s.left) + 'px';
       m.style.top = Math.round(r.top + r.height / 2 - s.top - s.height / 2) + 'px';
     }
     function showSeo(on) {

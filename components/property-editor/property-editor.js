@@ -155,7 +155,11 @@
       cards.forEach(function (card) {
         card.hidden = !Array.from(card.querySelectorAll('[data-pe-row]')).some(function (r) { return !r.hidden; });
       });
-      if (mark) mark.hidden = !input || !input.value || input.value === defaultName;
+      if (mark) {
+        // метка появляется, когда правка закончена: пока поле имени в фокусе, её нет
+        mark.hidden = !input || !input.value || input.value === defaultName || document.activeElement === input;
+        if (mark.hidden) mark.classList.remove('is-open');
+      }
       renderDims();
       if (lineBtn) lineBtn.classList.toggle('pe__line--dashed', model.line === 'dashed');
       switches.forEach(renderSplit);
@@ -213,6 +217,7 @@
     function closePop(pop) { while (pops.length && pops.indexOf(pop) >= 0) closeTop(); }
 
     function onDocClick(e) {
+      if (mark && !mark.contains(e.target)) mark.classList.remove('is-open'); // подсказка закрывается кликом мимо
       while (pops.length) {
         const top = pops[pops.length - 1];
         if (top.el.contains(e.target) || top.anchor.contains(e.target)) return;
@@ -423,7 +428,10 @@
         }
         return;
       }
-      if (mark && t.closest('.pe__mark')) { input.value = defaultName; changed(); return; }
+      // Метка открывает и закрывает подсказку, имя возвращает клик по тексту-ссылке в ней
+      if (mark && t.closest('.pe__hint-text')) { mark.classList.remove('is-open'); input.value = defaultName; changed(); return; }
+      if (mark && t.closest('.pe__hint')) return;
+      if (mark && t.closest('.pe__mark')) { mark.classList.toggle('is-open'); return; }
       const unit = t.closest('[data-pe-dim] .pe__dim-unit');
       if (unit) { e.preventDefault(); openSizeMenu(unit); return; }
       if (lineBtn && t.closest('.pe__line') === lineBtn) { openLineMenu(); return; }
@@ -482,7 +490,8 @@
 
     // Enter завершает правку, Esc возвращает значение на момент входа в поле
     let before = '';
-    function onFocus(e) { if (e.target === input) before = input.value; }
+    function onFocus(e) { if (e.target === input) { before = input.value; render(); } }
+    function onBlur(e) { if (e.target === input) render(); }
     function onKey(e) {
       if (e.target === input) {
         if (e.key === 'Enter') input.blur();
@@ -496,6 +505,7 @@
     root.addEventListener('input', onInput);
     root.addEventListener('change', onChange);
     root.addEventListener('focusin', onFocus);
+    root.addEventListener('focusout', onBlur);
     root.addEventListener('keydown', onKey);
     document.addEventListener('click', onDocClick, true);
     document.addEventListener('keydown', onDocKey, true);
@@ -510,6 +520,7 @@
         root.removeEventListener('input', onInput);
         root.removeEventListener('change', onChange);
         root.removeEventListener('focusin', onFocus);
+        root.removeEventListener('focusout', onBlur);
         root.removeEventListener('keydown', onKey);
         document.removeEventListener('click', onDocClick, true);
         document.removeEventListener('keydown', onDocKey, true);

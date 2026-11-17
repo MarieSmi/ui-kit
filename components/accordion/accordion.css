@@ -9,7 +9,7 @@
  * подразделом → .is-active; подраздел → .accordion__item--sub; наведение → .is-hover (и :hover).
  * Только CSS: сворачивание по клику работает без JS, если кнопка сворачивания — <label> с флажком.
  * Иконки разделов — шрифт Accordion-Font (набор аккордеона Saby, fonts/Accordion-Font.ttf), его подключает прототип
- * через fonts/fonts.css. Коды глифов — в README компонента.
+ * через fonts/fonts.css. Коды глифов — в README компонента. Логотип «saby…» — шрифт Maison Neue Extended, тоже из fonts.css.
  * Размеры и часть цветов — токены ui-kit (tokens.css подключается раньше). Цвета темы навигации Saby в токены
  * кита не входят: они заданы переменными --acc-* на .sidebar и .accordion, прототип может их переопределить.
  * https://github.com/MarieSmi/ui-kit/tree/main/components/accordion
@@ -189,6 +189,8 @@
 /* Логотип: «saby» и название продукта. В Saby — шрифт Maison Neue Extended, в ките его нет: шрифт кита */
 .sidebar__logo {
   flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap;
+  /* шрифт логотипа, как в Saby (NavigationPanels/Logotype) — нет токена; файлы — fonts/MaisonNeue, подключает fonts.css */
+  font-family: "Maison Neue Extended", sans-serif;
   font-size: var(--font-font-size-font-size_4xl); line-height: 20px; /* высота строки логотипа 20px — нет токена */
   text-transform: lowercase; text-decoration: none;
   color: var(--text-text-color);

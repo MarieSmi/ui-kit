@@ -99,7 +99,7 @@
   clip-path: polygon(100% 100%, 100% 0, 0 0);
 }
 .pe__hint {
-  display: none; position: absolute; z-index: 1; left: -16px; bottom: calc(100% + 2px); /* нос над меткой, как в макете — нет токена */
+  display: none; position: absolute; z-index: 1; left: -16px; bottom: calc(100% + 11px); /* от кончика носа до метки 4px: 11 = 4 + выступ носа 7 — нет токена */
   align-items: center; gap: var(--offset-offset_2xs);
   padding: var(--offset-offset_2xs) var(--offset-offset_xl) var(--offset-offset_2xs) var(--offset-offset_m);
   border: 1px solid rgb(82 146 220 / .35); /* в макете градиент — нет токена */
@@ -113,9 +113,13 @@
   color: var(--text-text-color);
   font-size: var(--font-font-size-font-size_l); font-weight: var(--font-font-weight-regular); white-space: nowrap;
 }
-.pe__mark:is(:hover, .is-open) .pe__hint { display: flex; }
+.pe__mark.is-open .pe__hint { display: flex; cursor: default; }
+.pe__hint-text { cursor: pointer; }
+/* кнопка-ссылка в стиле default (как .btn--link.btn--style-default): при наведении темнее и с подчёркиванием; клик возвращает имя */
+.pe__hint-text:is(:hover, .is-hover) { color: var(--text-hover_text-color); text-decoration: underline; }
 .pe__hint::after { /* нос */
-  content: ""; position: absolute; left: 15px; bottom: -6px; width: 11px; height: 11px;
+  content: ""; position: absolute; left: 15px; bottom: -5.5px; width: 11px; height: 11px;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%); /* только наружная половина: внутрь подсказки нос не заходит */
   border: solid rgb(82 146 220 / .35); border-width: 0 1px 1px 0; /* как рамка подсказки */
   background: color-mix(in srgb, rgb(12 148 255) 8%, var(--background-background-color)); /* край заливки подсказки, в светлой теме #ecf6ff из макета — нет токена */
   transform: rotate(45deg);
@@ -194,6 +198,7 @@
   background: var(--background-contrast-pale_color);
   color: var(--text-text-color); font: inherit;
 }
+:is(input, textarea).pe__editor { outline: 0; } /* в поле ввода обводки фокуса нет, как у остальных полей кита */
 .pe__editor.is-readonly, .pe__editor::placeholder { color: var(--text-readonly_text-color); opacity: 1; }
 
 /* ---------- Размер: метки слева, значения справа, стрелка в углу ---------- */

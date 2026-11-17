@@ -34,11 +34,21 @@
 :is(.lsb--hover, .lsb--pinned) > .lsb__panel {
   position: absolute; z-index: 1; left: 0; top: 0; bottom: var(--offset-offset_s);
   margin: 0 0 0 var(--offset-offset_s);
-  display: none;
   /* стиль shadow_a из макета; смещение 0 0 — нет токена */
   box-shadow: 0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a), 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a);
+  /* Выезд слева, как у плавающих панелей Saby (TOC FloatingMenuWrapper): transform 0.25s ease — нет токена.
+     Закрытая панель уезжает за левый край вместе с полем и тенью, после выезда прячется (visibility) */
+  transform: translateX(calc(-100% - var(--offset-offset_s) - var(--blur-shadow-blur_a2)));
+  visibility: hidden;
+  transition: transform 0.25s ease, visibility 0s linear 0.25s; /* нет токена */
 }
-:is(.lsb--hover, .lsb--pinned).is-open > .lsb__panel { display: flex; }
+:is(.lsb--hover, .lsb--pinned).is-open > .lsb__panel {
+  transform: none; visibility: visible;
+  transition: transform 0.25s ease, visibility 0s; /* нет токена */
+}
+/* Смена режима кнопкой разворота — мгновенно, как в Saby; .is-switching ставит left-sidebar.js на один кадр */
+.lsb.is-switching > .lsb__panel { transition: none; }
+@media (prefers-reduced-motion: reduce) { .lsb > .lsb__panel { transition: none; } }
 
 /* ---------- Шапка ---------- */
 .lsb__head {
@@ -201,7 +211,7 @@
   box-shadow: 0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a), 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a);
 }
 .lsb__menu[hidden] { display: none; }
-.lsb__menu :where(.lsb__menu-close, .lsb__menu-item) { /* :where — сброс слабее правил ниже */
+.lsb__menu :where(.lsb__menu-item) { /* :where — сброс слабее правил ниже */
   margin: 0; border: 0; background: none;
   font: inherit; color: inherit; text-align: left; cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -217,18 +227,8 @@
   text-transform: uppercase;
   color: var(--text-label_text-color);
 }
-/* Крестик: глиф 16 в квадрате 24 */
-.lsb .lsb__menu-close {
-  flex: none;
-  display: flex; align-items: center; justify-content: center;
-  width: var(--icon-icon_size-icon-size_m); height: var(--icon-icon_size-icon-size_m);
-  margin: var(--offset-offset_3xs) var(--offset-offset_2xs) 0 0;
-  padding: 0;
-  font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
-  font-weight: normal; font-style: normal; line-height: 1;
-  color: var(--icon-secondary_icon-color);
-}
-.lsb__menu-close::before { content: "\e66c"; }
+/* Крестик — слот с кнопкой кита close-button (linkButton), здесь только место в строке шапки */
+.lsb .lsb__menu-close { flex: none; margin: var(--offset-offset_3xs) var(--offset-offset_2xs) 0 0; }
 /* Пункт: иконка 24 (глиф в .lsb__menu-icon) и подпись */
 .lsb .lsb__menu-item {
   display: flex; align-items: flex-start;
@@ -278,7 +278,8 @@
 .lsb__seo-fields > .input { align-self: stretch; }
 
 /* Меню выбора значения (Доступ, Способ отображения; Figma WHZ4ZSm4wRMrxQPWqEk5Wk 2406:20980): радиопункты
-   с точкой, круглый крестик за правым краем. Лежит в окне; положение ставит JS — пункт на месте ссылки */
+   с точкой. Крестик — слот с кнопкой кита close-button (linkButton): в шапке — справа в её строке, без шапки —
+   в правом верхнем углу меню. Лежит в окне; положение ставит JS — текст выбранного пункта на тексте ссылки */
 .lsb__pick {
   position: absolute; z-index: 1; left: 0; top: 0;
   width: max-content; min-width: 200px; /* по самому длинному пункту; 200 — нет токена */
@@ -293,8 +294,9 @@
   /* стиль shadow_a из макета; смещение 0 0 — нет токена */
   box-shadow: 0 0 var(--blur-shadow-blur_a) var(--color-shadow-color_a), 0 0 var(--blur-shadow-blur_a2) var(--color-shadow-color_a);
 }
+.lsb__pick-list { position: relative; }
 .lsb__pick-head {
-  display: flex; align-items: center;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--offset-offset_s);
   min-height: var(--components-popup-menu-header_min-height_sticky);
   padding-left: 22px; /* 8 отступ пункта + 14 место точки: заголовок по тексту — нет токена */
   font-size: var(--font-font-size-font-size_m);
@@ -302,7 +304,7 @@
   text-transform: uppercase;
   color: var(--text-label_text-color);
 }
-.lsb__pick :where(.lsb__pick-item, .lsb__pick-close) { /* :where — сброс слабее правил ниже */
+.lsb__pick :where(.lsb__pick-item) { /* :where — сброс слабее правил ниже */
   margin: 0; padding: 0; border: 0; background: none;
   font: inherit; color: inherit; text-align: left; cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -336,16 +338,6 @@
   letter-spacing: -.0141em; /* −1.41 % из макета — нет токена */
   color: var(--text-text-color);
 }
-/* Круглый крестик за правым краем меню */
-.lsb__pick-close {
-  position: absolute; right: -14px; top: var(--offset-offset_s); /* −14: половина кнопки — нет токена */
-  display: flex; align-items: center; justify-content: center;
-  width: var(--inline_height-inline_height_l); height: var(--inline_height-inline_height_l);
-  border-radius: 50%;
-  background: var(--background-contrast-unaccented_hover_contrast_background-color);
-  font-family: var(--icon-font-family-2xs_icon_font-family); font-size: var(--icon-icon_size-icon-size_2xs);
-  font-weight: normal; font-style: normal; line-height: 1;
-  color: var(--icon-contrast_icon-color);
-}
-.lsb__pick-close::before { content: "\e66c"; }
-.lsb__pick-close:is(:hover, .is-hover) { background: #aaaaaad9; } /* нет токена: в макете темнее покоя */
+/* Крестик без шапки — в правом верхнем углу меню, первый пункт оставляет под него место справа */
+.lsb__pick-list > .lsb__pick-close { position: absolute; right: var(--offset-offset_s); top: var(--offset-offset_s); }
+.lsb__pick-list > .lsb__pick-close + .lsb__pick-item { margin-right: var(--components-popup-inline_height_closebutton); }

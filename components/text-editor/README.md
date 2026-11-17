@@ -2,7 +2,7 @@
 
 Окно текстового редактора, выделенное из [table-widget](https://github.com/pershmary/table-widget):
 шапка документа, левая и правая панели, полный верхний тулбар, прокручиваемая область редактирования.
-Чистые CSS и JS, без зависимостей от остальных компонентов кита.
+Чистые CSS и JS. Из компонентов кита нужен только [`scroll-shadow`](../scroll-shadow/) — тень прокрутки под тулбаром.
 
 Вид перенесён из `demo.html` и `css/table-widget.css`; исходный фрейм — `1265:76984`,
 ключ файла Figma в исходнике не указан. Повторной сверки с Figma не было.
@@ -14,10 +14,12 @@
 ## Подключение
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.15.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.15.0/fonts/fonts.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.15.0/components/text-editor/text-editor.css">
-<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.15.0/components/text-editor/text-editor.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/components/scroll-shadow/scroll-shadow.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/components/text-editor/text-editor.css">
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/components/scroll-shadow/scroll-shadow.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/components/text-editor/text-editor.js"></script>
 
 <div id="editor" style="height: 600px"><p>Текст документа</p></div>
 <script>
@@ -34,7 +36,7 @@ const editor = TextEditor.mount(document.getElementById('editor'), {
 </script>
 ```
 
-CDN-пример доступен после выпуска тега `1.15.0`. До выпуска используйте локальные файлы.
+CDN-пример доступен после выпуска тега `1.20.0`. До выпуска используйте локальные файлы.
 Размер окна задаёт прототип. `.te--fullscreen` даёт высоту `100dvh`; прокрутка документа
 и горизонтальная прокрутка длинного тулбара работают внутри окна, без изменений `html`/`body`.
 На узком экране шапка и тулбар прокручиваются по горизонтали. Одновременно можно создать несколько окон.
@@ -82,7 +84,7 @@ CDN-пример доступен после выпуска тега `1.15.0`. �
 Корень `.te`, части `.te__head`, `.te__left`, `.te__right`, `.te__toolbar`, `.te__viewport`, `.te__document`.
 Ширина документа — локальная переменная `--te-document-width` (820px).
 Кнопки поддерживают `:hover` / `.is-hover`, `:focus-visible`, `:disabled` / `.is-disabled`.
-Корень `.is-scrolled` включает тень под тулбаром; JS обновляет класс по прокрутке своего документа.
+Тень под тулбаром — [`scroll-shadow`](../scroll-shadow/) на `.te__viewport` (с версии 1.20.0). Корень `.is-scrolled` по-прежнему включает её; JS обновляет класс по прокрутке своего документа.
 `.te__ritem--accent` — акцентная кнопка правой панели.
 
 Покой и hover перенесены из проекта. `is-disabled` и клавиатурный фокус добавлены для интеграции

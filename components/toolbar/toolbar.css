@@ -1,63 +1,90 @@
 /*!
- * toolbar — плавающий тулбар (Figma rHabzni5OI5D4fxBLQdj2m, страница «Плавающий тулбар» 854:7085).
- * Контейнер — component set toolbar 854:7144: style → .tb--style-info / .tb--style-success (default без класса).
- * Кнопки — Bricks/button 854:7089 (.tb__btn; ⛔ hover / select → .is-hover / .is-selected и :hover / aria-pressed),
- * Bricks/deleteButton 870:26168 (.tb__btn--delete), _Bricks/successButton 1600:291 (.tb__btn--success),
- * Bricks/backButton (.tb__btn с глифом «назад»), _Bricks/toobar/separator 854:7136 (.tb__sep).
- * Слоты 6dots и button_expander в кит не входят. Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
+ * toolbar — плавающий тулбар. Источники сверены между собой, взято то, где информации больше:
+ *  - Figma xf4ot0TI7serEN9WyA5TVo «Тулбар в конструкторах», component set «Круглый плавающий (Сайты)» 1592:91557
+ *    (ключ 9497f52206de1b6588301f5365efcaabc040ecf3) и «Кнопка тулбара» 154:83822 (ключ 3d1ca386b686e86d26e1853789c434be88287665,
+ *    hover / click → :hover, .is-hover / aria-pressed, .is-selected); палитры — коллекция «Тулбар | Палитра»;
+ *  - код saby-components: ExtControls/_floatingToolbar/PlatformToolbar (_View.less, _ButtonTemplates.less).
+ * Стили: без класса — default (код), .tb--style-info — «Бледная фиолетовая» / constructor, .tb--style-contrast —
+ * «Акцентная фиолетовая» / contrast, .tb--style-unaccented — «Серая» (только макет), .tb--style-success — success (только код).
+ * Кнопки удаления и подтверждения, разделитель — прежние (rHabzni5OI5D4fxBLQdj2m 870:26168, 1600:291, 854:7136).
+ * Цвета и размеры — токены ui-kit (tokens.css подключается раньше).
  * https://github.com/MarieSmi/ui-kit/tree/main/components/toolbar
  *
- * Устройство: стиль тулбара задаёт палитру кнопок (--tb-hover, --tb-sel, --tb-sel-ic), кнопки берут её сами,
- * поэтому стиль у кнопок не указывается. Иконки — глифы шрифта иконок в .tb__icon; шрифт подключает проект.
+ * Устройство: стиль тулбара задаёт палитру кнопок (--tb-hover, --tb-sel, --tb-sel-hover, --tb-ic-def, --tb-sel-ic),
+ * кнопки берут её сами, поэтому стиль у кнопок не указывается. Иконки — глифы шрифта иконок в .tb__icon; шрифт подключает проект.
  */
 
-/* ---------- Контейнер (style=default) ---------- */
+/* ---------- Контейнер (style=default, из кода) ---------- */
 .tb {
-  --tb-hover: var(--background-contrast-pale_hover_color);
-  --tb-sel: var(--background-secondary_active_background-color);
-  --tb-sel-ic: var(--icon-link_icon-color);
-  --tb-ok-hover: var(--background-contrast-pale_hover_color);
-  --tb-bd: var(--border-border-color);
-
-  position: relative; box-sizing: border-box;
-  display: inline-flex; align-items: stretch;
-  overflow: clip;
-  border-radius: var(--border-radius-border-radius_s);
-  background: var(--background-background-color);
-  box-shadow: 0 0 var(--blur-shadow-blur_c) var(--color-shadow-color_c); /* shadow_c; смещение 0 0 — нет токена */
-}
-/* Рамка поверх кнопок, как stroke INSIDE в Figma: размер тулбара равен сумме кнопок */
-.tb::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  border: 1px solid var(--tb-bd); /* 1px — нет токена */
-  border-radius: inherit;
-}
-.tb--style-info {
   --tb-hover: var(--background-info_hover_background-color);
   --tb-sel: var(--background-info_active_background-color);
+  --tb-sel-hover: var(--background-info_hover_background-color);
+  --tb-ic-def: var(--icon-icon-color);
   --tb-sel-ic: var(--icon-info_icon-color);
-  --tb-ok-hover: var(--background-info_hover_background-color); /* в макете нет: как у остальных кнопок info */
+  --tb-ok-hover: var(--tb-hover);
+  --tb-bd: transparent;
+  --tb-sep: var(--border-border-color);
+
+  box-sizing: border-box;
+  display: inline-flex; align-items: center;
+  column-gap: var(--offset-offset_3xs);
+  padding: var(--offset-offset_3xs);
+  overflow: clip;
+  border-radius: calc(var(--border-radius-border-radius_m) + var(--offset-offset_3xs)); /* 14px в макете без переменной; формула из кода */
+  background: var(--background-background-color);
+  /* обводка снаружи (stroke OUTSIDE) + shadow_c; 1px и смещение 0 0 — нет токена */
+  box-shadow: 0 0 0 1px var(--tb-bd), 0 0 var(--blur-shadow-blur_c) var(--color-shadow-color_c);
+}
+.tb--style-info { /* «Бледная фиолетовая» */
+  --tb-hover: var(--background-info_hover_background-color);
+  --tb-sel: var(--background-info_active_background-color);
+  --tb-sel-hover: var(--background-info_hover_background-color);
+  --tb-ic-def: var(--icon-secondary_icon-color);
+  --tb-sel-ic: var(--icon-info_icon-color);
   --tb-bd: color-mix(in srgb, var(--border-info_border-color) 20%, transparent); /* 20 % — нет токена */
+  --tb-sep: var(--border-unaccented_border-color);
   background: var(--background-info_background-color);
 }
-.tb--style-success {
+.tb--style-contrast { /* «Акцентная фиолетовая» */
+  --tb-hover: var(--background-contrast-pale_color);
+  --tb-sel: var(--background-same-info_active_same_background-color);
+  --tb-sel-hover: var(--background-same-info_hover_same_background-color);
+  --tb-ic-def: var(--icon-icon-color);
+  --tb-sel-ic: var(--icon-icon-color);
+  --tb-sep: var(--border-unaccented_border-color);
+  background: var(--background-same-info_same_background-color);
+}
+.tb--style-unaccented { /* «Серая» */
+  --tb-hover: var(--background-contrast-pale_color);
+  --tb-sel: var(--background-contrast-pale_active_color);
+  --tb-sel-hover: var(--background-contrast-pale_color);
+  --tb-ic-def: var(--icon-secondary_icon-color);
+  --tb-sel-ic: var(--icon-secondary_icon-color);
+  --tb-sep: var(--border-unaccented_border-color);
+  background: var(--background-unaccented_background-color);
+}
+.tb--style-success { /* из кода; select + hover и цвета иконок в макете нет — как у остальных стилей */
   --tb-hover: var(--background-same-success_hover_same_background-color);
   --tb-sel: var(--background-same-success_active_same_background-color);
+  --tb-sel-hover: var(--background-same-success_hover_same_background-color);
+  --tb-ic-def: var(--icon-icon-color);
   --tb-sel-ic: var(--icon-success_icon-color);
   --tb-ok-hover: var(--background-success_hover_background-color);
-  --tb-bd: color-mix(in srgb, var(--border-success_border-color) 20%, transparent); /* 20 % — нет токена */
+  --tb-bd: color-mix(in srgb, var(--border-success_border-color) 25%, transparent); /* 25 % — нет токена */
+  --tb-sep: var(--border-unaccented_border-color);
   background: var(--background-same-success_same_background-color);
 }
 
-/* ---------- Кнопка ---------- */
+/* ---------- Кнопка («Кнопка тулбара») ---------- */
 .tb__btn {
   --tb-bg: transparent;
-  --tb-ic: var(--icon-icon-color);
-  --tb-ar: var(--icon-unaccented_icon-color);
+  --tb-ic: var(--tb-ic-def);
 
   box-sizing: border-box; flex: none;
-  display: inline-flex; align-items: center; gap: var(--offset-offset_2xs);
-  margin: 0; padding: var(--offset-offset_2xs) var(--offset-offset_xs); border: 0; border-radius: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--offset-offset_2xs);
+  min-width: var(--inline_height-inline_height_xl); height: var(--inline_height-inline_height_xl);
+  margin: 0; padding: var(--offset-offset_2xs); border: 0;
+  border-radius: var(--border-radius-border-radius_m);
   background: var(--tb-bg); color: var(--text-text-color);
   font-family: var(--font-font-family-default), sans-serif; /* шрифт Inter подключает проект */
   font-size: var(--font-font-size-font-size_m); font-weight: var(--font-font-weight-regular); line-height: normal;
@@ -65,21 +92,23 @@
   white-space: nowrap; text-decoration: none; cursor: pointer; user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
-.tb__btn:focus-visible { outline-offset: -2px; } /* focus в макете нет: обводка браузера внутрь, иначе её срежет overflow тулбара; 2px — нет токена */
+.tb__btn:focus-visible { outline-offset: -2px; } /* focus нет ни в макете, ни в коде: обводка браузера внутрь; 2px — нет токена */
 
-.tb__btn:hover, .tb__btn.is-hover {
-  --tb-bg: var(--tb-hover);
-  --tb-ar: var(--icon-unaccented_hover_icon-color);
-}
-/* select: в макете нет сочетания с hover — выбранная кнопка при наведении не меняется */
+.tb__btn:hover, .tb__btn.is-hover { --tb-bg: var(--tb-hover); }
+/* click */
 .tb__btn[aria-pressed="true"], .tb__btn.is-selected {
   --tb-bg: var(--tb-sel);
   --tb-ic: var(--tb-sel-ic);
-  --tb-ar: var(--icon-unaccented_hover_icon-color);
+}
+/* hover + click: фон «Актив-Ховер», иконка обычная (макет) */
+.tb__btn[aria-pressed="true"]:hover, .tb__btn.is-selected:hover,
+.tb__btn[aria-pressed="true"].is-hover, .tb__btn.is-selected.is-hover {
+  --tb-bg: var(--tb-sel-hover);
+  --tb-ic: var(--tb-ic-def);
 }
 
-.tb__btn--delete { --tb-ic: var(--icon-danger_icon-color); }
-.tb__btn--success { --tb-ic: var(--icon-success_icon-color); }
+.tb__btn--delete, .tb__btn--delete:hover, .tb__btn--delete.is-hover { --tb-ic: var(--icon-danger_icon-color); }
+.tb__btn--success, .tb__btn--success:hover, .tb__btn--success.is-hover { --tb-ic: var(--icon-success_icon-color); }
 .tb__btn--success:hover, .tb__btn--success.is-hover { --tb-bg: var(--tb-ok-hover); }
 
 /* Иконка — глиф шрифта иконок или svg */
@@ -94,27 +123,26 @@
 
 .tb__caption { color: var(--text-text-color); }
 
-/* Стрелка у кнопки с подписью: вниз, при select — вверх */
+/* Стрелка у кнопки с подписью: вниз, при click — вверх */
 .tb__arrow {
   flex: none; display: inline-flex; align-items: center; justify-content: center;
-  margin-left: calc(var(--offset-offset_3xs) - var(--offset-offset_2xs)); /* в макете отступ 3xs вместо gap 2xs */
   width: var(--icon-icon_size-icon-size_s); height: var(--icon-icon_size-icon-size_s);
   font-family: var(--icon-font-family-s_icon_font-family); font-size: var(--icon-icon_size-icon-size_s);
   font-weight: normal; font-style: normal; line-height: 1;
-  color: var(--tb-ar);
+  color: var(--icon-secondary_icon-color);
 }
 .tb__arrow::before { content: "\e9aa"; } /* глиф из макета */
 .tb__btn[aria-pressed="true"] .tb__arrow::before, .tb__btn.is-selected .tb__arrow::before { content: "\e9a8"; }
 
-/* ---------- Разделитель ---------- */
+/* ---------- Разделитель (из кода) ---------- */
 .tb__sep {
-  flex: none; box-sizing: border-box;
+  flex: none; box-sizing: border-box; align-self: stretch;
   display: flex; align-items: center; justify-content: center;
-  padding: 0 var(--offset-offset_3xs);
+  padding: var(--offset-offset_2xs) 0;
 }
 .tb__sep::before {
   content: ""; align-self: stretch;
   width: 1px; /* нет токена */
-  background: var(--border-border-color);
+  background: var(--tb-sep);
 }
 .tb__sep--style-contrast::before { background: var(--border-unaccented_border-color); }

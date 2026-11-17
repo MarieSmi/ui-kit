@@ -2,7 +2,7 @@
  * text-editor — шапка, боковые панели, тулбар и область документа из pershmary/table-widget.
  * Figma: исходный фрейм 1265:76984; ключ файла в исходнике не указан. Повторно не сверено.
  * Сохранить: RXao8Os01blfLeZ4xU9rYM / 17654:127765. Стили окружения перенесены из css/table-widget.css.
- * Подключите tokens.css, fonts/fonts.css, затем этот файл. Зависимостей от других компонентов нет.
+ * Подключите tokens.css, fonts/fonts.css, components/scroll-shadow (тень прокрутки), затем этот файл.
  * Геометрия документа 820px, сайдбары 52/54px, оптические сдвиги 1px, толщины линий,
  * размеры контролов 26/150px, высоты строк 15/17/18px, tracking −1.41%, проценты прозрачности и длительность перехода — нет токена.
  * У hover больших боковых кнопок и «Сохранить» нет точного токена: используются локальные
@@ -52,11 +52,8 @@
   overflow-x: auto; white-space: nowrap;
 }
 .te__viewport { min-width: 0; min-height: 0; overflow: auto; position: relative; }
-.te__viewport::before {
-  content: ''; display: block; position: sticky; top: 0; height: 0; z-index: 1; pointer-events: none;
-  box-shadow: 0 0 var(--offset-offset_s) var(--offset-offset_2xs) var(--components-scroll-shadow_start-color_scroll);
-  opacity: 0; transition: opacity .1s ease-out; /* длительность — нет токена */
-}
+/* Тень прокрутки под тулбаром — компонент кита scroll-shadow (класс .scroll-shadow на .te__viewport).
+   Корень .is-scrolled по-прежнему включает её: так было до 1.20.0 */
 .te.is-scrolled .te__viewport::before { opacity: 1; }
 .te__page { padding: 0 var(--offset-offset_2xl) var(--offset-offset_3xl); min-height: 100%; }
 .te__document {

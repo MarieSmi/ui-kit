@@ -16,7 +16,7 @@ Saby Components, с макетом не сверялись; ключ компо�
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.17.0/components/accordion/accordion.css">
 ```
 
-`tokens.css` подключается первым. `fonts.css` нужен для Inter, иконок разделов (Accordion-Font) и птички
+`tokens.css` подключается первым. `fonts.css` нужен для Inter, иконок разделов (Accordion-Font), логотипа (Maison Neue Extended) и птички
 в шапке (cbuc-icons24).
 
 ## Разметка
@@ -300,7 +300,7 @@ Inspections, Lenta, Money-UZ, Open, Quarantine, Refund, Selling, Showcase, Unpac
 
 ## Отличия от Saby
 
-- Логотип набран шрифтом кита (Inter): шрифта Maison Neue Extended в ките нет.
+- Логотип набран шрифтом Maison Neue Extended, как в Saby (`NavigationPanels/Logotype`): файлы — `fonts/MaisonNeue/`, скачаны с cdn.saby.ru (версия 1.0.4), подключает `fonts.css`.
 - Длинное название раздела обрезается многоточием, в Saby оно плавно затухает к краю.
 - Нет подменю, счётчиков и панелей по счётчику, кнопки «+» быстрого создания, меню «птички», панели выбора
   приложений и схем навигации, акцентных разделов (`accented`), своих картинок вместо иконок.

@@ -35,7 +35,7 @@
   <script>
     // Глифы из макета: cbuc-icons24 (24 px)
     const G = { back: '', settings: '', del: '', more: '', ok: '', bird: '' };
-    const STYLES = ['', ' tb--style-info', ' tb--style-success']; // default, info, success
+    const STYLES = ['', ' tb--style-info', ' tb--style-contrast', ' tb--style-unaccented', ' tb--style-success']; // default, info, contrast, unaccented, success
 
     const icon = (g) => `<span class="tb__icon" aria-hidden="true">${g}</span>`;
     const btn = (g, label, cls = '', state = '') =>

@@ -12,13 +12,16 @@
 ## Подключение
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.18.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.18.0/fonts/fonts.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.18.0/components/shop/shop.css">
-<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.18.0/components/shop/shop.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/fonts/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/components/scroll-shadow/scroll-shadow.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/components/shop/shop.css">
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/components/scroll-shadow/scroll-shadow.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/MarieSmi/ui-kit@1.20.0/components/shop/shop.js"></script>
 ```
 
-`tokens.css` подключается первым. `fonts.css` нужен для Inter и глифов иконок (cbuc-icons, cbuc-icons24).
+`tokens.css` подключается первым. `scroll-shadow` — тень прокрутки списка и дерева, общий компонент кита
+(с версии 1.20.0). `fonts.css` нужен для Inter и глифов иконок (cbuc-icons, cbuc-icons24).
 
 Шапка и дерево категорий — слоты, их стили магазин не содержит. Для разметки из этого README подключите ещё
 `components/right-sidebar/right-sidebar.css` (шапка `.rsb__head`) и `components/master-list/master-list.css`
@@ -141,6 +144,9 @@ shop.destroy();      // снять обработчики
 ```
 
 - Кнопка `.shop__expand` открывает и закрывает расширенный магазин.
+- Тень прокрутки у списка `.shop__list` и дерева `.shop__master` — компонент кита
+  [`scroll-shadow`](../scroll-shadow/): `mount` ставит им класс `.scroll-shadow` и следит за прокруткой.
+  Подключите `scroll-shadow.css` и `scroll-shadow.js` раньше `shop.js`, иначе тени нет.
 - Клик по категории отмечает её (`.is-selected`, `aria-current`) и вызывает `onCategory`.
 - Клик по стрелке узла дерева сворачивает его: вложенным категориям ставится `hidden`.
 - У крупного виджета (`div` с `role="button"`) Enter и пробел работают как клик.

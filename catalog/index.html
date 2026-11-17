@@ -25,10 +25,14 @@
 <link rel="stylesheet" href="../components/input/input.css" data-kit="input">
 <link rel="stylesheet" href="../components/toolbar/toolbar.css" data-kit="toolbar">
 <link rel="stylesheet" href="../components/widget/widget.css" data-kit="widget">
+<link rel="stylesheet" href="../components/builder-header/builder-header.css" data-kit="builder-header">
+<script src="../components/builder-header/builder-header.js" data-kit="builder-header"></script>
 <link rel="stylesheet" href="../components/left-sidebar/left-sidebar.css" data-kit="left-sidebar">
 <script src="../components/left-sidebar/left-sidebar.js" data-kit="left-sidebar"></script>
 <link rel="stylesheet" href="../components/right-sidebar/right-sidebar.css" data-kit="right-sidebar">
 <script src="../components/right-sidebar/right-sidebar.js" data-kit="right-sidebar"></script>
+<link rel="stylesheet" href="../components/scroll-shadow/scroll-shadow.css" data-kit="scroll-shadow">
+<script src="../components/scroll-shadow/scroll-shadow.js" data-kit="scroll-shadow"></script>
 <link rel="stylesheet" href="../components/shop/shop.css" data-kit="shop">
 <script src="../components/shop/shop.js" data-kit="shop"></script>
 <link rel="stylesheet" href="../components/property-editor/property-editor.css" data-kit="property-editor">
@@ -60,7 +64,10 @@
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--surface); color: var(--fg); font: 400 14px/1.45 var(--sans); }
 a { color: var(--link); }
-:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+/* Обводка фокуса каталога — через :where, чтобы не перебивать outline компонентов кита.
+   У текстовых полей обводки нет: фокус в поле показывает сам компонент (линия, каретка) */
+:where(:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+:where(input:not([type=checkbox], [type=radio], [type=range], [type=color]), textarea, [contenteditable]):focus-visible { outline: none; }
 
 /* Каркас как на сайте Saby Components: навигация слева, содержимое справа */
 .lib { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
@@ -226,6 +233,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 #tumbler-body { display: grid; gap: 32px; }
 #accordion-body { display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start; }
 .acc-demo { display: flex; gap: 24px; } /* рамка примера: сайдбар занимает её высоту */
+#accordion-body > .btn-set:last-child { flex-basis: 100%; }
+.acc-cell { padding-top: var(--offset-offset_2xs); } /* пункт отдельно: отступ сверху как снизу и по бокам — 4px */
 #tabs-body { display: grid; gap: 32px; }
 .tabs-demo { width: 480px; max-width: 100%; } /* ширина примера вкладок */
 .tabs-demo--wide { width: 640px; }
@@ -246,29 +255,40 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .btn-grid.on-gray th, .btn-grid.on-gray td:first-child { padding-left: 8px; }
 #toolbar-body { display: grid; gap: 32px; }
 /* Кнопки тулбара без самого тулбара: .tb даёт им цвета стиля, фон и рамку тулбара прячем */
-.tb.tb-bare { background: none; box-shadow: none; overflow: visible; }
+.tb.tb-bare { background: none; box-shadow: none; overflow: visible; padding: 0; }
 .tb.tb-bare::after { content: none; }
 #widget-body { display: grid; gap: 32px; }
+#builder-header-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+.bhd-stage { overflow-x: auto; background: var(--background-unaccented_background-color); }
+.bhd-stage--editing { background: var(--components-constructor-constructor_background-color); } /* фон окна в редакторе */
+.bhd-stage > .bhd { min-width: 1100px; }
+.bhd-tile { display: flex; align-items: center; gap: var(--offset-offset_m); width: max-content; padding: 0 12px; } /* плитка: только правая часть шапки */
+.bhd-states { display: grid; grid-template-columns: max-content repeat(4, max-content); align-items: center; justify-items: start; gap: 10px 24px; padding: 12px 16px; width: max-content; background: var(--background-unaccented_background-color); }
+.bhd-states > span { font: 400 12px var(--mono); color: var(--muted); }
+.bhd-states > .bhd { display: block; height: auto; padding: 0; }
 #left-sidebar-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
 /* сцена левого сайдбара: фон конструктора, сайдбар прижат влево; справа — «страница» */
-.lsb-stage { position: relative; display: flex; height: 460px; padding-top: 8px; background: var(--components-constructor-constructor_background-color); }
+.lsb-stage { position: relative; display: flex; height: 460px; padding-top: 8px; overflow: hidden; background: var(--components-constructor-constructor_background-color); }
 .lsb-stage > p { align-self: center; margin: 0 0 0 24px; max-width: 260px; font-size: 12px; color: var(--muted); }
-.lsb-stage--static { height: auto; min-height: 0; padding: 8px 0 0; overflow-x: auto; }
+.lsb-stage--static { height: auto; min-height: 0; padding: 8px 8px 0 0; overflow-x: auto; } /* справа 8px — как отступ панели слева и снизу */
 .lsb-stage--static > .lsb { flex: 1 1 auto; min-width: 0; flex-wrap: wrap; row-gap: 24px; padding-bottom: 8px; }
 .lsb-stage--static .lsb__panel { height: auto; }
-.lsb-stage .lsb__menu.is-demo, .lsb-stage .lsb__settings.is-demo, .lsb-stage .lsb__pick.is-demo { position: relative; left: auto; top: auto; }
+.lsb-stage .lsb__menu.is-demo { position: relative; left: auto; top: auto; }
+.lsb-stage--settings { height: 340px; padding: 8px 0 0 8px; }
+.lsb-stage--settings :is(.lsb__lines, .lsb__panel) { display: none; }
 #right-sidebar-body { display: grid; gap: 32px; }
 /* сцена сайдбара: фон страницы конструктора, сайдбар прижат вправо и занимает высоту сцены */
-.rsb-stage { display: flex; justify-content: flex-end; height: 420px; padding-right: 8px; background: var(--components-constructor-constructor_background-color); } /* фон конструктора, как у набора в макете */
-.rsb-stage--float { justify-content: space-between; align-items: stretch; }
-.rsb-stage--float > p { align-self: center; margin: 0 0 0 24px; max-width: 240px; font-size: 12px; color: var(--muted); }
-.rsb-box { display: block; flex: none; width: 350px; background: var(--background-background-color); border: 1px dashed var(--line, #d9d9d9); }
+.rsb-stage { display: flex; justify-content: flex-end; height: 420px; padding: 8px 8px 8px 0; background: var(--components-constructor-constructor_background-color); } /* фон конструктора, как у набора в макете */
 #shop-body { display: grid; gap: 32px; }
-.shop-stage { height: 520px; padding: 0 8px 8px; }
-.shop-cell { display: block; background: none; }
+#scroll-shadow-body { display: grid; gap: 32px; }
+.ss-box { box-sizing: border-box; width: 280px; height: 200px; overflow: auto; border-radius: 8px; background: var(--background-background-color); outline: 1px dashed var(--border-unaccented_border-color); }
+.ss-line { margin: 0; padding: 8px 12px; }
+.shop-stage { height: 520px; padding: 8px; }
+.shop-cell { display: block; min-width: 0; background: none; } /* ширина ячейки — как у колонки сетки магазина */
+.shop-cell > .shop__widget { width: 100%; } /* кнопка-виджет в блоке не тянется сама, в сетке магазина — тянется */
 .shop-ph { display: block; width: 100%; object-fit: cover; } /* превью — картинка виджета (components/widget/example/content.png) */
 .rsb-row { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
-#property-editor-body, #pe-snaps { display: grid; gap: 32px; }
+#property-editor-body { display: grid; gap: 32px; }
 /* Редакторы PropertyGrid: облачко с редакторами и образец, к которому применяются значения */
 .pg-demo { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px; padding: 72px 24px 24px; border-radius: 8px; background: var(--bg); } /* место сверху под окно цвета */
 .pg-stack { display: flex; flex-direction: column; gap: var(--offset-offset_2xs); width: 342px; max-width: 100%; } /* облачка окна: зазор 4 */
@@ -282,8 +302,6 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 .pe.pe-bare { width: auto; background: none; box-shadow: none; }
 .pe-bare .pe__rows { width: 100%; }
 .pe-hint-cell { padding-top: 44px; } /* место над меткой под открытую подсказку */
-.pe-snap { align-items: flex-start; }
-.pe-snap > .pe__menu, .pe-snap > .pe__pop { position: static; margin: 20px; } /* снимок на месте, с полями под тень */
 /* Виджет: место сверху под тулбар (40px) и по бокам под кружки (10px), содержимое — картинка из макета (_Контент виджета) */
 .wg-grid td { padding: 52px 32px 16px 12px; }
 .wg-grid tr:first-child th + th { padding-left: 12px; } /* подпись столбца — по левому краю виджета */
@@ -316,7 +334,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 <div class="lib">
   <aside class="lib-nav" id="lib-nav">
     <div class="lib-head">
-      <a class="lib-logo" href="#all"><span class="lib-logo-mark">UI</span><span>ui-kit<span class="lib-logo-sub ver">1.19.0</span></span></a>
+      <a class="lib-logo" href="#all"><span class="lib-logo-mark">UI</span><span>ui-kit<span class="lib-logo-sub ver">1.20.0</span></span></a>
       <button type="button" class="lib-menu-btn" id="lib-menu" aria-controls="lib-nav" aria-expanded="false">Меню</button>
     </div>
     <a class="lib-item lib-item-all" href="#all">Все компоненты</a>
@@ -330,7 +348,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     <nav class="lib-group" aria-label="Конструктор">
       <button type="button" class="lib-group-title" aria-expanded="true">Конструктор</button>
       <a class="lib-item" href="#widget">Виджет</a>
-      <a class="lib-item" href="#toolbar">Тулбар</a>
+      <a class="lib-item" href="#toolbar">Плавающий тулбар</a>
+      <a class="lib-item" href="#builder-header">Шапка</a>
       <a class="lib-item" href="#left-sidebar">Левый сайдбар</a>
       <a class="lib-item" href="#right-sidebar">Правый сайдбар</a>
       <a class="lib-item" href="#shop">Магазин</a>
@@ -357,6 +376,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       <a class="lib-item" href="#tumbler">Тумблер</a>
       <a class="lib-item" href="#tabs">Вкладки</a>
       <a class="lib-item" href="#accordion">Аккордеон и сайдбар</a>
+      <a class="lib-item" href="#scroll-shadow">Тень прокрутки</a>
     </nav>
     <nav class="lib-group" aria-label="SabyDoc">
       <button type="button" class="lib-group-title" aria-expanded="true">SabyDoc</button>
@@ -507,6 +527,10 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         </div>
         <div id="tumbler-body"></div>
       </article>
+      <article class="comp" id="scroll-shadow">
+        <div class="comp-head"><h3>Тень прокрутки</h3><code>components/scroll-shadow</code></div>
+        <div id="scroll-shadow-body"></div>
+      </article>
       <article class="comp" id="tabs">
         <div class="comp-head"><h3>Вкладки</h3><code>components/tabs</code>
           <label class="comp-tool" for="tabs-style">selectedStyle
@@ -537,7 +561,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         <div id="input-body"></div>
       </article>
       <article class="comp" id="toolbar">
-        <div class="comp-head"><h3>Тулбар</h3><code>components/toolbar</code></div>
+        <div class="comp-head"><h3>Плавающий тулбар</h3><code>components/toolbar</code></div>
         <div id="toolbar-body"></div>
       </article>
       <article class="comp" id="widget">
@@ -547,6 +571,10 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
           </label>
         </div>
         <div id="widget-body"></div>
+      </article>
+      <article class="comp" id="builder-header">
+        <div class="comp-head"><h3>Шапка</h3><code>components/builder-header</code></div>
+        <div id="builder-header-body"></div>
       </article>
       <article class="comp" id="left-sidebar">
         <div class="comp-head"><h3>Левый сайдбар</h3><code>components/left-sidebar</code></div>
@@ -919,7 +947,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     ['Иконки', ['<span class="tumbler__icon" aria-hidden="true">&#xe731;</span>', '<span class="tumbler__icon" aria-hidden="true">&#xe637;</span>']],
     ['Счётчик', ['<span class="tumbler__caption">Новые</span><span class="tumbler__counter">12</span>', '<span class="tumbler__caption">Все</span>']]
   ];
-  var TMB_STATES = [['покой', '', ''], ['hover на втором пункте', '', ' is-hover'], ['readOnly', ' is-readonly', '']], tbUid = 0;
+  var TMB_STATES = [['покой', '', ''], ['readOnly', ' is-readonly', '']], tbUid = 0;
   function buildTumbler() {
     var host = document.getElementById('tumbler-body'), size = document.getElementById('tb-size').value;
     function tumbler(items, cls, state, hover) {
@@ -961,15 +989,67 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     var three = [[cap('Все')], [cap('Опубликованные')], [cap('Черновики')]];
     host.innerHTML =
       set('Вкладки слева', '.tabs', '', tabs('', three, 1)) +
-      set('Наведение на третью вкладку', '.is-hover', '', tabs('', [three[0], three[1], [three[2][0], ' is-hover']], 1)) +
       set('Иконки и счётчики', '.tabs__counter, .tabs__icon', '', tabs('', [
         [cap('Заявки') + '<span class="tabs__counter">12</span>'], [cap('Посетители') + '<span class="tabs__counter">1,5к</span>'],
         [cap('Файлы') + '<span class="tabs__icon" aria-hidden="true">&#xe671;</span>'], ['<span class="tabs__icon" aria-hidden="true">&#xe61b;</span>', '', 'Настройки']], 0)) +
       set('Главная вкладка слева, остальные справа', '.tabs__item--main, .tabs__space', ' tabs-demo--wide', tabs('', [
         ['<span class="tabs__caption">Параметры сайта</span>', ' tabs__item--main'], 'space', [cap('SEO')], [cap('Домен')], [cap('Сценарии')]], 1)) +
       set('Разделы карточки: справа, без линии', '.tabs--no-border', ' tabs-demo--wide tabs-demo--gray', tabs(' tabs--no-border', [
-        'space', [cap('Страница')], [cap('Данные')], [cap('Статистика')], [cap('Посетители')], [cap('Заявки')]], 0)) +
-      set('Без отступа от края', '.tabs--padding-null', '', tabs(' tabs--padding-null', three, 0));
+        'space', [cap('Страница')], [cap('Данные')], [cap('Статистика')], [cap('Посетители')], [cap('Заявки')]], 0));
+  }
+
+  // Шапка конструктора: живая на builder-header.js, дальше статичные режимы и состояния кнопок.
+  // Глифы: сайт U+EB5F (cbuc-icons24), размеры U+E730 / U+E637 / U+EAB4, история U+E6CF / U+E6CA / U+E629 / U+EAB9,
+  // масштаб U+E6EA / U+E6E9 (cbuc-icons24), «Изменить» U+E660, галочка U+E75E
+  function buildBuilderHeader() {
+    var host = document.getElementById('builder-header-body');
+    function set(title, code, note, html) {
+      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code></h4>' + (note ? '<p class="btn-note">' + note + '</p>' : '') + html + '</div>';
+    }
+    function ico(g, size) { return '<span class="bhd__icon' + (size ? ' bhd__icon--' + size : '') + '" aria-hidden="true">&#x' + g + ';</span>'; }
+    function b(cls, label, inner, extra) { return '<button type="button" class="bhd__btn' + (cls ? ' ' + cls : '') + '" aria-label="' + label + '"' + (extra || '') + '>' + inner + '</button>'; }
+    var title = '<div class="bhd__title">' + ico('eb5f', 24) + '<span class="bhd__name">Онлайн-сервис доставки еды</span></div>';
+    var devices = '<div class="bhd__center"><div class="bhd__devices" role="group" aria-label="Размер экрана">' +
+      b('bhd__device', 'Компьютер', ico('e730', 14), ' aria-pressed="true"') + b('bhd__device', 'Планшет', ico('e637', 14), ' aria-pressed="false"') +
+      b('bhd__device', 'Другие размеры', ico('eab4', 14), ' aria-pressed="false"') + '</div></div>';
+    var history = '<div class="bhd__history">' + b('', 'Отменить', ico('e6cf', 20)) + b('', 'Повторить', ico('e6ca', 20)) + b('', 'Сбросить', ico('e629', 20), ' disabled') + b('', 'Предпросмотр', ico('eab9', 20)) + '</div>';
+    function zoom(st) { return '<div class="bhd__zoom">' + b(st, 'Уменьшить масштаб', ico('e6ea', 24)) + '<button type="button" class="bhd__zoom-value' + (st ? ' ' + st : '') + '">100%</button>' + b(st, 'Увеличить масштаб', ico('e6e9', 24)) + '</div>'; }
+    var revision = '<div class="bhd__revision"><span class="bhd__revision-image" aria-hidden="true"></span><span>15 окт</span></div>';
+    function edit(st) { return '<button type="button" class="bhd__pill bhd__pill--edit' + (st ? ' ' + st : '') + '">Изменить ' + ico('e660') + '</button>'; }
+    function save(st) { return '<button type="button" class="bhd__pill bhd__pill--save' + (st ? ' ' + st : '') + '">Сохранить <span class="bhd__pill-check">' + ico('e75e') + '</span></button>'; }
+    function close(st) { return '<button type="button" class="bhd__close' + (st ? ' ' + st : '') + '" aria-label="Закрыть"></button>'; }
+
+    var html = set('Живая шапка', 'BuilderHeader.mount', '«Изменить» и «Сохранить» переключают режим, «+» и «−» меняют масштаб, клик по проценту сбрасывает его к 100, размер экрана выбирается.',
+      '<div class="bhd-stage" id="bhd-live-stage"><header id="bhd-live" aria-label="Шапка конструктора"></header></div>');
+    html += set('Чтение', '.bhd', 'Размеры экрана, масштаб, последняя редакция, «Изменить», крестик.',
+      '<div class="bhd-stage" id="bhd-read"><header class="bhd">' + title + devices + '<div class="bhd__actions">' + zoom('') + revision + edit('') + close('') + '</div></header></div>');
+    html += set('Редактирование', '.bhd--editing', 'История с разделителем, масштаб, «Сохранить», крестик. Фон окна задаёт прототип.',
+      '<div class="bhd-stage bhd-stage--editing"><header class="bhd bhd--editing">' + title + devices + '<div class="bhd__actions" id="bhd-edit-actions">' + history + zoom('') + save('') + close('') + '</div></header></div>');
+
+    var rows = [
+      ['«Изменить»', edit],
+      ['«Сохранить»', save],
+      ['Крестик', close],
+      ['История', function (st) { return '<div class="bhd__history">' + b(st, 'Отменить', ico('e6cf', 20)) + '</div>'; }],
+      ['Масштаб', zoom],
+      ['Размер экрана', function (st) { return '<div class="bhd__devices">' + b('bhd__device' + (st ? ' ' + st : ''), 'Планшет', ico('e637', 14), ' aria-pressed="false"') + '</div>'; }]
+    ];
+    var grid = '<span></span><span>default</span><span>.is-hover</span><span>.is-active</span><span>disabled</span>';
+    rows.forEach(function (r) {
+      grid += '<span>' + r[0] + '</span>';
+      ['', 'is-hover', 'is-active'].forEach(function (st) { grid += '<div class="bhd">' + r[1](st) + '</div>'; });
+      grid += r[0] === 'История' ? '<div class="bhd"><div class="bhd__history">' + b('', 'Сбросить', ico('e629', 20), ' disabled') + '</div></div>' : '<span>—</span>';
+    });
+    html += set('Состояния', '.is-hover · .is-active · disabled', 'Перенесены из прототипа: в исходнике заданы только наведение, нажатие и неактивная кнопка истории.',
+      '<div class="btn-scroll"><div class="bhd-states">' + grid + '</div></div>');
+    host.innerHTML = html;
+
+    var stage = document.getElementById('bhd-live-stage');
+    BuilderHeader.mount(document.getElementById('bhd-live'), {
+      title: 'Онлайн-сервис доставки еды',
+      revision: { date: '15 окт' },
+      onMode: function (m) { stage.classList.toggle('bhd-stage--editing', m === 'edit'); }
+    });
   }
 
   // Левый сайдбар «Страницы»: рабочие сайдбары на left-sidebar.js, дальше состояния строк, меню «⋮» и окно настройки.
@@ -989,18 +1069,19 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     function page(name, cls) { return '<div class="lsb__page' + (cls || '') + '"><span class="lsb__marker"></span><span class="lsb__page-name">' + name + '</span>' + MORE + '</div>'; }
     var ACTS = [['home', 'e64c', 'Сделать главной'], ['settings', 'e61b', 'Настроить'], ['link', 'e6a7', 'Скопировать ссылку'], ['duplicate', 'e669', 'Дублировать'], ['hide', 'e651', 'Скрыть'], ['delete', 'eb72', 'Удалить']];
     function menu(cls, hover) {
-      return '<div class="lsb__menu' + cls + '" role="menu" aria-label="Действия"' + (cls ? '' : ' hidden') + '><div class="lsb__menu-top"><div class="lsb__menu-head">Действия</div><button type="button" class="lsb__menu-close" aria-label="Закрыть"></button></div>' +
+      return '<div class="lsb__menu' + cls + '" role="menu" aria-label="Действия"' + (cls ? '' : ' hidden') + '><div class="lsb__menu-top"><div class="lsb__menu-head">Действия</div><button type="button" class="close-button close-button--link-button lsb__menu-close" aria-label="Закрыть"></button></div>' +
         ACTS.map(function (a) {
           return '<button type="button" class="lsb__menu-item' + (a[0] === 'delete' ? ' lsb__menu-item--danger' : '') + (a[0] === hover ? ' is-hover' : '') + '" role="menuitem" data-lsb-act="' + a[0] + '">' +
             '<span class="lsb__menu-icon" aria-hidden="true">&#x' + a[1] + ';</span><span class="lsb__menu-text">' + a[2] + '</span></button>';
         }).join('') + '</div>';
     }
     function pick(key, title, items, cls, hover) {
+      var close = '<button type="button" class="close-button close-button--link-button lsb__pick-close" aria-label="Закрыть"></button>';
       return '<div class="lsb__pick' + cls + '" data-lsb-pick-menu="' + key + '" role="menu" aria-label="' + title + '"' + (cls ? '' : ' hidden') + '><div class="lsb__pick-list">' +
-        (key === 'access' ? '<div class="lsb__pick-head">' + title + '</div>' : '') +
+        (key === 'access' ? '<div class="lsb__pick-head"><span class="lsb__pick-title">' + title + '</span>' + close + '</div>' : close) +
         items.map(function (it, i) {
           return '<button type="button" class="lsb__pick-item' + (i === hover ? ' is-hover' : '') + '" role="menuitemradio" aria-checked="' + (i === 0) + '" data-value="' + it[0] + '"><span class="lsb__pick-text">' + it[1] + '</span></button>';
-        }).join('') + '</div><button type="button" class="lsb__pick-close" aria-label="Закрыть"></button></div>';
+        }).join('') + '</div></div>';
     }
     var ACCESS = [['public', 'Без авторизации'], ['authorized', 'Только авторизованным']];
     var MODES = [['page', 'На странице'], ['window', 'В новом окне'], ['both', 'В окне и на странице']];
@@ -1027,10 +1108,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     var PAGES = [{ id: 1, name: 'Главная', home: true }, { id: 2, name: 'Меню' }, { id: 3, name: 'О нас', off: true }, { id: 4, name: 'Контакты' }, { id: 5, name: 'Доставка' }];
     function staticBox(html) { return '<div class="lsb-stage lsb-stage--static"><div class="lsb"><div class="lsb__panel">' + html + '</div></div></div>'; }
     host.innerHTML =
-      set('Вписан', '.lsb', '5:28393', 'Рабочий сайдбар на left-sidebar.js: клик по строке открывает страницу, двойной клик — переименование, «⋮» — меню действий, «+» и «Настроить» — окно настройки. Кнопка справа в шапке сворачивает сайдбар в линии.',
+      set('Вписан и По ховеру', '.lsb, .lsb--hover, .lsb--pinned', '5:28393, 5:28427', 'Рабочий сайдбар на left-sidebar.js: клик по строке открывает страницу, двойной клик — переименование, «⋮» — меню действий, «+» и «Настроить» — окно настройки. Кнопка справа в шапке сворачивает сайдбар в линии (.lsb--hover) — по одной на страницу, открытая длиннее. Наведение на линии открывает панель поверх страницы, кнопка в её шапке возвращает вписанный вид. «Закреплен» ставится из кода: pin().',
         '<div class="lsb-stage" data-lsb-live></div>') +
-      set('По ховеру', '.lsb--hover, .lsb--pinned', '5:28427', 'Сайдбар свёрнут в линии — по одной на страницу, открытая длиннее. Наведение на линии открывает панель поверх страницы, кнопка в её шапке возвращает вписанный вид. «Закреплен» ставится из кода: pin().',
-        '<div class="lsb-stage" data-lsb-live="hover"></div>') +
       set('Строки', '.lsb__page', '5:28133', 'Сверху вниз: обычная, наведение, открытая, скрытая, с открытым меню, переименование (Edit=on).',
         '<div class="rsb-row">' + staticBox(head() + '<div class="lsb__list">' + page('Главная') + page('Наведение', ' is-hover') + page('Открытая', ' is-active') + page('Скрытая', ' is-off') + page('Меню открыто', ' is-menu') +
           '<div class="lsb__page is-edit"><span class="lsb__marker"></span><input class="lsb__input" value="Переименование" aria-label="Название страницы"><span class="lsb__save">' +
@@ -1038,11 +1117,23 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
           '<button type="button" class="btn btn--ghost btn--style-label btn--size-m btn--icon lsb__save-cancel" aria-label="Отменить"><span class="btn__icon" aria-hidden="true">&#xe66c;</span></button></span></div></div>') + '</div>') +
       set('Меню «⋮»', '.lsb__menu', '17009:434390', 'Макет — файл «Расширенный конструктор». Крестик меню встаёт на место «⋮». Второй пункт — наведение.',
         '<div class="lsb-stage lsb-stage--static"><div class="lsb">' + menu(' is-demo', 'settings') + '</div></div>') +
-      set('Окно настройки страницы', '.pe.lsb__settings, .lsb__pick', '30037:38001', 'Окно редактора свойств кита со строками страницы; оно же — окно новой страницы. Рядом — меню значения «Доступ»: выбранный пункт с точкой, второй — наведение.',
-        '<div class="lsb-stage lsb-stage--static"><div class="lsb" style="gap:24px;align-items:flex-start">' + settings(' is-demo') + '<div style="position:relative;padding-right:14px">' + pick('access', 'Доступ', ACCESS, ' is-demo', 1) + '</div></div></div>');
+      set('Окно настройки страницы', '.pe.lsb__settings, .lsb__pick', '30037:38001', 'Окно редактора свойств кита со строками страницы; оно же — окно новой страницы. Здесь — окно страницы «Меню», рабочее. Клик по значению «Доступ» или «Способ отображения» открывает меню выбора: текст выбранного пункта ложится на текст значения.',
+        '<div class="lsb-stage lsb-stage--settings" data-lsb-live="settings"></div>');
     host.querySelector('[data-lsb-live=""]').innerHTML = live('') + '<p>Страница справа от сайдбара.</p>';
-    host.querySelector('[data-lsb-live="hover"]').innerHTML = live(' lsb--hover') + '<p>Страница под панелью: сайдбар занимает только колонку линий.</p>';
-    [].forEach.call(host.querySelectorAll('[data-lsb-live] > .lsb'), function (el) { LeftSidebar.mount(el, { pages: PAGES, active: 2 }); });
+    host.querySelector('[data-lsb-live="settings"]').innerHTML = live('');
+    LeftSidebar.mount(host.querySelector('[data-lsb-live=""] > .lsb'), { pages: PAGES, active: 2 });
+    // Окно настройки без панели: сайдбар рабочий, панель скрыта стилем стенда, закрытое окно сразу открывается снова
+    var withSeo = PAGES.map(function (p) { return p.id === 2 ? Object.assign({}, p, { seo: 'Меню' }) : p; });
+    var sb = LeftSidebar.mount(host.querySelector('[data-lsb-live="settings"] > .lsb'), { pages: withSeo, active: 2 });
+    var win = host.querySelector('[data-lsb-live="settings"] .lsb__settings');
+    function showWin() {
+      var y = window.scrollY; // окно ставит каретку в название — каталог не прокручиваем
+      sb.openSettings(2);
+      if (win.contains(document.activeElement)) document.activeElement.blur();
+      window.scrollTo(0, y);
+    }
+    showWin();
+    new MutationObserver(function () { if (win.hidden) showWin(); }).observe(win, { attributes: true, attributeFilter: ['hidden'] });
   }
 
   // Правый сайдбар конструктора: рабочие сайдбары на right-sidebar.js, дальше состояния частей.
@@ -1061,22 +1152,13 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         '</div><div class="rsb__dock"><button type="button" class="btn btn--filled btn--style-pale btn--size-xl btn--icon" aria-label="Развернуть панель"><span class="btn__icon" aria-hidden="true">&#xebfa;</span></button></div>' +
         '<div class="rsb__informers"><button type="button" class="rsb__help" aria-label="Помощь">?</button></div></div>';
     }
-    function iconBtn(glyph, title, cls) {
-      return '<button type="button" class="btn btn--size-m btn--icon ' + cls + '" title="' + title + '" aria-label="' + title + '"><span class="btn__icon" aria-hidden="true">&#x' + glyph + ';</span></button>';
-    }
-    function head(name, search, extra) {
-      return '<header class="rsb__head"><div class="rsb__title"><h3 class="rsb__name">' + name + '</h3>' + (extra || '') + '</div>' +
+    function head(name, search) {
+      return '<header class="rsb__head"><div class="rsb__title"><h3 class="rsb__name">' + name + '</h3></div>' +
         '<div class="rsb__tools">' + (search ? '<label class="rsb__search"><input class="rsb__search-input" type="search" placeholder="Найти" aria-label="Найти"></label>' : '') + '</div></header>';
-    }
-    function headWidget() {
-      return '<header class="rsb__head rsb__head--widget"><div class="rsb__head-row"><div class="rsb__title"><h3 class="rsb__name">Строка</h3></div>' +
-        '<div class="rsb__head-cmds">' + iconBtn('e60a', 'Сбросить', 'btn--link btn--style-label') + iconBtn('eb72', 'Удалить', 'btn--link btn--style-danger') + '</div></div>' +
-        '<div class="rsb__path"><nav class="breadcrumbs breadcrumbs--size-m" aria-label="Путь"><span class="breadcrumbs__middle"><a class="breadcrumbs__crumb" href="#right-sidebar">Документ</a></span>' +
-        '<a class="breadcrumbs__crumb breadcrumbs__crumb--last" href="#right-sidebar">Строка</a></nav></div></header>';
     }
     function field(kind, level, name, type, state) { // kind: object | node | '' (поле)
       var tree = kind ? ' aria-expanded="' + (state === 'closed' ? 'false' : 'true') + '"' : '';
-      return '<div class="rsb__field' + (kind ? ' rsb__field--' + kind : '') + (level > 1 ? ' rsb__row--level-' + level : '') + (state === 'hover' ? ' is-hover' : '') + '" role="treeitem"' + tree + '>' +
+      return '<div class="rsb__field' + (kind ? ' rsb__field--' + kind : '') + (level > 1 ? ' rsb__row--level-' + level : '') + '" role="treeitem"' + tree + '>' +
         '<span class="rsb__row-name">' + name + '</span>' + (kind ? '<button type="button" class="rsb__arrow" aria-label="Свернуть или развернуть"></button>' : '') +
         '<span class="rsb__type">' + type + '</span></div>';
     }
@@ -1112,17 +1194,9 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
         return '<tr><th>' + k[0] + '</th>' + states.map(function (s) { return '<td><div class="rsb">' + item('', k[2], k[0], k[1] + s[1], false) + '</div></td>'; }).join('') + '</tr>';
       }).join('') + '</table></div>';
     host.innerHTML =
-      set('Вписан', '.rsb', '5:28859', 'Рабочий сайдбар на right-sidebar.js: пункт тулбара открывает панель, повторный клик сворачивает. Кнопка разворота под пунктами — появляется при наведении на тулбар — переводит сайдбар в режим «По ховеру» и обратно. Стрелки строк сворачивают дерево. Панель «Магазин» — компонент shop в панели-слоте .rsb__panel--bare.',
+      set('Вписан, По ховеру и Закреплен', '.rsb, .rsb--hover, .rsb--pinned', '5:28859, 5:28883', 'Рабочий сайдбар на right-sidebar.js: пункт тулбара открывает панель, повторный клик сворачивает. Кнопка разворота под пунктами — появляется при наведении на тулбар — переводит сайдбар в режим «По ховеру» (.rsb--hover) и обратно: панель висит поверх страницы слева от тулбара, наведение на пункт открывает её, клик закрепляет (.rsb--pinned), повторный клик открепляет и закрывает. Стрелки строк сворачивают дерево. Панель «Магазин» — компонент shop в панели-слоте .rsb__panel--bare.',
         '<div class="rsb-stage">' + sidebar('', 'data') + '</div>') +
-      set('По ховеру и Закреплен', '.rsb--hover, .rsb--pinned', '5:28883', 'Панель висит поверх страницы слева от тулбара. Наведение на пункт открывает её, клик закрепляет, повторный клик открепляет и закрывает. Кнопка разворота делает сайдбар вписанным.',
-        '<div class="rsb-stage rsb-stage--float"><p>Страница под панелью: сайдбар занимает только ширину тулбара.</p>' + sidebar(' rsb--hover', null) + '</div>') +
-      set('Пункт тулбара', '.rsb__item', '1517:58645', '', itemsTable) +
-      set('Шапка панели', '.rsb__head, .rsb__head--widget', '5:28538', 'Кнопки и хлебные крошки — компоненты button и breadcrumbs кита в слотах шапки.',
-        '<div class="rsb-row"><div class="rsb rsb-box">' + head('Виджеты', true, iconBtn('e995', 'Вид', 'btn--ghost btn--style-label')) + '</div>' +
-        '<div class="rsb rsb-box">' + head('Слои', false) + '</div><div class="rsb rsb-box">' + headWidget() + '</div></div>') +
-      set('Строки: поля и слои', '.rsb__field, .rsb__layer', '5:28569', 'Вторая строка — наведение. У слоя при наведении видны команды, третья строка слоёв выбрана.',
-        '<div class="rsb-row"><div class="rsb rsb-box"><div class="rsb__content">' + field('object', 1, 'Аккаунт', 'Аккаунт') + field('node', 2, 'Тип', 'Строка', 'hover') + field('', 2, 'Номер лицевого счета', 'Число') + '</div></div>' +
-        '<div class="rsb rsb-box"><div class="rsb__content">' + layer(1, 'eaee', 'Строка', true) + layer(2, 'eaee', 'Строка', true, ' is-hover') + layer(3, 'e9a3', 'Изображение', false, ' is-active') + '</div></div></div>');
+      set('Пункт тулбара', '.rsb__item', '1517:58645', '', itemsTable);
     [].forEach.call(host.querySelectorAll('.rsb-stage > .rsb'), function (el) { RightSidebar.mount(el); });
     [].forEach.call(host.querySelectorAll('.rsb-stage .shop'), function (el) { Shop.mount(el); });
   }
@@ -1194,6 +1268,17 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     });
   }
 
+  // Тень прокрутки: общий компонент для прокручиваемых блоков (shop, text-editor). Первый список живой, второй — состояние классом
+  function buildScrollShadow() {
+    var host = document.getElementById('scroll-shadow-body'), lines = '';
+    for (var i = 1; i <= 20; i++) lines += '<p class="ss-line">Строка списка ' + i + '</p>';
+    function box(cls) { return '<div class="ss-box scroll-shadow' + cls + '">' + lines + '</div>'; }
+    host.innerHTML = '<div class="btn-set"><h4>Тень прокрутки <code>.scroll-shadow, .is-scrolled, .is-more-below</code> <span>15499:1120, 15499:1122</span></h4>' +
+      '<p class="btn-note">Полоса 8px у края блока, за которым есть ещё содержимое: сверху — пока блок прокручен вниз, снизу — пока ниже есть что прокрутить. Прокрутите первый список. Магазин и текстовый редактор берут тень отсюда.</p>' +
+      '<div class="btn-scroll"><table class="btn-grid"><tr><th></th><th>прокрутка</th><th>position=top</th><th>position=bottom</th></tr><tr><th></th><td>' + box('') + '</td><td>' + box(' scroll-shadow--top is-scrolled') + '</td><td>' + box(' scroll-shadow--bottom is-more-below') + '</td></tr></table></div></div>';
+    ScrollShadow.mount(host.querySelector('.ss-box'));
+  }
+
   // Аккордеон и сайдбар: примеры по NavigationPanels из Saby. Кнопка «≡» — label с флажком, сворачивает без JS.
   // Иконки — шрифт Accordion-Font: Home, Screenshots, EditForm, SabyDisk, Statistics, Setting
   function buildAccordion() {
@@ -1214,20 +1299,34 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     function set(title, code, height, html) {
       return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code></h4><div class="acc-demo" style="height: ' + height + 'px">' + html + '</div></div>';
     }
-    function four(sel, hover) {
+    function four(sel) {
       return [['e9eb', 'Сайты'], ['e9d5', 'Виджеты'], ['e943', 'Оформление', 'Стиль'], ['e96d', 'Диск']].map(function (it, n) {
-        return item(it[0], it[1], (n === sel ? ' is-selected' : '') + (n === hover ? ' is-hover' : ''), it[2]);
+        return item(it[0], it[1], n === sel ? ' is-selected' : '', it[2]);
       }).join('');
     }
+    // Пункт отдельно: развёрнутый и свёрнутый вид × состояния
+    var ITEM_STATES = [['Default', ''], ['Hover', ' is-hover'], ['Selected', ' is-selected'], ['Selected + Hover', ' is-selected is-hover']];
+    var itemTable = '<div class="btn-set"><h4>Пункт аккордеона <code>.accordion__item</code></h4>' +
+      '<p class="btn-note">Состояния пункта: выбранный — .is-selected или aria-current="page", наведение — .is-hover и :hover.</p>' +
+      '<div class="btn-scroll"><table class="btn-grid"><tr><th></th>' + ITEM_STATES.map(function (s) { return '<th>' + s[0] + '</th>'; }).join('') + '</tr>' +
+      [['Развёрнутый', ''], ['Свёрнутый', ' accordion--compact']].map(function (v) {
+        return '<tr><th>' + v[0] + '</th>' + ITEM_STATES.map(function (s) {
+          return '<td><nav class="accordion' + v[1] + ' acc-cell" aria-label="Пункт">' + item('e9d5', 'Виджеты', s[1]) + '</nav></td>';
+        }).join('') + '</tr>';
+      }).join('') + '</table></div></div>';
     host.innerHTML =
-      set('Сайдбар продукта', '.sidebar', 300, '<aside class="sidebar">' + header(true, true) + '<nav class="accordion" aria-label="Разделы">' + four(0, 1) + '</nav></aside>') +
-      set('Свёрнутый', '.sidebar--compact', 330, '<aside class="sidebar sidebar--compact">' + header(false, false) + '<nav class="accordion" aria-label="Разделы">' + four(1, -1) + '</nav></aside>') +
-      set('Подразделы и группы', '.accordion__item--sub, .accordion__group', 360, '<aside class="sidebar">' + header(true, true) + '<nav class="accordion" aria-label="Разделы">' +
-        item('e9eb', 'Сайты', ' is-active') + item('', 'Статистика сайтов', ' accordion__item--sub is-selected') + item('e9d5', 'Виджеты') +
-        '<div class="accordion__group"></div>' + item('e954', 'Аналитика') + '<div class="accordion__spacer"></div>' + item('e92d', 'Настройки') + '</nav></aside>') +
-      set('Аккордеон без шапки', '.accordion, .accordion--compact', 200,
-        '<nav class="accordion" aria-label="Разделы">' + item('e9eb', 'Сайты', ' is-selected') + item('e9d5', 'Виджеты') + '</nav>' +
-        '<nav class="accordion accordion--compact" aria-label="Разделы">' + item('e9eb', 'Сайты', ' is-selected') + item('e9d5', 'Виджеты') + '</nav>');
+      set('Сайдбар продукта', '.sidebar', 300, '<aside class="sidebar">' + header(true, true) + '<nav class="accordion" aria-label="Разделы" data-acc-live>' + four(0) + '</nav></aside>') +
+      set('Свёрнутый', '.sidebar--compact', 330, '<aside class="sidebar sidebar--compact">' + header(false, false) + '<nav class="accordion" aria-label="Разделы" data-acc-live>' + four(1) + '</nav></aside>') +
+      itemTable;
+    // Переключение по пунктам: клик выбирает пункт, выбор снимается с остальных пунктов того же аккордеона
+    host.addEventListener('click', function (e) {
+      var it = e.target.closest('[data-acc-live] .accordion__item'); if (!it) return;
+      e.preventDefault();
+      [].forEach.call(it.parentNode.querySelectorAll('.accordion__item'), function (x) {
+        var on = x === it; x.classList.toggle('is-selected', on);
+        if (on) x.setAttribute('aria-current', 'page'); else x.removeAttribute('aria-current');
+      });
+    });
   }
 
   // Кнопка-стрелка: таблица «вид и стиль × состояние» по viewMode и buttonStyle из Saby; размер и направление — переключатели
@@ -1285,7 +1384,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     var cls = ' breadcrumbs--size-' + document.getElementById('bc-size').value + (color ? ' breadcrumbs--color-' + color : '');
     function box(w, inner) { return '<div class="bc-box" style="width: ' + w + 'px">' + inner + '</div>'; }
     host.innerHTML = '<div class="btn-set"><h4>Только крошки <code>.breadcrumbs</code></h4><div class="btn-scroll"><table class="btn-grid">' +
-        [['покой', bcPath(BC_SHORT, cls)], ['hover на крошке', bcPath(BC_SHORT, cls, 1)], ['readOnly', bcPath(BC_SHORT, cls + ' is-readonly')]].map(function (r) { return '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>'; }).join('') +
+        [['покой', bcPath(BC_SHORT, cls)], ['readOnly', bcPath(BC_SHORT, cls + ' is-readonly')]].map(function (r) { return '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>'; }).join('') +
       '</table></div></div>' +
       '<div class="btn-set"><h4>Длинный путь <code>.breadcrumbs__dots</code></h4><p class="btn-note">Последняя крошка не шире половины, остальные обрезаются; когда места не хватает, справа от них появляется «…». Рамка — ширина 360 и 640.</p>' +
         '<div class="bc-stack">' + box(360, bcPath(BC_LONG, cls)) + box(640, bcPath(BC_LONG, cls)) + '</div></div>' +
@@ -1378,8 +1477,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   }
 
   // Тулбар: тулбар целиком по стилям, дальше по кнопке (component set) — таблица «стиль × состояние».
-  // Показаны только info и success: default в каталоге не показываем
-  var TB_STYLES = [['default', ''], ['info', ' tb--style-info'], ['success', ' tb--style-success']];
+  // default в каталоге не показываем
+  var TB_STYLES = [['default', ''], ['info', ' tb--style-info'], ['contrast', ' tb--style-contrast'], ['unaccented', ' tb--style-unaccented'], ['success', ' tb--style-success']];
   var TB_ICON = { back: '&#xe9a9;', settings: '&#xe75d;', del: '&#xeb72;', more: '&#xeab4;', ok: '&#xe75e;', bird: '&#xe9e2;' }; // глифы из макета, cbuc-icons24
   var TB_KINDS = [ // имя, класс, узел Figma, разметка кнопки, есть ли select
     ['Bricks/button', '.tb__btn', '854:7089', function (s) { return tbBtn('', s, TB_ICON.bird); }, true],
@@ -1387,7 +1486,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     ['Bricks/deleteButton', '.tb__btn--delete', '870:26168', function (s) { return tbBtn(' tb__btn--delete', s, TB_ICON.del); }, false],
     ['_Bricks/successButton', '.tb__btn--success', '1600:291', function (s) { return tbBtn(' tb__btn--success', s, TB_ICON.ok); }, false]
   ];
-  var TB_STATES = [['покой', ''], ['hover', ' is-hover'], ['select', ' is-selected']];
+  var TB_STATES = [['покой', ''], ['hover', ' is-hover'], ['select', ' is-selected'], ['select + hover', ' is-selected is-hover']];
   function tbBtn(cls, state, glyph, extra) {
     var sel = state.indexOf('is-selected') >= 0;
     return '<button type="button" class="tb__btn' + cls + state + '"' + (sel ? ' aria-pressed="true"' : '') + (extra ? '' : ' aria-label="Кнопка"') + '>' +
@@ -1536,7 +1635,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     var names = set('_Name', '.pe__name', '4608:8089', ths(['покой', 'hover']), [['Empty=off', ''], ['Empty=on', ' is-empty']].map(function (e) {
       return row(e[0], ['', ' is-hover'].map(function (s) { return bare('<span class="pe__name' + e[1] + s + '">Название виджета</span>'); }));
     }).join(''));
-    var marks = set('Сброс', '.pe__mark', '4608:7990', ths(['Open=off', 'Open=on']), row('', [bare(peMark()), '<div class="pe-hint-cell">' + bare(peMark(' is-open')) + '</div>']));
+    var marks = set('Сброс', '.pe__mark', '4608:7990', ths(['Open=off', 'Open=on', 'hover на тексте']), row('', [bare(peMark()), '<div class="pe-hint-cell">' + bare(peMark(' is-open')) + '</div>',
+      '<div class="pe-hint-cell">' + bare(peMark(' is-open').replace('pe__hint-text"', 'pe__hint-text is-hover"')) + '</div>']));
     var states = [['покой', ''], ['hover', ' is-hover'], ['active', ' is-active']];
     function btnRows(list) {
       return list.map(function (b) {
@@ -1546,45 +1646,9 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     var buttons = set('Кнопки шапки', '.pe__reset, .pe__done, .pe__close, .pe__arrow', '4608:8098, 4608:7662', ths(['покой', 'hover', 'active', 'disabled']), btnRows([
       ['Сброс', 'pe__reset', PE_G.reset, 'Сбросить', true], ['Сохранить', 'pe__done', PE_G.done, 'Сохранить'], ['Закрыть', 'pe__close', PE_G.close, 'Закрыть'], ['Стрелка', 'pe__arrow', '', 'Ограничения'], ['Назад', 'pe__back', PE_G.back, 'Назад']]));
 
-    var labels = set('Метка+редактор PG', '.pe__row, .pe__title', '6c2fc2d0…', ths(['редактор']), row('', [bare('<div class="pe__title">Заголовок группы</div><div class="pe__rows"><div class="pe__row"><span class="pe__label">Метка</span><span class="pe__editor is-readonly">Редактор</span></div><div class="pe__row"><span class="pe__label">Длинная метка</span><input class="pe__editor" value="Значение" aria-label="Длинная метка"></div></div>', 318)]));
-    function dim(cls, value, unit, ph) {
-      return bare('<label class="pe__dim' + cls + '"><input class="pe__dim-value" value="' + value + '" placeholder="' + (ph || '') + '" aria-label="Размер"><span class="pe__dim-unit">' + unit + '</span></label>', 130);
-    }
-    var dims = set('Поле ввода', '.pe__dim', '4614:20979', ths(['покой', 'hover']), [['Type=fix', '', '24', 'px'], ['Type=auto', ' pe__dim--auto', '', 'по контенту', '115'], ['Type=fill', ' pe__dim--auto', '', 'заполнить', '115']].map(function (t) {
-      return row(t[0], ['', ' is-hover'].map(function (s) { return dim(t[1] + s, t[2], t[3], t[4]); }));
-    }).join(''));
+    host.innerHTML = live + heads + names + marks + buttons;
 
-    var style = set('Строки оформления', '.pe__row--style', '4629:5073, 4629:2701, 4629:3650, 4629:3539', ths(['Open=off', 'Open=on']),
-      row('Скругления', [bare('<div class="pe__rows">' + peRadius(false) + '</div>', 318), bare('<div class="pe__rows">' + peRadius(true) + '</div>', 318)]) +
-      row('Границы', [bare('<div class="pe__rows">' + peBorder(false) + '</div>', 318), bare('<div class="pe__rows">' + peBorder(true) + '</div>', 318)]) +
-      row('Тень', [bare('<div class="pe__rows">' + peRow('Тень', peBubble('#000000', true) + peX()) + '</div>', 318), null]) +
-      row('Фон', [bare('<div class="pe__rows">' + peRow('Фон', peBubble('#a39c97', false) + peX()) + '</div>', 318), null]), ' pe-top');
-    var parts = set('Элементы строк', '.pe__switch, .pe__x, .pe__swatch, .pe__bubble, .pe__line', '', ths(['покой', 'hover', 'Active=on', 'Active=on, hover', 'dashed']),
-      row('Переключатель', [bare(peBtn('pe__switch', PE_G.sides, 'Стороны')), bare(peBtn('pe__switch is-hover', PE_G.sides, 'Стороны')), bare(peBtn('pe__switch is-active', PE_G.sides, 'Стороны')), bare(peBtn('pe__switch is-active is-hover', PE_G.sides, 'Стороны')), null]) +
-      row('Крестик', [bare(peX()), bare(peX('', ' is-hover')), null, null, null]) +
-      row('Кружок цвета', [bare(peBtn('pe__swatch', '', 'Цвет', ' style="--pe-color: #a39c97"')), bare(peBtn('pe__swatch is-hover', '', 'Цвет', ' style="--pe-color: #a39c97"')), null, null, null]) +
-      row('Пилюля цвета', [bare(peBubble('#a39c97', false)), bare(peBubble('#a39c97', false).replace('pe__bubble"', 'pe__bubble is-hover"')), null, null, null]) +
-      row('Тип линии', [bare(peBtn('pe__line', '', 'Сплошная')), null, null, null, bare(peBtn('pe__line pe__line--dashed', '', 'Пунктир'))]));
-
-    host.innerHTML = live + heads + names + marks + buttons + labels + dims + style + parts + '<div id="pe-snaps"></div>';
-
-    // Снимки всплывающих окон: разметка та же, что строит рабочее окно
-    var win = document.getElementById('pe-live');
-    window.PropertyEditor.mount(win);
-    function snap(opener, sel) {
-      win.querySelector(opener).click();
-      var el = win.querySelector(sel), html = el.outerHTML;
-      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
-      return html;
-    }
-    function popSet(title, code, node, html) {
-      return '<div class="btn-set"><h4>' + title + ' <code>' + code + '</code> <span>' + node + '</span></h4><div class="pe pe-bare pe-snap">' + html + '</div></div>';
-    }
-    document.getElementById('pe-snaps').innerHTML =
-      popSet('Меню величин', '.pe__menu--size', '4614:20951', snap('[data-pe-dim="w"] .pe__dim-unit', '.pe__menu--size')) +
-      popSet('Меню выбора линии', '.pe__menu--line', '4629:2697', snap('[data-pe-row="border"] .pe__line', '.pe__menu--line')) +
-      popSet('Выбор цвета', '.pe__pop--color', '4629:3533', snap('[data-pe-row="background"] .pe__bubble', '.pe__pop--color')) +
-      popSet('Тень', '.pe__pop--shadow', '4629:3606', snap('[data-pe-row="shadow"] .pe__bubble', '.pe__pop--shadow'));
+    window.PropertyEditor.mount(document.getElementById('pe-live'));
   }
 
   // Мастер-список: «Список» и «Навигация» — таблица «itemType × состояние», переключатель, дерево и заголовок группы.
@@ -1725,9 +1789,9 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
     cell.appendChild(tray); document.getElementById('te-states').appendChild(cell);
   });
 
-  var ROUTES = { all: 'all', icons: 'icons', components: 'components', button: 'components', checkbox: 'components', chips: 'components', 'close-button': 'components', 'arrow-button': 'components', back: 'components', breadcrumbs: 'components', combobox: 'components', 'switch': 'components', tumbler: 'components', tabs: 'components', accordion: 'components', input: 'components', toolbar: 'components', widget: 'components', 'left-sidebar': 'components', 'right-sidebar': 'components', shop: 'components', 'property-editor': 'components', 'pg-editors': 'components', 'text-editor': 'components', 'master-list': 'components', 'demo-frame': 'components',
+  var ROUTES = { all: 'all', icons: 'icons', components: 'components', button: 'components', checkbox: 'components', chips: 'components', 'close-button': 'components', 'arrow-button': 'components', back: 'components', breadcrumbs: 'components', combobox: 'components', 'switch': 'components', tumbler: 'components', tabs: 'components', accordion: 'components', 'scroll-shadow': 'components', input: 'components', toolbar: 'components', widget: 'components', 'builder-header': 'components', 'left-sidebar': 'components', 'right-sidebar': 'components', shop: 'components', 'property-editor': 'components', 'pg-editors': 'components', 'text-editor': 'components', 'master-list': 'components', 'demo-frame': 'components',
     tokens: 'tokens', colors: 'tokens', sizes: 'tokens', shadows: 'tokens' };
-  var COMPS = ['button', 'checkbox', 'chips', 'close-button', 'arrow-button', 'back', 'breadcrumbs', 'combobox', 'switch', 'tumbler', 'tabs', 'accordion', 'input', 'toolbar', 'widget', 'left-sidebar', 'right-sidebar', 'shop', 'property-editor', 'pg-editors', 'text-editor', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
+  var COMPS = ['button', 'checkbox', 'chips', 'close-button', 'arrow-button', 'back', 'breadcrumbs', 'combobox', 'switch', 'tumbler', 'tabs', 'accordion', 'scroll-shadow', 'input', 'toolbar', 'widget', 'builder-header', 'left-sidebar', 'right-sidebar', 'shop', 'property-editor', 'pg-editors', 'text-editor', 'master-list', 'demo-frame'], TOKEN_SECTIONS = ['colors', 'sizes', 'shadows'];
   var group = null, comp = 'button', libNav = document.getElementById('lib-nav'), menuBtn = document.getElementById('lib-menu');
   function nav(sel) { return [].slice.call(document.querySelectorAll(sel)); }
   function setMenu(open) { libNav.classList.toggle('is-open', open); menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
@@ -1776,9 +1840,10 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
   var TILES = [
     ['Конструктор', [
       { id: 'widget', title: 'Виджет', sum: 'Рамка при наведении и выделении, кружки-плюсы на сторонах, слот для тулбара, пустое состояние.', table: '#widget-body .wg-grid', cells: [[1, 2]] },
-      { id: 'toolbar', title: 'Тулбар', sum: 'Стили default, info и success, кнопки-иконки, удаление, подтверждение, подпись со стрелкой.', table: '#toolbar-body table', cells: [[1, 1]] },
+      { id: 'toolbar', title: 'Плавающий тулбар', sum: 'Стили default, info и success, кнопки-иконки, удаление, подтверждение, подпись со стрелкой.', table: '#toolbar-body table', cells: [[1, 1]] },
+      { id: 'builder-header', title: 'Шапка', sum: 'Шапка окна конструктора: название, размеры экрана, история, масштаб, «Изменить» и «Сохранить».', nodes: '#bhd-edit-actions > .bhd__zoom, #bhd-edit-actions > .bhd__pill--save, #bhd-edit-actions > .bhd__close', wrap: 'bhd bhd--editing bhd-tile' },
       { id: 'left-sidebar', title: 'Левый сайдбар', sum: 'Панель «Страницы»: список страниц, переименование, меню «⋮», окно настройки; вписан или свёрнут в линии.', nodes: '#left-sidebar-body .btn-set:nth-child(1) .lsb-stage', w: 480 },
-      { id: 'right-sidebar', title: 'Правый сайдбар', sum: 'Тулбар с пунктами, панели «Данные» и «Слои», шапка панели; вписан, по ховеру или закреплён.', nodes: '#right-sidebar-body .btn-set:nth-child(1) .rsb-stage', w: 480 },
+      { id: 'right-sidebar', title: 'Правый сайдбар', sum: 'Тулбар с пунктами, панели «Магазин», «Данные» и «Слои»; вписан, по ховеру или закреплён.', nodes: '#right-sidebar-body .btn-set:nth-child(1) .rsb-stage', w: 480 },
       { id: 'shop', title: 'Магазин', sum: 'Виджеты трёх размеров, разделы с превью, расширенный вид с деревом категорий.', nodes: '#shop-body .btn-set:nth-child(1) .shop-stage', w: 480 },
       { id: 'demo-frame', title: 'Вспомогательная область', sum: 'Рамка прототипа: шапка, сцена и панель сценариев.', nodes: '#frame-demo', wrap: 'stage', w: 720 }
     ]],
@@ -1800,7 +1865,8 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
       { id: 'switch', title: 'Переключатель', sum: 'Включает и выключает настройку сразу: filled и outlined, размеры s, m и l, подпись слева или справа.', table: '#switch-body table', cells: [[2, 1], [1, 1]] },
       { id: 'tumbler', title: 'Тумблер', sum: 'Переключатель из 2–4 вариантов на общей подложке: подписи, иконки, счётчик, контрастная подложка.', table: '#tumbler-body table', cells: [[1, 1], [2, 1]] },
       { id: 'tabs', title: 'Вкладки', sum: 'Переключение разделов карточки или панели: маркер снизу, иконки и счётчики, главная вкладка.', nodes: '#tabs-body .btn-set:nth-child(3) .tabs', w: 480 },
-      { id: 'accordion', title: 'Аккордеон и сайдбар', sum: 'Навигация по разделам продукта: шапка с логотипом, разделы с иконками, подразделы, свёрнутый вид.', nodes: '#accordion-body .btn-set:nth-child(1) .acc-demo, #accordion-body .btn-set:nth-child(2) .acc-demo', wrap: 'acc-demo' }
+      { id: 'accordion', title: 'Аккордеон и сайдбар', sum: 'Навигация по разделам продукта: шапка с логотипом, разделы с иконками, свёрнутый вид, пункт и его состояния.', nodes: '#accordion-body .btn-set:nth-child(1) .acc-demo, #accordion-body .btn-set:nth-child(2) .acc-demo', wrap: 'acc-demo' },
+      { id: 'scroll-shadow', title: 'Тень прокрутки', sum: 'Полоса 8px сверху и снизу списка, пока за краем есть содержимое. Общая для всех прокручиваемых блоков кита.', nodes: '#scroll-shadow-body td:nth-child(3) > .ss-box' }
     ]],
     ['SabyDoc', [
       { id: 'text-editor', title: 'Окно текстового редактора', sum: 'Шапка, боковые панели, верхний тулбар и область документа.', nodes: '#te-demo', w: 720 }
@@ -1932,7 +1998,7 @@ section > p.lead { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
   var start = location.hash.slice(1);
   if (!go(start, false)) go('all', false);
-  buildButtons(); buildCheckboxes(); buildChips(); buildCloseButtons(); buildArrowButtons(); buildBack(); buildBreadcrumbs(); buildCombobox(); buildSwitch(); buildTumbler(); buildTabs(); buildAccordion(); buildInputs(); buildToolbars(); buildWidgets(); buildLeftSidebar(); buildRightSidebar(); buildShop(); buildPropertyEditor(); buildPgEditors(); buildMasterList(); buildColors(); buildSizes(); buildShadows();
+  buildButtons(); buildCheckboxes(); buildChips(); buildCloseButtons(); buildArrowButtons(); buildBack(); buildBreadcrumbs(); buildCombobox(); buildSwitch(); buildTumbler(); buildTabs(); buildAccordion(); buildScrollShadow(); buildInputs(); buildToolbars(); buildWidgets(); buildBuilderHeader(); buildLeftSidebar(); buildRightSidebar(); buildShop(); buildPropertyEditor(); buildPgEditors(); buildMasterList(); buildColors(); buildSizes(); buildShadows();
   buildTiles(); buildIcons();
   if (ROUTES[start]) { // открыт по адресу страницы: браузер прокрутил бы к якорю, а страница начинается с начала.
     // На время загрузки убираем якорь из адреса, после неё возвращаем и встаём в начало

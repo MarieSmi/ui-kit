@@ -1,0 +1,32 @@
+/*!
+ * scroll-shadow — тень прокрутки: полоса 8px у края прокручиваемого блока, за которым есть ещё содержимое.
+ * Figma: «⚙️ Default components» (nuC4KFMiS36uDWDUp9wKGl), набор scroll-shadow, свойство position:
+ * top 15499:1120 → сверху, пока блок прокручен вниз (.is-scrolled); bottom 15499:1122 → снизу, пока ниже есть
+ * содержимое (.is-more-below). Варианты left и right в ките не сделаны. Перенесена из прототипа «Компоненты» (popups).
+ * Класс .scroll-shadow ставится на сам прокручиваемый блок (overflow: auto); классы состояний ставит scroll-shadow.js.
+ * Только верхняя тень — .scroll-shadow--top, только нижняя — .scroll-shadow--bottom.
+ * Если у блока есть боковые отступы, тень тянется на всю ширину через --scroll-shadow-inset (по умолчанию 0).
+ * Тени занимают ::before и ::after блока: свои псевдоэлементы у него должны быть свободны.
+ * Цвета и высота — токены ui-kit (tokens.css подключается раньше).
+ * https://github.com/MarieSmi/ui-kit/tree/main/components/scroll-shadow
+ */
+.scroll-shadow::before,
+.scroll-shadow::after {
+  content: ""; display: block; position: sticky; z-index: 1; pointer-events: none;
+  height: var(--offset-offset_s);
+  opacity: 0;
+}
+/* position=top: прилипает к верху, места в потоке не занимает */
+.scroll-shadow::before {
+  top: 0;
+  margin: 0 calc(-1 * var(--scroll-shadow-inset, 0px)) calc(-1 * var(--offset-offset_s));
+  background: linear-gradient(var(--components-scroll-shadow_start-color_scroll), var(--components-scroll-shadow_end-color_scroll));
+}
+/* position=bottom: прилипает к низу, места в потоке не занимает */
+.scroll-shadow::after {
+  bottom: 0;
+  margin: calc(-1 * var(--offset-offset_s)) calc(-1 * var(--scroll-shadow-inset, 0px)) 0;
+  background: linear-gradient(var(--components-scroll-shadow_end-color_scroll), var(--components-scroll-shadow_start-color_scroll));
+}
+.scroll-shadow.is-scrolled:not(.scroll-shadow--bottom)::before,
+.scroll-shadow.is-more-below:not(.scroll-shadow--top)::after { opacity: 1; }

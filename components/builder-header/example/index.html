@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>builder-header — пример</title>
+  <link rel="stylesheet" href="../../../tokens.css">
+  <link rel="stylesheet" href="../../../fonts/fonts.css">
+  <link rel="stylesheet" href="../builder-header.css">
+  <style>
+    body { margin: 0; font-family: var(--font-font-family-default), sans-serif; color: var(--text-text-color);
+      background: var(--background-unaccented_background-color); }
+    .demo { min-width: 1100px; }
+    .demo + .demo { margin-top: 24px; }
+    .demo--editing { background: var(--components-constructor-constructor_background-color); } /* фон окна в редакторе */
+    .demo p { margin: 0; padding: 8px 20px; font-size: 12px; color: var(--text-label_text-color); }
+  </style>
+</head>
+<body>
+  <section class="demo">
+    <p>Чтение</p>
+    <header class="bhd" aria-label="Шапка конструктора">
+      <div class="bhd__title"><span class="bhd__icon bhd__icon--24" aria-hidden="true">&#xeb5f;</span><span class="bhd__name">Онлайн-сервис доставки еды</span></div>
+      <div class="bhd__center">
+        <div class="bhd__devices" role="group" aria-label="Размер экрана">
+          <button type="button" class="bhd__btn bhd__device" aria-label="Компьютер" aria-pressed="true"><span class="bhd__icon bhd__icon--14" aria-hidden="true">&#xe730;</span></button>
+          <button type="button" class="bhd__btn bhd__device" aria-label="Планшет" aria-pressed="false"><span class="bhd__icon bhd__icon--14" aria-hidden="true">&#xe637;</span></button>
+          <button type="button" class="bhd__btn bhd__device" aria-label="Другие размеры" aria-pressed="false"><span class="bhd__icon bhd__icon--14" aria-hidden="true">&#xeab4;</span></button>
+        </div>
+      </div>
+      <div class="bhd__actions">
+        <div class="bhd__zoom">
+          <button type="button" class="bhd__btn" aria-label="Уменьшить масштаб"><span class="bhd__icon bhd__icon--24" aria-hidden="true">&#xe6ea;</span></button>
+          <button type="button" class="bhd__zoom-value">100%</button>
+          <button type="button" class="bhd__btn" aria-label="Увеличить масштаб"><span class="bhd__icon bhd__icon--24" aria-hidden="true">&#xe6e9;</span></button>
+        </div>
+        <div class="bhd__revision"><span class="bhd__revision-image" aria-hidden="true"></span><span>15 окт</span></div>
+        <button type="button" class="bhd__pill bhd__pill--edit">Изменить <span class="bhd__icon" aria-hidden="true">&#xe660;</span></button>
+        <button type="button" class="bhd__close" aria-label="Закрыть"></button>
+      </div>
+    </header>
+  </section>
+
+  <section class="demo demo--editing">
+    <p>Редактирование</p>
+    <header class="bhd bhd--editing" aria-label="Шапка конструктора">
+      <div class="bhd__title"><span class="bhd__icon bhd__icon--24" aria-hidden="true">&#xeb5f;</span><span class="bhd__name">Онлайн-сервис доставки еды</span></div>
+      <div class="bhd__center">
+        <div class="bhd__devices" role="group" aria-label="Размер экрана">
+          <button type="button" class="bhd__btn bhd__device" aria-label="Компьютер" aria-pressed="true"><span class="bhd__icon bhd__icon--14" aria-hidden="true">&#xe730;</span></button>
+          <button type="button" class="bhd__btn bhd__device" aria-label="Планшет" aria-pressed="false"><span class="bhd__icon bhd__icon--14" aria-hidden="true">&#xe637;</span></button>
+          <button type="button" class="bhd__btn bhd__device" aria-label="Другие размеры" aria-pressed="false"><span class="bhd__icon bhd__icon--14" aria-hidden="true">&#xeab4;</span></button>
+        </div>
+      </div>
+      <div class="bhd__actions">
+        <div class="bhd__history">
+          <button type="button" class="bhd__btn" aria-label="Отменить"><span class="bhd__icon bhd__icon--20" aria-hidden="true">&#xe6cf;</span></button>
+          <button type="button" class="bhd__btn" aria-label="Повторить"><span class="bhd__icon bhd__icon--20" aria-hidden="true">&#xe6ca;</span></button>
+          <button type="button" class="bhd__btn" aria-label="Сбросить" disabled><span class="bhd__icon bhd__icon--20" aria-hidden="true">&#xe629;</span></button>
+          <button type="button" class="bhd__btn" aria-label="Предпросмотр"><span class="bhd__icon bhd__icon--20" aria-hidden="true">&#xeab9;</span></button>
+        </div>
+        <div class="bhd__zoom">
+          <button type="button" class="bhd__btn" aria-label="Уменьшить масштаб"><span class="bhd__icon bhd__icon--24" aria-hidden="true">&#xe6ea;</span></button>
+          <button type="button" class="bhd__zoom-value">100%</button>
+          <button type="button" class="bhd__btn" aria-label="Увеличить масштаб"><span class="bhd__icon bhd__icon--24" aria-hidden="true">&#xe6e9;</span></button>
+        </div>
+        <button type="button" class="bhd__pill bhd__pill--save">Сохранить <span class="bhd__pill-check"><span class="bhd__icon" aria-hidden="true">&#xe75e;</span></span></button>
+        <button type="button" class="bhd__close" aria-label="Закрыть"></button>
+      </div>
+    </header>
+  </section>
+
+  <section class="demo" id="live-box">
+    <p>Живая шапка (builder-header.js): «Изменить» и «Сохранить» переключают режим, масштаб и размер экрана меняются. <span id="log"></span></p>
+    <header id="live" aria-label="Шапка конструктора"></header>
+  </section>
+
+  <script src="../builder-header.js"></script>
+  <script>
+    const log = document.getElementById('log');
+    const box = document.getElementById('live-box');
+    BuilderHeader.mount(document.getElementById('live'), {
+      title: 'Онлайн-сервис доставки еды',
+      revision: { date: '15 окт' },
+      onMode(m) { box.classList.toggle('demo--editing', m === 'edit'); log.textContent = 'режим: ' + m; },
+      onDevice(id) { log.textContent = 'размер экрана: ' + id; },
+      onZoom(v) { log.textContent = 'масштаб: ' + v + '%'; },
+      onUndo() { log.textContent = 'отменить'; },
+      onClose() { log.textContent = 'закрыть'; },
+    });
+  </script>
+</body>
+</html>

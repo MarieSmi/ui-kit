@@ -79,15 +79,20 @@
 .shop__master {
   display: none; box-sizing: border-box; flex: none;
   width: var(--shop-master-width);
-  padding-top: var(--offset-offset_s);
   overflow: auto; scrollbar-width: none; /* полосы прокрутки в макете нет: прокрутка колесом и жестом */
 }
 .shop.is-expanded .shop__master { display: block; }
+/* Зазор над деревом — у содержимого слота, не у блока прокрутки: иначе тень прокрутки (sticky, top: 0)
+   прилипает ниже края блока на этот зазор и над ней видны пункты */
+.shop__master > :first-child { margin-top: var(--offset-offset_s); }
 
 .shop__list {
   box-sizing: border-box; flex: 1 1 auto; min-width: 0; overflow: auto; scrollbar-width: none; /* полосы прокрутки в макете нет */
   padding: var(--offset-none) var(--offset-offset_m) var(--offset-offset_2xs);
 }
+/* Тень прокрутки у списка и дерева категорий — компонент кита scroll-shadow (shop.js ставит ему класс).
+   Тень тянется на всю ширину списка, за его боковые отступы */
+.shop__list { --scroll-shadow-inset: var(--offset-offset_m); }
 
 /* Сетки: small — четыре в ряд, medium — две колонки */
 .shop__grid { display: grid; gap: var(--offset-offset_s); }

@@ -191,7 +191,7 @@
 </button>
 </span>
 </div>
-<div class="te__viewport" tabindex="0" aria-label="Область документа">
+<div class="te__viewport scroll-shadow" tabindex="0" aria-label="Область документа">
 <div class="te__page">
 <div class="te__document" role="textbox" aria-multiline="true" aria-label="Текст документа">
 </div>
@@ -283,6 +283,7 @@
         root.removeEventListener('click', onClick);
         content.removeEventListener('input', onInput);
         viewport.removeEventListener('scroll', syncScroll);
+        if (shadow) shadow.destroy();
         root.replaceChildren.apply(root, original);
         if (!hadClass) root.classList.remove('te');
         root.classList.toggle('is-scrolled', wasScrolled);
@@ -300,6 +301,9 @@
     content.addEventListener('input', onInput);
     viewport.addEventListener('scroll', syncScroll, { passive: true });
     syncScroll();
+    // Тень прокрутки — компонент кита scroll-shadow
+    var shadow = win.ScrollShadow ? win.ScrollShadow.mount(viewport) : null;
+    if (!shadow && win.console) win.console.warn('TextEditor: подключите components/scroll-shadow — без него нет тени прокрутки');
     instances.set(root, api);
     return api;
   }
